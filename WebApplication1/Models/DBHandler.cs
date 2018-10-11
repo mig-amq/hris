@@ -28,6 +28,12 @@ namespace WebApplication1.Models
             this.SqlConnectionBuilder.InitialCatalog = "master";
             this.SqlConnectionBuilder.IntegratedSecurity = true;
         }
+
+        /**
+         * <summary>Executes the specified sql command and
+         * returns either the DataTable containing the Read Data or the Primary Key of the
+         * first affected row</summary>
+         */
         public T Execute<T>(CRUD type, string sql, Dictionary<string, dynamic> param = null)
         {
             try
