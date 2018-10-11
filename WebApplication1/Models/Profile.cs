@@ -5,6 +5,7 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
+    using System.Collections;
     using System.Data;
 
     public enum SexType
@@ -44,8 +45,11 @@ namespace WebApplication1.Models
         public string City { get; set; }
         public string Province { get; set; }
 
+        public ArrayList EmploymentHistories { get; set; }
+
         public Profile(int ProfileID = -1)
         {
+            this.EmploymentHistories = new ArrayList();
             this.DBHandler = new DBHandler();
 
             if (ProfileID != -1)

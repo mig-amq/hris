@@ -5,6 +5,7 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
+    using System.Collections;
     using System.Data;
     using WebApplication1.Models.Supers;
 
@@ -16,7 +17,7 @@ namespace WebApplication1.Models
        
         public Applicant() {}
         public Applicant(int ProfileID)
-            : base(ProfileID) {}
+            : base(ProfileID){}
 
         public override ProfiledObject FindProfile(int ProfileID, bool recursive = false)
         {
@@ -70,6 +71,13 @@ namespace WebApplication1.Models
 
                 this.ApplicantID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             }
+            return this;
+        }
+
+        public Applicant Delete()
+        {
+            this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM Applicant WHERE ApplicantID = " + this.ApplicantID);
+            this.Profile.Delete();
             return this;
         }
     }
