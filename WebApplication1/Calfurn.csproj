@@ -163,6 +163,7 @@
     <Compile Include="Models\DBHandler.cs" />
     <Compile Include="Models\Education.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\EmploymentHistory.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\Supers\ProfiledObject.cs" />
     <Compile Include="Models\Supers\SecureObject.cs" />

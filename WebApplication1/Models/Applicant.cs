@@ -74,6 +74,16 @@ namespace WebApplication1.Models
             return this;
         }
 
+        public Applicant Update(bool recursive = true)
+        {
+            return this.Update(this.ApplicantID, recursive);
+        }
+
+        public Applicant Update(int ApplicantID, bool recursive = true)
+        {
+            return this;
+        }
+
         public Applicant Delete()
         {
             this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM Applicant WHERE ApplicantID = " + this.ApplicantID);
