@@ -9,9 +9,43 @@
 		<link rel="stylesheet" type="text/css" href="css/element-framework/select.css" />
 		<link rel="stylesheet" type="text/css" href="css/element-framework/table.css" />
 		<link rel="stylesheet" type="text/css" href="css/page-framework/dashboard.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/modal.css" />
 		<script src="js/jquery-3.3.1.js" type="text/javascript"></script>
+		<script src="js/modal.js" type="text/javascript"></script>
+		<script src="js/date.js" type="text/javascript"></script>
 	</head>
 	<body>
+		<div id="modal">
+			<img src="assets/icons/close.svg" id="modal-close" />
+			<div id="modal-form">
+				<h2 class="title">Post a New Job</h2>
+				<form>
+					<div class="cluster">
+						<p class="sub-title">Details</p>
+						<input type="text" placeholder="Job Title" name="job-title" autofocus />
+						<textarea placeholder="Job Description" name="job-desc"></textarea>
+						<textarea placeholder="Job Classification" name="job-class"></textarea>
+						<textarea placeholder="Requirements" name="job-requirements"></textarea>
+					</div>
+					<div class="cluster">
+						<p class="sub-title">Date Posted</p>
+						<select id="month" name="month">
+							<option value="-1">-- Select month --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="day" name="day">
+							<option value="-1">-- Select day --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="year" name="year">
+							<option value="-1">-- Select year --</option>
+							<!-- JS generated -->
+						</select>
+					</div>
+					<button type="submit">Post New Job</button>
+				</form>
+			</div>
+		</div>
 		<nav id="main-sidebar">
 			<div id="logo-banner">
 				<img src="assets/images/calfurn-logo-2.png" id="logo" />
@@ -84,7 +118,7 @@
 			<div id="section-heading">
 				<div>
 					<h1 id="section-title">Job Posting</h1>
-					<button class="hallow">
+					<button class="hallow modal-trigger">
 						<img src="assets/icons/add.svg" />
 						Add New
 					</button>
@@ -159,12 +193,54 @@
 						<td>11-15-2018</td>
 						<td><button class="hallow">View Applications</button></td>
 					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
 				</tbody>
 			</table>
 			<div id="result-summary">
 				<div>
 					<button id="generate-report">Generate Report</button>
 					<span id="result-count">Showing <b>1 - 15</b> out of 289 results</span>
+				</div>
+				<div id="pagination">
+					<span class="active">1</span>
+					<span>2</span>
+					<span>3</span>
+					<span>4</span>
+					<span>5</span>
 				</div>
 			</div>
 		</section>

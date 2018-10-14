@@ -1,6 +1,6 @@
 /* Input fields element framework */
 
-input{
+input, textarea{
 	font-family: var(--theme-body-font);
 	color: #666;
 	background-color: white;
@@ -10,6 +10,10 @@ input{
 	font-size: 0.8em;
 }
 
-input:focus{
+textarea{
+	resize: none;
+}
+
+input:focus, textarea:focus{
 	border: thin solid var(--theme-color);
 }

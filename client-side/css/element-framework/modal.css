@@ -1,0 +1,66 @@
+/* modal element stylesheet */
+
+#modal{
+	position: fixed;
+	background-color: rgba(0, 0, 0, 0.8);
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: 1000;
+	overflow-y: scroll;
+}
+
+#modal-close{
+	width: 1.5em;
+	position: fixed;
+	top: 3em;
+	right: 3em;
+	cursor: pointer;
+}
+
+#modal-form{
+	padding: 2em;
+	border-radius: var(--border-radius);
+	background-color: white;
+	overflow: hidden;
+	border: thin solid var(--border-color);
+	width: 30em;
+	margin: 3em auto;
+	z-index: 1001;
+}
+
+#modal-form div.cluster{
+	margin: 1.8em 0;
+}
+
+#modal-form .title{
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+#modal-form hr{
+	margin: 2em 0;
+	margin-bottom: 1em;
+}
+
+#modal-form .sub-title{
+	color: #666;
+	font-size: 0.9em;
+	margin-bottom: 1em;
+}
+
+#modal-form form input, #modal-form form textarea{
+	width: 97%;
+	margin-bottom: 1em;
+}
+
+#modal-form form select{
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+#modal-form form button{
+	width: 100%;
+}
