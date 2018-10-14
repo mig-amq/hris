@@ -1,0 +1,15 @@
+/* Input fields element framework */
+
+input{
+	font-family: var(--theme-body-font);
+	color: #666;
+	background-color: white;
+	border-radius: var(--border-radius);
+	border: thin solid var(--border-color);
+	padding: 0.7em 0.5em;
+	font-size: 0.8em;
+}
+
+input:focus{
+	border: thin solid var(--theme-color);
+}

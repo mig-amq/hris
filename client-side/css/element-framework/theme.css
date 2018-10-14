@@ -1,0 +1,41 @@
+/* Web applicattion theme */
+
+:root{
+	--theme-heading-font: 'Nunito', sans-serif;
+	--theme-body-font: 'Nunito', sans-serif;
+
+	--theme-color: #00917E;
+	--theme-dark-accent: #017A6A;
+	--neutral-dark: #333333;
+	--neutral-light: white;
+
+	--border-radius: 0.3em;
+	--border-color: #D9DEE2;
+}
+
+html, body{
+	margin: 0;
+	padding: 0;
+	font-family: var(--theme-body-font);
+	background-color: #F9F9F9;
+}
+
+a{
+	color: inherit;
+	text-decoration: none;
+}
+
+hr{
+	border: none;
+	border-bottom: thin solid var(--border-color);
+}
+
+p{
+	font-family: var(--theme-body-font);
+	color: var(--neutral-dark);
+}
+
+h1, h2, h3, h4, h5, h6{
+	font-family: var(--theme-heading-font-font);
+	color: var(--neutral-dark);
+}

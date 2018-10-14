@@ -1,0 +1,22 @@
+/* Option input elemental framework */
+
+select{
+	font-size: 0.8em;
+	background-color: white;
+	padding: 0.7em 0.5em;
+	color: #666;
+	margin: 0;
+	border-radius: var(--border-radius);
+	border: thin solid var(--border-color);
+	background: url('../../assets/icons/arrow-down.svg');
+	background-repeat: no-repeat;
+	background-size: 1.1em;
+	background-position: calc(100% - 5%);
+	appearance: none;
+	-webkit-appearance: none; 
+	-moz-appearance: none;
+}
+
+select:focus{
+	border: thin solid var(--theme-color);
+}

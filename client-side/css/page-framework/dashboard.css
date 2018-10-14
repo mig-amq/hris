@@ -1,0 +1,27 @@
+/* dashboard overall stylesheet */
+
+#main-sidebar{
+	min-width: 16em;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: white;
+	border-right: thin solid var(--border-color);
+}
+
+nav ul{
+	margin: 0;
+	padding: 0;
+}
+
+nav ul li{
+	list-style-type: none;
+	color: #666;
+	padding: 0.5em 3em;
+	font-size: 0.9em;
+}
+
+nav ul li.active{
+	background-color: #ccc;
+}
