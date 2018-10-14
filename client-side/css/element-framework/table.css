@@ -1,0 +1,37 @@
+/* table element framework */
+
+table{
+	width: 100%;
+	border: thin solid var(--border-color);
+	border-radius: var(--border-radius);
+	background-color: white;
+}
+
+table th{
+	color: var(--theme-color);
+	font-size: 0.9em;
+	background-color: white;
+	padding: 1.3em 1.3em;
+	text-align: left;
+	border-bottom: thin solid var(--border-color);
+
+}
+
+table td{
+	font-size: 0.8em;
+	padding: 0.9em 1.5em;
+	text-align: left;
+}
+
+table td button{
+	display: block;
+	margin: 0 auto;
+}
+
+table thead{
+	border-bottom: thin solid var(--border-color);
+}
+
+table tr:nth-child(odd){
+	background-color: #f4f4f4;
+}

@@ -6,7 +6,7 @@
 
 	--theme-color: #00917E;
 	--theme-dark-accent: #017A6A;
-	--neutral-dark: #333333;
+	--neutral-dark: #32373D;
 	--neutral-light: white;
 
 	--border-radius: 0.3em;
@@ -38,4 +38,8 @@ p{
 h1, h2, h3, h4, h5, h6{
 	font-family: var(--theme-heading-font-font);
 	color: var(--neutral-dark);
+}
+
+section{
+	padding: 3em 5%;
 }
