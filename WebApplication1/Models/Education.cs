@@ -5,6 +5,8 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
+    using System.Data;
+
     public enum EducationType
     {
         Elementary,
@@ -49,13 +51,39 @@ namespace WebApplication1.Models
 
         public Education(int EducationID) : this()
         {
-            // logic for getting education details
             this.EducationID = EducationID;
             this.Find(this.EducationID);
         }
 
         public Education Find(int EducationID)
         {
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT * FROM EducationalBackground WHERE EducationID = " + this.EducationID))
+            {
+                DataRow row = dt.Rows[0];
+
+                this.EducationID = EducationID;
+                this.Elementary.Name = row["Elementary"].ToString();
+                this.Elementary.Address = row["ElemAddress"].ToString();
+                this.Elementary.Start = DateTime.Parse(row["ElemStart"].ToString());
+                this.Elementary.End = DateTime.Parse(row["ElemEnd"].ToString());
+
+                this.HighSchool.Name = row["HighSchool"].ToString();
+                this.HighSchool.Address = row["HighSchool"].ToString();
+                this.HighSchool.Start = DateTime.Parse(row["HSStartYear"].ToString());
+                this.HighSchool.End = DateTime.Parse(row["HSEndYear"].ToString());
+
+                this.College.Name = row["College"].ToString();
+                this.College.Address = row["CollegeAddress"].ToString();
+                this.College.Start = DateTime.Parse(row["CollegeStartYear"].ToString());
+                this.College.End = DateTime.Parse(row["CollegeEndYear"].ToString());
+
+                this.PostGraduate.Name = row["PostGrad"].ToString();
+                this.PostGraduate.Address = row["PostGradAddress"].ToString();
+                this.PostGraduate.Start = DateTime.Parse(row["PostGradStartYear"].ToString());
+                this.PostGraduate.End = DateTime.Parse(row["PostGradEndYear"].ToString());
+            }
 
             return this;
         }

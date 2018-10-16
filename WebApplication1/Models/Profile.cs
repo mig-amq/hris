@@ -86,6 +86,7 @@ namespace WebApplication1.Models
                 this.ContactPerson = row["ContactPerson"].ToString();
                 this.CPersonNo = Int32.Parse(row["CPersonNo"].ToString());
                 this.CPersonRel = row["CPersonRel"].ToString();
+                this.ProfileID = ProfileID;
             }
 
             return this;
@@ -130,7 +131,7 @@ namespace WebApplication1.Models
         {
             return this.Update(this.ProfileID, recursive);
         }
-        public Profile Update(int ProfileID, bool recursive)
+        public Profile Update(int ProfileID, bool recursive = true)
         {
             if (recursive)
                 this.Education.Update(recursive);

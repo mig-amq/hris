@@ -28,31 +28,12 @@ namespace WebApplication1.Models
             : base(ProfileID)
         {}
 
-        public override ProfiledObject FindProfile(int ProfileID, bool recursive = false)
+        public override ProfiledObject FindProfile(int TableID, bool recursive = false, bool byPrimary = false)
         {
-            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM [PROFILE] P, [EMPLOYEE] E INNER JOIN ON P.ProfileID = E.Profile WHERE P.ProfileID = " + ProfileID))
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Employee WHERE " + (byPrimary ? " EmployeeID " : " Profile ") + " = " + TableID))
             {
                 DataRow row = dt.Rows[0];
                 
-                // Fill Profile Object
-                this.Profile.FirstName = row["FirstName"].ToString();
-                this.Profile.MiddleName = row["MiddleName"].ToString();
-                this.Profile.LastName = row["LastName"].ToString();
-                this.Profile.BirthDate = DateTime.Parse(row["BirthDate"].ToString());
-                this.Profile.CivilStatus = (CivilStatusType)Enum.Parse(
-                    typeof(CivilStatusType),
-                    row["CivilStatus"].ToString(),
-                    true);
-                this.Profile.Sex = (SexType)Enum.Parse(typeof(SexType), row["Sex"].ToString(), true);
-                this.Profile.Contact = Int32.Parse(row["Contact"].ToString());
-                this.Profile.ContactPerson = row["Contact Person"].ToString();
-                this.Profile.CPersonNo = Int32.Parse(row["CPersonNo"].ToString());
-                this.Profile.CPersonRel = row["CPersonRel"].ToString();
-                this.Profile.City = row["City"].ToString();
-                this.Profile.HouseNo = row["HouseNo"].ToString();
-                this.Profile.Province = row["Province"].ToString();
-                this.Profile.Street = row["Street"].ToString();
-
                 // Fill Employee Object
                 this.EmployeeID = Int32.Parse(row["EmployeeID"].ToString());
                 this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
@@ -60,7 +41,7 @@ namespace WebApplication1.Models
                 
                 if (recursive)
                 {
-                    this.Profile.Education = new Education(Int32.Parse(row["Education"].ToString()));
+                    this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
                     this.Department = new Department(Int32.Parse(row["Department"].ToString()));
                 }
             }

@@ -19,36 +19,20 @@ namespace WebApplication1.Models
         public Applicant(int ProfileID)
             : base(ProfileID){}
 
-        public override ProfiledObject FindProfile(int ProfileID, bool recursive = false)
+        public override ProfiledObject FindProfile(int TableID, bool recursive = false, bool byPrimary = false)
         {
-            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM [Profile] P, [Applicant] A INNER JOIN ON P.ProfileID = A.Profile WHERE P.ProfileID = " + ProfileID))
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Applicant WHERE " + (byPrimary ? " ApplicantID " : " Profile ") + " = " + TableID))
             {
                 DataRow row = dt.Rows[0];
 
-                // Fill Profile Object
-                this.Profile.FirstName = row["FirstName"].ToString();
-                this.Profile.MiddleName = row["MiddleName"].ToString();
-                this.Profile.LastName = row["LastName"].ToString();
-                this.Profile.BirthDate = DateTime.Parse(row["BirthDate"].ToString());
-                this.Profile.CivilStatus = (CivilStatusType)Enum.Parse(
-                    typeof(CivilStatusType),
-                    row["CivilStatus"].ToString(),
-                    true);
-                this.Profile.Sex = (SexType)Enum.Parse(typeof(SexType), row["Sex"].ToString(), true);
-                this.Profile.Contact = Int32.Parse(row["Contact"].ToString());
-                this.Profile.ContactPerson = row["Contact Person"].ToString();
-                this.Profile.CPersonNo = Int32.Parse(row["CPersonNo"].ToString());
-                this.Profile.CPersonRel = row["CPersonRel"].ToString();
-                this.Profile.City = row["City"].ToString();
-                this.Profile.HouseNo = row["HouseNo"].ToString();
-                this.Profile.Province = row["Province"].ToString();
-                this.Profile.Street = row["Street"].ToString();
-
                 // Fill Applicant Object
+                this.ApplicantID = Int32.Parse(row["ApplicantID"].ToString());
+                this.Skills = row["Skills"].ToString();
+                this.DesiredPosition = row["DesiredPosition"].ToString();
 
                 if (recursive)
                 {
-                    this.Profile.Education = new Education(Int32.Parse(row["Education"].ToString()));
+                    this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
                 }
             }
 
@@ -81,6 +65,19 @@ namespace WebApplication1.Models
 
         public Applicant Update(int ApplicantID, bool recursive = true)
         {
+            if (recursive)
+            {
+                this.Profile.Update(recursive);
+            }
+
+            string set = "UPDATE Applicant SET Skills = @Skills AND "
+                         + "DesiredPosition = @DesiredPosition WHERE ApplicantID = " + this.ApplicantID;
+            Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+
+            param.Add("@Skills", this.Skills);
+            param.Add("@DesiredPosition", this.DesiredPosition);
+
+            this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;
         }
 

@@ -46,7 +46,7 @@ namespace WebApplication1.Models
                     this.Password = row["Password"].ToString();
                     this.Email = row["Email"].ToString();
                     this.AccountID = Int32.Parse(row["AccountID"].ToString());
-                    this.Type = (AccountType)Enum.Parse(typeof(AccountType), row["Type"].ToString(), true);
+                    this.Type = (AccountType)Int32.Parse(row["Type"].ToString());
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
 
                     if (recursive)

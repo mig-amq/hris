@@ -159,15 +159,21 @@
     </Compile>
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Applicant.cs" />
+    <Compile Include="Models\Appraisal.cs" />
+    <Compile Include="Models\Attendance.cs" />
     <Compile Include="Models\Branch.cs" />
     <Compile Include="Models\DBHandler.cs" />
     <Compile Include="Models\Education.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmploymentHistory.cs" />
+    <Compile Include="Models\JobPosting.cs" />
+    <Compile Include="Models\Leave.cs" />
     <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\RequisitionForm.cs" />
     <Compile Include="Models\Supers\ProfiledObject.cs" />
     <Compile Include="Models\Supers\SecureObject.cs" />
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\TrainingHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

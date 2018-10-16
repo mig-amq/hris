@@ -16,11 +16,11 @@ namespace WebApplication1.Models.Supers
             this.DBHandler = new DBHandler();
         }
 
-        public ProfiledObject(int AccountID) : this()
+        public ProfiledObject(int TableID) : this()
         {
-            this.FindProfile(AccountID);
+            this.FindProfile(TableID);
         }
 
-        public abstract ProfiledObject FindProfile(int AccountID, bool recursive = false);
+        public abstract ProfiledObject FindProfile(int TableID, bool recursive = false, bool byPrimary = false);
     }
 }

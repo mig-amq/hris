@@ -5,6 +5,8 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
+    using System.Data;
+
     public enum BranchType
     {
         CorporateServices = 0,
@@ -16,7 +18,80 @@ namespace WebApplication1.Models
 
     public class Branch
     {
-        private Account Head { get; set; }
-        private BranchType Type { get; set; }
+        private DBHandler DBHandler;
+        public int BranchID { get; set; }
+        public string BranchName { get; set; }
+        public BranchType Type { get; set; }
+        public Employee BranchVP { get; set; }
+
+        public Branch(int BranchID = -1)
+        {
+            this.DBHandler = new DBHandler();
+
+            if (BranchID != -1)
+            {
+                this.BranchID = BranchID;
+                this.Find(BranchID);
+            }
+        }
+
+        public Branch Find(int BranchID, bool recursive = true)
+        {
+            using (DataTable dt =
+                this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Branch WHERE BranchID = " + BranchID))
+            {
+                DataRow row = dt.Rows[0];
+
+                this.BranchID = BranchID;
+                this.BranchName = row["BranchName"].ToString();
+                this.Type = (BranchType)Int32.Parse(row["Type"].ToString());
+
+                if (recursive)
+                {
+                    this.BranchVP = (Employee)new Employee().FindProfile(Int32.Parse(row["BranchVP"].ToString()), byPrimary:true);
+                }
+            }
+            return this;
+        }
+
+        public Branch Create()
+        {
+            string columns = "INSERT INTO Branch(BranchName, BranchVP, Type) OUTPUT INSERTED.BranchID";
+            string values = " VALUES(@BranchName, @BranchVP, @Type)";
+            Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+
+            param.Add("@BranchName", this.BranchName);
+            param.Add("@BranchVP", this.BranchVP.EmployeeID);
+            param.Add("@Type", (Int32)this.Type);
+
+            this.BranchID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
+            return this;
+        }
+
+        public Branch Update(bool recursive = true)
+        {
+            return this.Update(this.BranchID, recursive);
+        }
+
+        public Branch Update(int BranchID, bool recursive = true)
+        {
+            string set =
+                "UPDATE Branch SET BranchName = @BranchName AND "
+                + "BranchVP = @BranchVP AND Type = @Type WHERE BranchID = " + BranchID;
+            Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+
+            param.Add("@BranchName", this.BranchName);
+            param.Add("@BranchVP", this.BranchVP.EmployeeID);
+            param.Add("@Type", (Int32)this.Type);
+
+            this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
+            return this;
+        }
+
+        public Branch Delete()
+        {
+            this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM Branch WHERE BranchID = " + this.BranchID);
+            return this;
+        }
     }
 }
