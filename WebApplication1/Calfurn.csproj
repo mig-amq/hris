@@ -161,6 +161,7 @@
     <Compile Include="Models\Applicant.cs" />
     <Compile Include="Models\Appraisal.cs" />
     <Compile Include="Models\Attendance.cs" />
+    <Compile Include="Models\AttendanceTime.cs" />
     <Compile Include="Models\Branch.cs" />
     <Compile Include="Models\DBHandler.cs" />
     <Compile Include="Models\Education.cs" />

@@ -87,7 +87,9 @@ namespace WebApplication1.Models
 
         public AttendanceTime Delete()
         {
-            this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM AttendanceTime WHERE AttendanceTimeID = " + AttendanceTimeID)
+            this.DBHandler.Execute<Int32>(
+                CRUD.DELETE,
+                "DELETE FROM AttendanceTime WHERE AttendanceTimeID = " + AttendanceTimeID);
             return this;
         }
     }

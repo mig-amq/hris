@@ -57,6 +57,20 @@ namespace WebApplication1.Controllers
             }
             else
             { // return an error if the username and password combination is not in the DB
+                if (Session["count"] != null)
+                {
+                    Session["count"] = Int32.Parse(Session["count"].ToString()) + 1;
+
+                    if (Int32.Parse(Session["count"].ToString()) >= 3)
+                    {
+                        a.Locked = true;
+                        a.Update();
+                    }
+                }
+                else
+                {
+                    Session["count"] = 1;
+                }
                 json["error"] = true;
                 json["message"] = "Oops! You entered an incorrect username or password";
             }
