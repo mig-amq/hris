@@ -3,9 +3,9 @@
 $(document).ready(function(){
 	$("#modal").hide();
 	$(".modal-trigger").click(function(){
-		$("#modal-form input").val("");
-		$("#modal-form textarea").val("");
-		$("#modal-form select").val(-1);
+		//$("#modal-form input").val("");
+		//$("#modal-form textarea").val("");
+		//$("#modal-form select").val(-1);
 		$("#modal").show();
 	});
 

@@ -23,6 +23,15 @@ table td{
 	text-align: left;
 }
 
+table td.multiple-buttons{
+	display: flex;
+	justify-content: center;
+}
+
+table td.multiple-buttons button{
+	display: inline-block;
+}
+
 table td button{
 	display: block;
 	margin: 0 auto;

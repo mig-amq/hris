@@ -28,6 +28,16 @@ button.hallow{
 	color: var(--theme-color);
 }
 
+button.hallow.red{
+	color: #FF4F4F;
+	border-color: #FF4F4F;
+}
+
+button.hallow.red:hover{
+	color: red;
+	border-color: red;
+}
+
 button.hallow:hover{
 	border: thin solid var(--theme-dark-accent);
 	background-color: transparent;
