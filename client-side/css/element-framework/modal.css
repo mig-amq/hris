@@ -9,6 +9,7 @@
 	top: 0;
 	z-index: 1000;
 	overflow-y: scroll;
+	display: none;
 }
 
 #modal-close{
@@ -19,7 +20,7 @@
 	cursor: pointer;
 }
 
-#modal-form{
+#modal-form, #modal-form-table{
 	padding: 2em;
 	border-radius: var(--border-radius);
 	background-color: white;
@@ -28,6 +29,11 @@
 	width: 30em;
 	margin: 3em auto;
 	z-index: 1001;
+}
+
+#modal-form-table{
+	margin: 10em auto;
+	width: 60em;
 }
 
 #modal-form div.cluster{

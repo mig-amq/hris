@@ -25,6 +25,10 @@ a{
 	text-decoration: none;
 }
 
+span.spot{
+	color: var(--theme-color);
+}
+
 hr{
 	border: none;
 	border-bottom: thin solid var(--border-color);

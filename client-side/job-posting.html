@@ -13,6 +13,7 @@
 		<script src="js/jquery-3.3.1.js" type="text/javascript"></script>
 		<script src="js/modal.js" type="text/javascript"></script>
 		<script src="js/date.js" type="text/javascript"></script>
+		<script src="js/dashboard.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="modal">
@@ -58,48 +59,48 @@
 				<div class="cluster">
 					<h6 class="cluster-label">Recruitment</h6>
 					<ul>
-						<li class="active">Job Posting</li>
-						<li>Application Status</li>
-						<li>Interview Schedule</li>
+						<a href="job-posting.html"><li class="active">Job Posting</li></a>
+						<a href="application-status.html"><li>Application Status</li></a>
+						<a href="interview-schedule.html"><li>Interview Schedule</li></a>
 					</ul>
 				</div>
 				<hr/>
 				<div class="cluster">
 					<h6 class="cluster-label">Employment</h6>
 					<ul>
-						<li>Add Employee</li>
-						<li>Employee List</li>
-						<li>Employee Status</li>
+						<a href="add-employee.html"><li>Add Employee</li></a>
+						<a href="employee-list.html"><li>Employee List</li></a>
+						<a href="employee-status.html"><li>Employee Status</li></a>
 					</ul>
 				</div>
 				<hr/>
 				<div class="cluster">
 					<h6 class="cluster-label">Attendance</h6>
 					<ul>
-						<li>Attendance Details</li>
+						<a href="attendance-details.html"><li>Attendance Details</li></a>
 					</ul>
 				</div>
 				<hr/>
 				<div class="cluster">
 					<h6 class="cluster-label">Leave</h6>
 					<ul>
-						<li>Leave Approval</li>
+						<a href="leave-approval.html"><li>Leave Approval</li></a>
 					</ul>
 				</div>
 				<hr/>
 				<div class="cluster">
 					<h6 class="cluster-label">Evaluation</h6>
 					<ul>
-						<li>Apprisal Non-Supervisory</li>
-						<li>Employee Evaluation</li>
+						<a href="apprisal.html"><li>Apprisal Non-Supervisory</li></a>
+						<a href="employee-evaluation.html"><li>Employee Evaluation</li></a>
 					</ul>
 				</div>
 				<hr/>
 				<div class="cluster">
 					<h6 class="cluster-label">Training</h6>
 					<ul>
-						<li>Training Programs</li>
-						<li>Employees with Assigned Trainings</li>
+						<a href="training-programs.html"><li>Training Programs</li></a>
+						<a href="assigned-trainings.html"><li>Employees with Assigned Trainings</li></a>
 					</ul>
 				</div>
 			</ul>
@@ -112,6 +113,11 @@
 					<span id="profile-email">john.delasalle@gmail.com</span>
 				</div>
 				<img src="assets/icons/arrow-down-2.svg" id="profile-dropdown" />
+			</div>
+			<div id="account-dropdown">
+				<ul>
+					<a href="#"><li>Logout</li></a>
+				</ul>
 			</div>
 		</header>
 		<section>
@@ -214,25 +220,11 @@
 						<td>11-15-2018</td>
 						<td><button class="hallow">View Applications</button></td>
 					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
 				</tbody>
 			</table>
 			<div id="result-summary">
 				<div>
-					<button id="generate-report">Generate Report</button>
+					<button class="footer-button">Generate Report</button>
 					<span id="result-count">Showing <b>1 - 15</b> out of 289 results</span>
 				</div>
 				<div id="pagination">
