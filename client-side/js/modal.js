@@ -6,7 +6,17 @@ $(document).ready(function(){
 		//$("#modal-form input").val("");
 		//$("#modal-form textarea").val("");
 		//$("#modal-form select").val(-1);
-		$("#modal").show();
+		if($(this).has("data-id")){
+			var contents = $(".modal-content");
+			var index = $(this).attr("data-id");
+			$(".modal-content").hide();
+
+			$(contents[index]).show();
+			console.log(contents[index]);
+			$("#modal").show();
+		}
+
+		else $("#modal").show();
 	});
 
 	$("#modal-close").click(function(){

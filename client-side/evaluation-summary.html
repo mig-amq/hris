@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Calfurn - Application Status</title>
+		<title>Calfurn - Performance Evaluation Summary</title>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700" />
 		<link rel="stylesheet" type="text/css" href="css/element-framework/theme.css" />
 		<link rel="stylesheet" type="text/css" href="css/element-framework/button.css" />
@@ -19,31 +19,46 @@
 		<div id="modal">
 			<img src="assets/icons/close.svg" id="modal-close" />
 			<div id="modal-form">
-				<h2 class="title">Schedule an Interview</h2>
+				<h2 class="title">Request</h2>
 				<form>
 					<div class="cluster">
-						<p class="sub-title">Details</p>
-						<input type="text" placeholder="Applicant Name" name="applicant-name" autofocus />
-						<input type="email" placeholder="Email Address" name="email" />
-						<input type="text" placeholder="Venue" name="venue" />
-						<input type="text" placeholder="Time" name="time" />
-					</div>
-					<div class="cluster">
-						<p class="sub-title">Date</p>
-						<select id="month" name="month">
+						<p class="sub-title">Start Date</p>
+						<select id="month" name="start-month">
 							<option value="-1">-- Select month --</option>
 							<!-- JS generated -->
 						</select>
-						<select id="day" name="day">
+						<select id="day" name="start-day">
 							<option value="-1">-- Select day --</option>
 							<!-- JS generated -->
 						</select>
-						<select id="year" name="year">
+						<select id="year" name="start-year">
 							<option value="-1">-- Select year --</option>
 							<!-- JS generated -->
 						</select>
 					</div>
-					<button type="submit">Schedule</button>
+					<div class="cluster">
+						<p class="sub-title">End Date</p>
+						<select id="month" name="end-month">
+							<option value="-1">-- Select month --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="day" name="end-day">
+							<option value="-1">-- Select day --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="year" name="end-year">
+							<option value="-1">-- Select year --</option>
+							<!-- JS generated -->
+						</select>
+					</div>
+					<div class="cluster">
+						<p class="sub-title">Status</p>
+						<select name="leave-status">
+							<option value="1">Approve</option>
+							<option value="0">Reject</option>
+						</select>
+					</div>
+					<button type="submit">Save</button>
 				</form>
 			</div>
 		</div>
@@ -60,7 +75,7 @@
 					<h6 class="cluster-label">Recruitment</h6>
 					<ul>
 						<a href="job-posting.html"><li>Job Posting</li></a>
-						<a href="application-status.html"><li class="active">Application Status</li></a>
+						<a href="application-status.html"><li>Application Status</li></a>
 					</ul>
 				</div>
 				<hr/>
@@ -91,7 +106,7 @@
 					<ul>
 						<a href="apprisal.html"><li>Apprisal Non-Supervisory</li></a>
 						<a href="employee-evaluation.html"><li>Employee Evaluation</li></a>
-						<a href="evaluation-summary.html"><li>Evaluation Summary</li></a>
+						<a href="evaluation-summary.html"><li class="active">Evaluation Summary</li></a>
 					</ul>
 				</div>
 				<hr/>
@@ -129,7 +144,7 @@
 		<section>
 			<div id="section-heading">
 				<div>
-					<h1 id="section-title">Application Status</h1>
+					<h1 id="section-title">Performance Evaluation Summary</h1>
 					<span>
 						Show
 						<select id="show-entries">
@@ -138,57 +153,36 @@
 						Entries
 					</span>
 				</div>
-				<input type="text" placeholder="Search Application Status..." class="search" />
+				<input type="text" placeholder="Search Performance Evaluation Summary..." class="search" />
 			</div>
 			<br/>
 			<table>
 				<thead>
 					<tr id="heading-row">
 						<th>No.</th>
-						<th>Applicant Name</th>
-						<th>Contact Number</th>
-						<th>Email</th>
-						<th>Desired Position</th>
-						<th>Department</th>
-						<th>Status</th>
-						<th></th>
+						<th>Employee Name</th>
+						<th>Position</th>
+						<th>Result</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>01</td>
-						<td>Ezra Berjamin</td>
-						<td>09775674894</td>
-						<td>ezy12@gmail.com</td>
-						<td>Accounting Manager</td>
-						<td>Accounting</td>
-						<td>
-							<select>
-								<option value="1">Approve</option>
-								<option value="0">Reject</option>
-							</select>
-						</td>
-						<td><button class="hallow modal-trigger">Schedule</button></td>
+						<td>Rachel Green</td>
+						<td>Operations Manager</td>
+						<td>98.50</td>
 					</tr>
 					<tr>
 						<td>02</td>
-						<td>Claire Fernando</td>
-						<td>09478782367</td>
-						<td>fernds_c@gmai.com</td>
-						<td>IT Head</td>
-						<td>IT</td>
-						<td>
-							<select>
-								<option value="1">Approve</option>
-								<option value="0">Reject</option>
-							</select>
-						</td>
-						<td><button class="hallow modal-trigger">Schedule</button></td>
+						<td>Chris De La Cruz</td>
+						<td>Productions Manager</td>
+						<td>97</td>
 					</tr>
 				</tbody>
 			</table>
 			<div id="result-summary">
 				<div>
+					<button class="footer-button">Generate Report</button>
 					<span id="result-count">Showing <b>1 - 15</b> out of 289 results</span>
 				</div>
 				<div id="pagination">
@@ -197,7 +191,6 @@
 					<span>3</span>
 					<span>4</span>
 					<span>5</span>
-					<button class="footer-button">Save</button>
 				</div>
 			</div>
 		</section>

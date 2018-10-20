@@ -183,6 +183,27 @@ header{
 	background-color: white;
 }
 
+section div.cluster{
+	margin-bottom: 1.8em;
+}
+
+section div.cluster input, section div.cluster textarea,
+section div.cluster select{
+	margin-bottom: 0.7em;
+	display: block;
+}
+
+section div.cluster div.inline input,
+section div.cluster div.inline select{
+
+}
+
+section .sub-title{
+	color: var(--theme-color);
+	font-size: 1em;
+	margin: 1.5em 0;
+}
+
 #result-summary{
 	padding: 1em 0;
 	border-radius: var(--border-radius);
@@ -239,4 +260,13 @@ select#show-entries{
 	background-position: calc(100% - 15%);
 	padding-left: 1em;
 	padding-right: 1.5em;
+}
+
+.two-column-content{
+	display: flex;
+}
+
+.two-column-content div.cluster{
+	width: 40%;
+	margin-right: 5em;
 }

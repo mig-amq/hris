@@ -19,32 +19,61 @@
 		<div id="modal">
 			<img src="assets/icons/close.svg" id="modal-close" />
 			<div id="modal-form">
-				<h2 class="title">Post a New Job</h2>
-				<form>
-					<div class="cluster">
-						<p class="sub-title">Details</p>
-						<input type="text" placeholder="Job Title" name="job-title" autofocus />
-						<textarea placeholder="Job Description" name="job-desc"></textarea>
-						<textarea placeholder="Job Classification" name="job-class"></textarea>
-						<textarea placeholder="Requirements" name="job-requirements"></textarea>
-					</div>
-					<div class="cluster">
-						<p class="sub-title">Date Posted</p>
-						<select id="month" name="month">
-							<option value="-1">-- Select month --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="day" name="day">
-							<option value="-1">-- Select day --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="year" name="year">
-							<option value="-1">-- Select year --</option>
-							<!-- JS generated -->
-						</select>
-					</div>
-					<button type="submit">Post New Job</button>
-				</form>
+				<div class="modal-content">
+					<h2 class="title">Post a New Job</h2>
+					<form>
+						<div class="cluster">
+							<p class="sub-title">Details</p>
+							<input type="text" placeholder="Job Title" name="job-title" autofocus />
+							<textarea placeholder="Job Description" name="job-desc"></textarea>
+							<textarea placeholder="Job Classification" name="job-class"></textarea>
+							<textarea placeholder="Requirements" name="job-requirements"></textarea>
+						</div>
+						<div class="cluster">
+							<p class="sub-title">Date Posted</p>
+							<select id="month" name="month">
+								<option value="-1">-- Select month --</option>
+								<!-- JS generated -->
+							</select>
+							<select id="day" name="day">
+								<option value="-1">-- Select day --</option>
+								<!-- JS generated -->
+							</select>
+							<select id="year" name="year">
+								<option value="-1">-- Select year --</option>
+								<!-- JS generated -->
+							</select>
+						</div>
+						<button type="submit">Post New Job</button>
+					</form>
+				</div>
+				<div class="modal-content">
+					<h2 class="title">Applicant Profile</h2>
+					<form>
+						<div class="cluster">
+							<input type="text" placeholder="Applicant Name" name="applicant-name" autofocus />
+							<select name="sex">
+								<option value="-1">-- Select Sex --</option>
+								<option value="0">Male</option>
+								<option value="1">Female</option>
+							</select>
+							<select name="civil-status" class="full">
+								<option value="-1">-- Select Civil Status --</option>
+								<option value="0">Single</option>
+								<option value="1">Married</option>
+								<option value="2">Widowed</option>
+								<option value="3">Widower</option>
+							</select>
+							<input type="email" placeholder="Email Address" name="email" />
+							<input type="text" name="address" placeholder="Address" />
+							<input type="phone" name="contact-number" placeholder="Contact Number" />
+							<input type="email" name="email" placeholder="Email Address" />
+							<input type="text" name="desired-position" placeholder="Desired Position" class="full" />
+							<textarea placeholder="Skills" name="skills"></textarea>
+						</div>
+						<button type="submit">Save</button>
+					</form>
+				</div>
 			</div>
 		</div>
 		<nav id="main-sidebar">
@@ -61,7 +90,6 @@
 					<ul>
 						<a href="job-posting.html"><li class="active">Job Posting</li></a>
 						<a href="application-status.html"><li>Application Status</li></a>
-						<a href="interview-schedule.html"><li>Interview Schedule</li></a>
 					</ul>
 				</div>
 				<hr/>
@@ -70,7 +98,6 @@
 					<ul>
 						<a href="add-employee.html"><li>Add Employee</li></a>
 						<a href="employee-list.html"><li>Employee List</li></a>
-						<a href="employee-status.html"><li>Employee Status</li></a>
 					</ul>
 				</div>
 				<hr/>
@@ -93,6 +120,7 @@
 					<ul>
 						<a href="apprisal.html"><li>Apprisal Non-Supervisory</li></a>
 						<a href="employee-evaluation.html"><li>Employee Evaluation</li></a>
+						<a href="evaluation-summary.html"><li>Evaluation Summary</li></a>
 					</ul>
 				</div>
 				<hr/>
@@ -101,6 +129,13 @@
 					<ul>
 						<a href="training-programs.html"><li>Training Programs</li></a>
 						<a href="assigned-trainings.html"><li>Employees with Assigned Trainings</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">More</h6>
+					<ul>
+						<a href="requisition.html"><li>Requisition Form</li></a>
 					</ul>
 				</div>
 			</ul>
@@ -124,7 +159,7 @@
 			<div id="section-heading">
 				<div>
 					<h1 id="section-title">Job Posting</h1>
-					<button class="hallow modal-trigger">
+					<button class="hallow modal-trigger" data-id="0">
 						<img src="assets/icons/add.svg" />
 						Add New
 					</button>
@@ -148,77 +183,7 @@
 						<td>Coffee Lounge</td>
 						<td>Proficient in MS Excel</td>
 						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
-					</tr>
-					<tr>
-						<td>Human Resources</td>
-						<td>Coffee Lounge</td>
-						<td>Proficient in MS Excel</td>
-						<td>11-15-2018</td>
-						<td><button class="hallow">View Applications</button></td>
+						<td><button class="hallow modal-trigger" data-id="1">View Applications</button></td>
 					</tr>
 				</tbody>
 			</table>

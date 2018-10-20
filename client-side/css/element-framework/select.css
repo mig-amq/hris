@@ -17,6 +17,16 @@ select{
 	-moz-appearance: none;
 }
 
+select.half{
+	background-color: white;
+	width: 51.5%;
+}
+
+select.full{
+	width: 100%;
+	background-color: white;
+}
+
 select:focus{
 	border: thin solid var(--theme-color);
 }
