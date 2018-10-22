@@ -39,10 +39,10 @@ namespace WebApplication1.Controllers
 
                     json["message"] = "You logged in successfully! Please wait...";
 
-                    if (form.Get("cookie") != null && form.Get("cookie") == "on")
+                    if (form.Get("cookie") != null && form.GetValue("cookie").ToString() == "on")
                     { // check if the Remember Me was checked
                         // create and store a cookie
-                        HttpCookie cookie = new HttpCookie("user");
+                        HttpCookie cookie = new HttpCookie("userCookie");
                         cookie.Value = a.AccountID.ToString();
                         cookie.Expires = DateTime.Now.AddYears(1);
 
@@ -71,12 +71,13 @@ namespace WebApplication1.Controllers
                 {
                     Session["count"] = 1;
                 }
+
                 json["error"] = true;
                 json["message"] = "Oops! You entered an incorrect username or password";
             }
 
             // return the results of the login proccess
-            return Json(json, JsonRequestBehavior.AllowGet);
+            return Content(json.ToString(), "application/json");
         }
 
         // GET: UserAccount/LogOut
@@ -87,10 +88,10 @@ namespace WebApplication1.Controllers
                 Session.Clear(); // destroy current user session
                 Session.Abandon();
 
-                if (Request.Cookies.Get("user") != null) // check if the user ticked Remember Me
+                if (Request.Cookies.Get("userCookie") != null) // check if the user ticked Remember Me
                 {
-                    Response.Cookies.Remove("user"); // delete related cookie
-                    HttpCookie cookie = new HttpCookie("user");
+                    Response.Cookies.Remove("userCookie"); // delete related cookie
+                    HttpCookie cookie = new HttpCookie("userCookie");
                     cookie.Expires = DateTime.Now.AddDays(-1);
                     Response.Cookies.Add(cookie);
                 }

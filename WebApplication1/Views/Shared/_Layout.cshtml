@@ -1,10 +1,7 @@
 ﻿@{
-    if (Session["user"] == null)
+    if (Session["user"] == null && Request.Cookies["userCookie"] != null)
     {
-        if (Response.Cookies["user"] != null)
-        {
-            Session["user"] = Response.Cookies["user"];
-        }
+        Session["user"] = Request.Cookies["userCookie"];
     }
 }
 <!DOCTYPE html>

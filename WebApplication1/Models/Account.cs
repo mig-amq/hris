@@ -15,7 +15,8 @@ namespace WebApplication1.Models
         VP = 2,
         DepartmentHead = 3,
         Employee = 4,
-        Applicant = 5
+        Applicant = 5,
+        Any = 6
     }
 
     public class Account : SecureObject

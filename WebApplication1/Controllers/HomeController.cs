@@ -17,9 +17,7 @@ namespace WebApplication1.Controllers
 
         public ActionResult About()
         {
-            Account a = new Account().FindByUsername("testCEO");
-
-            ViewBag.Message = a.Email;
+            ViewBag.Message = "Sad";
 
             return View();
         }
