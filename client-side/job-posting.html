@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Calfurn - Job Posting</title>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/theme.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/button.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/field.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/select.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/page-framework/dashboard.css" />
+		<link rel="stylesheet" type="text/css" href="css/element-framework/modal.css" />
+		<script src="js/jquery-3.3.1.js" type="text/javascript"></script>
+		<script src="js/modal.js" type="text/javascript"></script>
+		<script src="js/date.js" type="text/javascript"></script>
+		<script src="js/dashboard.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<div id="modal">
+			<img src="assets/icons/close.svg" id="modal-close" />
+			<div id="modal-form">
+				<h2 class="title">Post a New Job</h2>
+				<form>
+					<div class="cluster">
+						<p class="sub-title">Details</p>
+						<input type="text" placeholder="Job Title" name="job-title" autofocus />
+						<textarea placeholder="Job Description" name="job-desc"></textarea>
+						<textarea placeholder="Job Classification" name="job-class"></textarea>
+						<textarea placeholder="Requirements" name="job-requirements"></textarea>
+					</div>
+					<div class="cluster">
+						<p class="sub-title">Date Posted</p>
+						<select id="month" name="month">
+							<option value="-1">-- Select month --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="day" name="day">
+							<option value="-1">-- Select day --</option>
+							<!-- JS generated -->
+						</select>
+						<select id="year" name="year">
+							<option value="-1">-- Select year --</option>
+							<!-- JS generated -->
+						</select>
+					</div>
+					<button type="submit">Post New Job</button>
+				</form>
+			</div>
+		</div>
+		<nav id="main-sidebar">
+			<div id="logo-banner">
+				<img src="assets/images/calfurn-logo-2.png" id="logo" />
+				<div>
+					<h5 class="title">Calfurn Mfg. Philippines, Inc.</h5>
+					<p class="sub-title">Human Resource Information System</p>
+				</div>
+			</div>
+			<ul>
+				<div class="cluster">
+					<h6 class="cluster-label">Recruitment</h6>
+					<ul>
+						<a href="job-posting.html"><li class="active">Job Posting</li></a>
+						<a href="application-status.html"><li>Application Status</li></a>
+						<a href="interview-schedule.html"><li>Interview Schedule</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">Employment</h6>
+					<ul>
+						<a href="add-employee.html"><li>Add Employee</li></a>
+						<a href="employee-list.html"><li>Employee List</li></a>
+						<a href="employee-status.html"><li>Employee Status</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">Attendance</h6>
+					<ul>
+						<a href="attendance-details.html"><li>Attendance Details</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">Leave</h6>
+					<ul>
+						<a href="leave-approval.html"><li>Leave Approval</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">Evaluation</h6>
+					<ul>
+						<a href="apprisal.html"><li>Apprisal Non-Supervisory</li></a>
+						<a href="employee-evaluation.html"><li>Employee Evaluation</li></a>
+					</ul>
+				</div>
+				<hr/>
+				<div class="cluster">
+					<h6 class="cluster-label">Training</h6>
+					<ul>
+						<a href="training-programs.html"><li>Training Programs</li></a>
+						<a href="assigned-trainings.html"><li>Employees with Assigned Trainings</li></a>
+					</ul>
+				</div>
+			</ul>
+		</nav>
+		<header>
+			<div id="account-wrapper">
+				<div id="profile-picture"></div>
+				<div>
+					<span id="profile-name">John Baptist De La Salle</span>
+					<span id="profile-email">john.delasalle@gmail.com</span>
+				</div>
+				<img src="assets/icons/arrow-down-2.svg" id="profile-dropdown" />
+			</div>
+			<div id="account-dropdown">
+				<ul>
+					<a href="#"><li>Logout</li></a>
+				</ul>
+			</div>
+		</header>
+		<section>
+			<div id="section-heading">
+				<div>
+					<h1 id="section-title">Job Posting</h1>
+					<button class="hallow modal-trigger">
+						<img src="assets/icons/add.svg" />
+						Add New
+					</button>
+				</div>
+				<input type="text" placeholder="Search Job Posting..." class="search" />
+			</div>
+			<br/>
+			<table>
+				<thead>
+					<tr id="heading-row">
+						<th>Job Title</th>
+						<th>Classification</th>
+						<th>Requirements</th>
+						<th>Date Posted</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+					<tr>
+						<td>Human Resources</td>
+						<td>Coffee Lounge</td>
+						<td>Proficient in MS Excel</td>
+						<td>11-15-2018</td>
+						<td><button class="hallow">View Applications</button></td>
+					</tr>
+				</tbody>
+			</table>
+			<div id="result-summary">
+				<div>
+					<button class="footer-button">Generate Report</button>
+					<span id="result-count">Showing <b>1 - 15</b> out of 289 results</span>
+				</div>
+				<div id="pagination">
+					<span class="active">1</span>
+					<span>2</span>
+					<span>3</span>
+					<span>4</span>
+					<span>5</span>
+				</div>
+			</div>
+		</section>
+	</body>
+</html>
