@@ -163,6 +163,8 @@
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\GlobalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JobRequisitionController.cs" />
+    <Compile Include="Controllers\Paginator.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\UserAccountController.cs" />
@@ -226,18 +228,19 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\UserAccount\Forgot.cshtml" />
+    <Content Include="Views\Training\Index.cshtml" />
+    <Content Include="Views\Employee\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\Applicant\" />
     <Folder Include="Views\DepartmentHead\" />
-    <Folder Include="Views\Employee\" />
+    <Folder Include="Views\JobRequisition\" />
     <Folder Include="Views\Reports\" />
-    <Folder Include="Views\Training\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -10,18 +10,18 @@ namespace WebApplication1.Models
 
     public enum SexType
     {
-        Male = 0,
-        Female = 1,
-        Other = 2
+        Male = 1,
+        Female = 2,
+        Other = 3
     }
 
     public enum CivilStatusType
     {
-        Married = 0,
-        Single = 1,
-        Divorced = 2,
-        Separated = 3,
-        Widowed = 4
+        Married = 1,
+        Single = 2,
+        Divorced = 3,
+        Separated = 4,
+        Widowed = 5
     }
 
     public class Profile
@@ -35,9 +35,9 @@ namespace WebApplication1.Models
         public SexType Sex { get; set; }
         public CivilStatusType CivilStatus { get; set; }
         public Education Education { get; set; }
-        public int Contact { get; set; }
+        public string Contact { get; set; }
         public string ContactPerson { get; set; }
-        public int CPersonNo { get; set; }
+        public string CPersonNo { get; set; }
         public string CPersonRel { get; set; }
 
         public string HouseNo { get; set; }
@@ -67,7 +67,14 @@ namespace WebApplication1.Models
             {
                 DataRow row = dt.Rows[0];
 
-                this.Education = new Education(Int32.Parse(row["Educaton"].ToString()));
+                try
+                {
+                    this.Education = new Education(Int32.Parse(row["Educaton"].ToString()));
+                }
+                catch (Exception e)
+                {
+                    this.Education = null;
+                }
 
                 this.FirstName = row["FirstName"].ToString();
                 this.MiddleName = row["MiddleName"].ToString();
@@ -82,9 +89,9 @@ namespace WebApplication1.Models
                 this.CivilStatus = (CivilStatusType)Enum.Parse(typeof(CivilStatusType), row["CivilStatus"].ToString(), true);
                 this.BirthDate = DateTime.Parse(row["BirthDate"].ToString());
 
-                this.Contact = Int32.Parse(row["Contact"].ToString());
+                this.Contact = row["Contact"].ToString();
                 this.ContactPerson = row["ContactPerson"].ToString();
-                this.CPersonNo = Int32.Parse(row["CPersonNo"].ToString());
+                this.CPersonNo = row["CPersonNo"].ToString();
                 this.CPersonRel = row["CPersonRel"].ToString();
                 this.ProfileID = ProfileID;
             }

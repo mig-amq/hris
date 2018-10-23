@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "Employee List";
+    ViewBag.Active = "EList";
+}
+<div id="modal">
+    <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+    <div id="modal-form">
+        <h2 class="title">Edit Employee Status</h2>
+        <form method="POST" action="/Employee/ListNoAjax">
+            <div class="cluster">
+                <input type="text" name="code" placeholder="Employee Code" autofocus />
+                <input type="text" name="employee-name" placeholder="Employee Name" />
+                <select id="department" name="department">
+                    <option value="18">None</option>
+                    <option value="0">Special Projects</option>
+                    <option value="1">Internal Auditing</option>
+                    <option value="2">Tax Matters</option>
+                    <option value="3">Paralegal</option>
+                    <option value="4">Human Resources</option>
+                    <option value="5">Social/Environment</option>
+                    <option value="6">General Service</option>
+                    <option value="7">IT</option>
+                    <option value="8">Security</option>
+                    <option value="9">Sales & Marketing</option>
+                    <option value="10">Quality Assurance</option>
+                    <option value="11">Shipping</option>
+                    <option value="12">Research & Development</option>
+                    <option value="13">Production Planning</option>
+                    <option value="14">Production Furniture & Accessory</option>
+                    <option value="15">Logistics</option>
+                    <option value="16">Accounting</option>
+                    <option value="17">Finance</option>
+                </select>
+                <select id="branch" name="branch">
+                    <option value="6">None</option>
+                    <option value="1">Corporate Services</option>
+                    <option value="2">Administration</option>
+                    <option value="3">Sales & Marketing</option>
+                    <option value="4">Operations</option>
+                    <option value="5">Finance</option>
+                </select>
+                <input type="text" name="position" placeholder="Position" />
+                <select name="status" id="status">
+                    <option value="1">Active</option>
+                    <option value="2">Inactive</option>
+                </select>
+                <input type="text" name="inactive" id="inactive" placeholder="Inactive Date" onfocus="this.type='date'"/>
+            </div>
+            <div class="cluster" id="employment-date">
+                <p class="sub-title">Date</p>
+                <select id="month" name="month">
+                    <option value="-1">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="day">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="year">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+<div id="section-heading">
+    <div>
+        <h1 id="section-title">Employee List</h1>
+        <span>
+            Show
+            <select id="show-entries" onchange="search(curr)">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
+    </div>
+    <input type="text" placeholder="Search Employee List..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)" />
+</div>
+<br/>
+<table>
+    <thead>
+    <tr id="heading-row">
+        <th>No.</th>
+        <th>Code</th>
+        <th>Employee Name</th>
+        <th>Department</th>
+        <th>Position</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="data">
+    </tbody>
+</table>
+<div id="result-summary">
+    <div>
+        <button class="footer-button">Generate Report</button>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+</section>
+
+<script>
+    var curr = 1;
+    $(document).ready(() => {
+        search(1);
+    })
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Employee/GetEmployees",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1,
+                'query': $("#search").val().trim().replace(/\s+/, " "),
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                    " - " +
+                    (((n - 1) * ($("#show-entries").val() || 5) ) + data.employees.length));
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr) {
+                    curr--;
+                    search(curr);
+                }
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+
+                data.employees.forEach((o, i, a) => {
+                    let row = $("<tr></tr>");
+                    let id = $("<td></td>").text(o.EmployeeID);
+                    let code = $("<td></td>").text(o.Code);
+                    let name = $("<td></td>").text(o.Profile.FirstName + " " + o.Profile.LastName);
+                    let dep = $("<td></td>").text(o.Department ? o.Department.Name : o.Branch.BranchName);
+                    let pos = $("<td></td>").text(o.Position);
+                    let btn = $("<td><button class='hallow modal-trigger' data-id='" + o.EmployeeID + "'>Edit</button></td>");
+
+                    btn.click(() => {
+                        load(o.EmployeeID);
+                    })
+                    row.append(id);
+                    row.append(code);
+                    row.append(name);
+                    row.append(dep);
+                    row.append(pos);
+                    row.append(btn);
+                    $("#data").append(row);
+                });
+            }
+        })
+    }
+
+    function load(n) {
+        console.log(n);
+
+        $.ajax({
+            url: "/Employee/GetEmployee",
+            method: "GET",
+            data: {
+                'id': n
+            },
+            success: (data) => {
+                let dt = new Date(data.employee.EmploymentDate);
+                $("#modal-form input[name=code]").val(data.employee.Code);
+                $("#modal-form input[name=position]").val(data.employee.Position);
+
+                if (data.employee.Department) {
+                    $("#modal-form select[name=department]").val(data.employee.Department.Type);
+                } else {
+                    console.log("Asdasd");
+                    $("#modal-form select[name=department] option[value='18']").attr("selected", true);
+                }
+
+                if (data.employee.Branch) {
+                    $("#modal-form select[name=branch]").val(data.employee.Branch.Type);
+                } else {
+                    $("#modal-form select[name=branch] option[value='6']").attr("selected", true);
+                }
+
+                $("#modal-form #employment-date select[name=month] option[value='" + dt.getMonth() + "']")
+                    .attr("selected", true);
+                $("#modal-form #employment-date select[name=day] option[value='" + (dt.getDay() + 1) + "']")
+                    .attr("selected", true);
+                $("#modal-form #employment-date select[name=year] option[value='" + dt.getFullYear() + "']")
+                    .attr("selected", true);
+
+                $("#modal-form select[name=status] option[value='" + data.employee.Status + "']").attr("selected", true);
+            }
+        })
+    }
+</script>

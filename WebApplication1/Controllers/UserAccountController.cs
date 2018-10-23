@@ -13,9 +13,17 @@ namespace WebApplication1.Controllers
 
     public class UserAccountController : Controller
     {
+        [HttpPost]
+        public ActionResult LoginNoAjax(FormCollection form)
+        {
+            ViewData["Alert"] = LogIn(form);
+
+            return View();
+        }
+
         // POST: UserAccount
         [HttpPost]
-        public ActionResult LogIn(FormCollection form)
+        public ContentResult LogIn(FormCollection form)
         {
             /**
              * Initialize a JSON object that will be returned to the client.
@@ -39,7 +47,7 @@ namespace WebApplication1.Controllers
 
                     json["message"] = "You logged in successfully! Please wait...";
 
-                    if (form.Get("cookie") != null && form.GetValue("cookie").ToString() == "on")
+                    if (form.Get("remember") != null && form.GetValue("remember").ToString() == "on")
                     { // check if the Remember Me was checked
                         // create and store a cookie
                         HttpCookie cookie = new HttpCookie("userCookie");
@@ -97,7 +105,7 @@ namespace WebApplication1.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "HomeController"); // redirect to home
+            return RedirectToAction("Index", "Home"); // redirect to home
         }
 
         // POST: UserAccount/Create
@@ -127,8 +135,8 @@ namespace WebApplication1.Controllers
                     emp.Profile.Province = form.GetValue("Province").ToString();
                     emp.Profile.Sex = (SexType)form.GetValue("Sex").ConvertTo(typeof(SexType));
 
-                    emp.Profile.Contact = Int32.Parse(form.GetValue("Contact").ToString().Replace(" ", ""));
-                    emp.Profile.CPersonNo = Int32.Parse(form.GetValue("CPersonNo").ToString().Replace(" ", ""));
+                    emp.Profile.Contact = form.GetValue("Contact").ToString().Replace(" ", "");
+                    emp.Profile.CPersonNo = form.GetValue("CPersonNo").ToString().Replace(" ", "");
                     emp.Profile.CPersonRel = form.GetValue("CPerson").ToString();
                     emp.Profile.ContactPerson = form.GetValue("ContactPerson").ToString();
 

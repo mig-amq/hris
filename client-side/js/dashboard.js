@@ -18,6 +18,6 @@ $(document).ready(function(){
 
 function ready_application_status(){
 	// show entries
-	for(var x = 1; x <= 30; x++)
+	for(var x = 5; x <= 30; x++)
 		$("#show-entries").append('<option value="' + x + '">' + x + '</option>');
 }

@@ -36,7 +36,7 @@ namespace WebApplication1.Models
             this.DBHandler = new DBHandler();
         }
 
-        public Account FindByUsername(string username, bool recursive = false)
+        public Account FindByUsername(string username, bool recursive = true)
         {
             using (DataTable result = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Account WHERE Username = '" + Sanitize(username) + "'"))
             {
@@ -162,13 +162,16 @@ namespace WebApplication1.Models
         {
             if (recursive)
             {
-                if (this.Type == AccountType.Applicant)
+                if (this.Profile != null)
                 {
-                    ((Applicant)this.Profile).Update(recursive);
-                }
-                else
-                {
-                    ((Employee)this.Profile).Update(recursive);
+                    if (this.Type == AccountType.Applicant)
+                    {
+                        ((Applicant)this.Profile).Update(recursive);
+                    }
+                    else
+                    {
+                        ((Employee)this.Profile).Update(recursive);
+                    }
                 }
             }
             string set = "UPDATE Account SET Username = @Username AND Password = @Password AND "

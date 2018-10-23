@@ -21,6 +21,6 @@ namespace WebApplication1.Models.Supers
             this.FindProfile(TableID);
         }
 
-        public abstract ProfiledObject FindProfile(int TableID, bool recursive = false, bool byPrimary = false);
+        public abstract ProfiledObject FindProfile(int TableID, bool recursive = true, bool byPrimary = false);
     }
 }

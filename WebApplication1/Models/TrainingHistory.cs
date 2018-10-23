@@ -35,7 +35,7 @@ namespace WebApplication1.Models
             {
                 DataRow row = dt.Rows[0];
 
-                this.TrainingHistoryID = TrainingHistoryID;
+                this.TrainingHistoryID = Int32.Parse(row["TrainingHistoryID"].ToString());
                 this.Title = row["Title"].ToString();
                 this.Description = row["Description"].ToString();
                 this.Facilitator = row["Facilitator"].ToString();

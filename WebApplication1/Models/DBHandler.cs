@@ -67,16 +67,27 @@ namespace WebApplication1.Models
                                 return default(T);
                             }
                         default:
-                            int recID = (int)command.ExecuteScalarAsync().Result;
-                            connection.Close();
-                            try
+                            if (type != CRUD.DELETE)
                             {
-                                return (T)Convert.ChangeType(recID, typeof(T));
+                                int recID = (int)command.ExecuteScalarAsync().Result;
+                                connection.Close();
+                                try
+                                {
+                                    return (T)Convert.ChangeType(recID, typeof(T));
+                                }
+                                catch (InvalidCastException)
+                                {
+                                    return default(T);
+                                }
                             }
-                            catch (InvalidCastException)
+                            else
                             {
+                                command.ExecuteScalarAsync();
+                                connection.Close();
                                 return default(T);
                             }
+
+                            break;
                     }
                 
                 }

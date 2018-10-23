@@ -9,8 +9,8 @@ namespace WebApplication1.Models
 
     public enum StatusType
     {
-        Active = 0,
-        Inactive = 1
+        Active = 1,
+        Inactive = 2
     }
 
     public class Employee : ProfiledObject
@@ -20,6 +20,9 @@ namespace WebApplication1.Models
         public DateTime DateInactive { get; set; }
         public StatusType Status { get; set; }
         public Department Department { get; set; }
+        public Branch Branch { get; set; }
+        public string Code { get; set; }
+        public string Position { get; set; }
 
         public Employee()
         {}
@@ -28,7 +31,7 @@ namespace WebApplication1.Models
             : base(ProfileID)
         {}
 
-        public override ProfiledObject FindProfile(int TableID, bool recursive = false, bool byPrimary = false)
+        public override ProfiledObject FindProfile(int TableID, bool recursive = true, bool byPrimary = false)
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Employee WHERE " + (byPrimary ? " EmployeeID " : " Profile ") + " = " + TableID))
             {
@@ -36,13 +39,36 @@ namespace WebApplication1.Models
                 
                 // Fill Employee Object
                 this.EmployeeID = Int32.Parse(row["EmployeeID"].ToString());
-                this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
                 this.Status = (StatusType)Enum.Parse(typeof(StatusType), row["Status"].ToString(), true);
-                
+                this.Code = row["Code"].ToString();
+                this.Position = row["Position"].ToString();
+                this.EmploymentDate = DateTime.Parse(row["EmploymentDate"].ToString());
+
+                if (this.Status == StatusType.Inactive)
+                    this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
+                else
+                    this.DateInactive = DateTime.MaxValue;
+
                 if (recursive)
                 {
                     this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
-                    this.Department = new Department(Int32.Parse(row["Department"].ToString()));
+                    try
+                    {
+                        this.Department = new Department(Int32.Parse(row["Department"].ToString()), recursive:false);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Department = null;
+                    }
+
+                    try
+                    {
+                        this.Branch = new Branch(Int32.Parse(row["Branch"].ToString()), recursive: false);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Branch = null;
+                    }
                 }
             }
 
@@ -57,16 +83,25 @@ namespace WebApplication1.Models
                 this.Department = new Department();
                 this.Department.Find(DepartmentID);
 
-                string columns = "INSERT INTO [dbo].[Employee](Profile, Department, EmploymentDate, DateInactive, Status)";
-                string values = "OUTPUT INSERTED.EmployeeID VALUES(@Profile, @Department, @EmploymentDate, @DateInactive, @Status)";
+                string columns = "INSERT INTO [dbo].[Employee](Profile, Department, EmploymentDate, DateInactive, Status, Code, Position)";
+                string values = "OUTPUT INSERTED.EmployeeID VALUES(@Profile, @Department, @EmploymentDate, @DateInactive, @Status, @Code, @Position)";
                 Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
                 param.Add("@Profile", this.Profile.ProfileID);
-                param.Add("@Department", this.Department.DepartmentID);
+                if (this.Department == null)
+                    param.Add("@Department", null);
+                else 
+                    param.Add("@Department", this.Department.DepartmentID);
                 param.Add("@EmploymentDate", this.EmploymentDate.ToShortDateString());
                 param.Add("@DateInactive", this.DateInactive.ToShortDateString());
                 param.Add("@Status", (int)this.Status);
-                
+                param.Add("@Code", Code);
+                param.Add("@Position", Position);
+                if (this.Branch == null)
+                    param.Add("@Branch", null);
+                else
+                    param.Add("@Branch", this.Branch.BranchID);
+
                 this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             }
 
@@ -86,13 +121,16 @@ namespace WebApplication1.Models
             }
 
             string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate AND "
-                         + "DateInactive = @DateInactive AND Status = @Status AND Department = @Department WHERE EmployeeID = " + EmployeeID;
+                         + "DateInactive = @DateInactive AND Status = @Status AND "
+                         + "Department = @Department AND Code = @Code AND Position = @Position WHERE EmployeeID = " + EmployeeID;
 
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@EmploymentDate", this.EmploymentDate.ToShortDateString());
             param.Add("@DateInactive", this.DateInactive.ToShortDateString());
             param.Add("@Status", (int)this.Status);
+            param.Add("@Code", Code);
+            param.Add("@Position", Position);
 
             // Update Department ID as well because Departments can't be updated through the Employee
             // yet the Employee can CHANGE Departments, unlike other Foreign Keys, the relationship

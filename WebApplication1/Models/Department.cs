@@ -47,33 +47,33 @@ namespace WebApplication1.Models
         public Branch Branch { get; set; }
         public DepartmentType Type { get; set; }
 
-        public Department(int DepartmentID = -1)
+        public Department(int DepartmentID = -1, bool recursive = true, bool byPrimary = true)
         {
             this.DBHandler = new DBHandler();
 
             if (this.DepartmentID != -1)
             {
                 this.DepartmentID = DepartmentID;
-                this.Find(this.DepartmentID);
+                this.Find(this.DepartmentID, recursive, byPrimary);
             }
         }
 
-        public Department Find(int DepartmentID, bool recursive = true)
+        public Department Find(int TableID, bool recursive = true, bool byPrimary = true)
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(
                 CRUD.READ,
-                "SELECT * FROM Department WHERE DepartmentID = " + DepartmentID))
+                "SELECT * FROM Department WHERE " + (byPrimary ? "DepartmentID" : "Type") + " = "+ TableID))
             {
                 DataRow row = dt.Rows[0];
 
-                this.DepartmentID = DepartmentID;
+                this.DepartmentID = Int32.Parse(row["DepartmentID"].ToString());
                 this.DepartmentName = row["DepartmentName"].ToString();
                 this.Type = (DepartmentType)Int32.Parse(row["Type"].ToString());
 
                 if (recursive)
                 {
-                    this.Branch = new Branch(Int32.Parse(row["Branch"].ToString()));
-                    this.DepartmentHead = (Employee) new Employee().FindProfile(Int32.Parse(row["DepartmentHead"].ToString()), byPrimary:true);
+                    this.Branch = new Branch(Int32.Parse(row["Branch"].ToString()), recursive:false);
+                    this.DepartmentHead = (Employee) new Employee().FindProfile(Int32.Parse(row["DepartmentHead"].ToString()), byPrimary:true, recursive:false);
                 }
             }
             return this;

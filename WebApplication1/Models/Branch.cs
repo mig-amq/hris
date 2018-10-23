@@ -9,11 +9,12 @@ namespace WebApplication1.Models
 
     public enum BranchType
     {
-        CorporateServices = 0,
-        Administration = 1,
-        SalesMarketing = 2,
-        Operations = 3,
-        Finance = 4
+        None = 0,
+        CorporateServices = 1,
+        Administration = 2,
+        SalesMarketing = 3,
+        Operations = 4,
+        Finance = 5
     }
 
     public class Branch
@@ -24,25 +25,25 @@ namespace WebApplication1.Models
         public BranchType Type { get; set; }
         public Employee BranchVP { get; set; }
 
-        public Branch(int BranchID = -1)
+        public Branch(int BranchID = -1, bool recursive = true, bool byPrimary = true)
         {
             this.DBHandler = new DBHandler();
 
             if (BranchID != -1)
             {
                 this.BranchID = BranchID;
-                this.Find(BranchID);
+                this.Find(BranchID, recursive, byPrimary);
             }
         }
 
-        public Branch Find(int BranchID, bool recursive = true)
+        public Branch Find(int BranchID, bool recursive = true, bool byPrimary = true)
         {
             using (DataTable dt =
-                this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Branch WHERE BranchID = " + BranchID))
+                this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Branch WHERE " + (byPrimary ? "BranchID" : "Type") + " = " + BranchID))
             {
                 DataRow row = dt.Rows[0];
 
-                this.BranchID = BranchID;
+                this.BranchID = Int32.Parse(row["BranchID"].ToString());
                 this.BranchName = row["BranchName"].ToString();
                 this.Type = (BranchType)Int32.Parse(row["Type"].ToString());
 
