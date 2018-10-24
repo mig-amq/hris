@@ -67,7 +67,14 @@ namespace WebApplication1.Models
             {
                 DataRow row = dt.Rows[0];
 
-                this.Education = new Education(Int32.Parse(row["Educaton"].ToString()));
+                if (row["Education"].ToString().ToLower() != "null")
+                {
+                    this.Education = new Education(Int32.Parse(row["Educaton"].ToString()));
+                }
+                else
+                {
+                    this.Education = null;
+                }
 
                 this.FirstName = row["FirstName"].ToString();
                 this.MiddleName = row["MiddleName"].ToString();
@@ -93,7 +100,8 @@ namespace WebApplication1.Models
 
         public Profile Create()
         {
-            this.Education.Create();
+            if (this.Education != null)
+                this.Education.Create();
             string columns = "INSERT INTO [dbo].[Profile] (FirstName, LastName, MiddleName, BirthDate, Sex, "
                              + "CivilStatus, Contact, ContactPerson, CPersonNo, CPersonRel, "
                              + "HouseNo, Street, City, Province, Education) OUTPUT INSERTED.ProfileID ";
@@ -103,7 +111,7 @@ namespace WebApplication1.Models
             param.Add("@FirstName", this.FirstName);
             param.Add("@LastName", this.LastName);
             param.Add("@MiddleName", this.MiddleName);
-            param.Add("@BirthDate", this.BirthDate.ToShortDateString());
+            param.Add("@BirthDate", this.BirthDate.ToString("yyyy-MM-dd"));
             param.Add("@Sex", (int)this.Sex);
             param.Add("@CivilStatus", (int)this.CivilStatus);
             param.Add("@Contact", this.Contact);
@@ -133,13 +141,13 @@ namespace WebApplication1.Models
         public Profile Update(int ProfileID, bool recursive)
         {
             if (recursive)
-                this.Education.Update(recursive);
+                if (this.Education != null) this.Education.Update(recursive);
 
-            string set = "UPDATE Profile SET FirstName = @FirstName AND MiddleName = @MiddleName AND "
-                         + "LastName = @LastName AND HouseNo = @HouseNo AND Street = @Street AND "
-                         + "City = @City AND Province = @Province AND Sex = @Sex AND CivilStatus = @CivilStatus AND"
-                         + "BirthDate = @BirthDate AND Contact = @Contact AND ContactPerson = @ContactPerson AND "
-                         + "CPersonNo = @CPersonNo AND CPersonRel = @CPersonRel WHERE ProfileID = " + ProfileID;
+            string set = "UPDATE Profile SET FirstName = @FirstName, MiddleName = @MiddleName, "
+                         + "LastName = @LastName, HouseNo = @HouseNo, Street = @Street, "
+                         + "City = @City, Province = @Province, Sex = @Sex, CivilStatus = @CivilStatus, "
+                         + "BirthDate = @BirthDate, Contact = @Contact, ContactPerson = @ContactPerson, "
+                         + "CPersonNo = @CPersonNo, CPersonRel = @CPersonRel OUTPUT INSERTED.ProfileID WHERE ProfileID = " + ProfileID;
 
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
@@ -153,7 +161,7 @@ namespace WebApplication1.Models
             param.Add("@Province", this.Province);
             param.Add("@Sex", (int)this.Sex);
             param.Add("@CivilStatus", (int)this.CivilStatus);
-            param.Add("@BirthDate", this.BirthDate.ToShortDateString());
+            param.Add("@BirthDate", this.BirthDate.ToString("yyyy-MM-dd"));
 
             param.Add("@Contact", this.Contact);
             param.Add("@ContactPerson", this.ContactPerson);
@@ -166,7 +174,9 @@ namespace WebApplication1.Models
 
         public Profile Delete()
         {
-            this.Education.Delete();
+            if (this.Education != null)
+                this.Education.Delete();
+
             this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM Profile WHERE ProfileID = " + this.ProfileID);
             return this;
         }

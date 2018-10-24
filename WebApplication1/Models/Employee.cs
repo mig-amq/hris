@@ -82,8 +82,8 @@ namespace WebApplication1.Models
 
                 param.Add("@Profile", this.Profile.ProfileID);
                 param.Add("@Department", this.Department.DepartmentID);
-                param.Add("@EmploymentDate", this.EmploymentDate.ToShortDateString());
-                param.Add("@DateInactive", this.DateInactive.ToShortDateString());
+                param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
+                param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
                 param.Add("@Status", (int)this.Status);
                 
                 this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
@@ -104,13 +104,13 @@ namespace WebApplication1.Models
                 this.Profile.Update(recursive);
             }
 
-            string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate AND "
-                         + "DateInactive = @DateInactive AND Status = @Status AND Department = @Department WHERE EmployeeID = " + EmployeeID;
+            string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate, "
+                         + "DateInactive = @DateInactive, Status = @Status, Department = @Department OUTPUT INSERTED.EmployeeID WHERE EmployeeID = " + EmployeeID;
 
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
-            param.Add("@EmploymentDate", this.EmploymentDate.ToShortDateString());
-            param.Add("@DateInactive", this.DateInactive.ToShortDateString());
+            param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
+            param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
             param.Add("@Status", (int)this.Status);
 
             // Update Department ID as well because Departments can't be updated through the Employee
