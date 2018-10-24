@@ -15,7 +15,8 @@ namespace WebApplication1.Models
         VP = 2,
         DepartmentHead = 3,
         Employee = 4,
-        Applicant = 5
+        Applicant = 5,
+        Any = 6
     }
 
     public class Account : SecureObject
@@ -35,7 +36,7 @@ namespace WebApplication1.Models
             this.DBHandler = new DBHandler();
         }
 
-        public Account FindByUsername(string username, bool recursive = false)
+        public Account FindByUsername(string username, bool recursive = true)
         {
             using (DataTable result = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Account WHERE Username = '" + Sanitize(username) + "'"))
             {
@@ -46,7 +47,7 @@ namespace WebApplication1.Models
                     this.Password = row["Password"].ToString();
                     this.Email = row["Email"].ToString();
                     this.AccountID = Int32.Parse(row["AccountID"].ToString());
-                    this.Type = (AccountType)Enum.Parse(typeof(AccountType), row["Type"].ToString(), true);
+                    this.Type = (AccountType)Int32.Parse(row["Type"].ToString());
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
 
                     if (recursive)
@@ -161,13 +162,16 @@ namespace WebApplication1.Models
         {
             if (recursive)
             {
-                if (this.Type == AccountType.Applicant)
+                if (this.Profile != null)
                 {
-                    ((Applicant)this.Profile).Update(recursive);
-                }
-                else
-                {
-                    ((Employee)this.Profile).Update(recursive);
+                    if (this.Type == AccountType.Applicant)
+                    {
+                        ((Applicant)this.Profile).Update(recursive);
+                    }
+                    else
+                    {
+                        ((Employee)this.Profile).Update(recursive);
+                    }
                 }
             }
             string set = "UPDATE Account SET Username = @Username AND Password = @Password AND "

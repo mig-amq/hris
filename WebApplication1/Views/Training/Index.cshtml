@@ -1,0 +1,242 @@
+﻿@using WebApplication1.Models
+@{
+    ViewBag.Title = "Training";
+    ViewBag.Active = "Training";
+}
+
+<div id="modal">
+    <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+    <div id="modal-form" data-action="add">
+        <h2 class="title">Add/Edit Training Program</h2>
+        <form id="training">
+            <div class="cluster">
+                <p class="sub-title">General Details</p>
+                <input type="text" placeholder="Title" name="title" autofocus />
+                <textarea placeholder="Description" name="desc"></textarea>
+                <input type="text" placeholder="Facilitator" name="faci" />
+                <input type="text" placeholder="Location" name="loc" />
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Start Date</p>
+                <select id="month" name="start-month">
+                    <option value="-1">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="start-day">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="start-year">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">End Date</p>
+                <select id="month" name="end-month">
+                    <option value="-1">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="end-day">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="end-year">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Training Programs</h1>
+            <button class="hallow modal-trigger" onclick="$('#modal-form').attr('data-action', 'add')">
+                <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
+                Add New
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <span>
+                Show
+                <select id="show-entries">
+                    <!-- JAVASCRIPT GENERATED -->
+                </select>
+                Entries
+            </span>
+        </div>
+        <input type="text" placeholder="Search Training Programs..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)"/>
+    </div>
+    <br/>
+    <table>
+        <thead>
+        <tr class="heading-row">
+            <th>No.</th>
+            <th>Title</th>
+            <th>Facilitator</th>
+            <th>Schedule/Time</th>
+            <th>Location</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
+    </table>
+<div id="result-summary">
+    <div>
+        <button class="footer-button">Generate Report</button>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+<script>
+    var curr = 1;
+    $(document).ready(() => {
+        search(1);
+    })
+
+    $(document).on('submit', "#modal-form[data-action=add] form", (e) => {
+        e.preventDefault();
+        var form = new FormData($("#modal-form form")[0]);
+
+        $.ajax({
+            url: "/Training/Create",
+            method: "POST",
+            data: form,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (!data.error) {
+                    $("#modal").hide();
+                    search(curr + 1);
+                }
+            }
+        })
+    });
+
+    $(document).on('submit', "#modal-form[data-action=edit] form", (e) => {
+        e.preventDefault();
+        
+        var form = new FormData($("#training")[0]);
+        form.append("ID", $("#modal-form[data-action=edit]").attr("data-id"));
+
+        $.ajax({
+            url: "/Training/Update",
+            method: "POST",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (!data.error) {
+                    $("#modal").hide();
+                }
+            }
+        })
+    });1
+
+    function load(n) {
+        $("#modal-form").attr("data-id", n);
+
+        $.ajax({
+            url: "/Training/Get",
+            data: {
+                ID: n
+            },
+            method: "GET",
+            success: (data) => {
+                var start = new Date(data.training.StartDate);
+                var end = new Date(data.training.EndDate);
+
+                $("#modal-form input[name=title]").val(data.training.Title);
+                $("#modal-form textarea[name=desc]").val(data.training.Description);
+                $("#modal-form input[name=faci]").val(data.training.Facilitator);
+                $("#modal-form input[name=loc]").val(data.training.Location);
+
+                $("#modal-form select[name=start-month]").val(start.getMonth());
+                $("#modal-form select[name=start-day]").val(start.getDate());
+                $("#modal-form select[name=start-year]").val(start.getFullYear());
+
+                $("#modal-form select[name=end-month]").val(end.getMonth());
+                $("#modal-form select[name=end-day]").val(end.getDate());
+                $("#modal-form select[name=end-year]").val(end.getFullYear());
+            }
+    })
+    }
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Training/GetTrainings",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1,
+                'query': $("#search").val().trim().replace(/\s+/, " "),
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                    " - " +
+                    (((n - 1) * ($("#show-entries").val() || 5)) + data.trainings.length));
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr) {
+                    curr--;
+                    search(curr);
+                }
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+
+                data.trainings.forEach((o, i, a) => {
+                    let s = new Date(o.StartDate);
+                    let e = new Date(o.EndDate);
+
+                    let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear() + " - "
+                                    + (e.getMonth() + 1) + "/" + (e.getDate()) + "/" + e.getFullYear();
+                    let row = $("<tr></tr>");
+                    let id = $("<td></td>").text(o.TrainingHistoryID);
+                    let code = $("<td></td>").text(o.Title);
+                    let name = $("<td></td>").text(o.Facilitator);
+                    let dep = $("<td></td>").text(schedule);
+                    let pos = $("<td></td>").text(o.Location);
+                    
+                    let btnE = $("<td class='multiple-buttons'><button class='hallow modal-trigger' data-id='" + o.EmployeeID + "'>Edit</button><button class='hallow red'>Delete</button></td>");
+                    btnE.children("button.modal-trigger").click(() => {
+                        $('#modal-form').attr('data-action', 'edit')
+                        load(o.TrainingHistoryID);
+                    });
+
+                    btnE.children("button.hallow:not(.modal-trigger)").click(() => {
+                        $.ajax({
+                            url: "/Training/Delete",
+                            method: "POST",
+                            data: {
+                                ID: o.TrainingHistoryID
+                            },
+                            success: (data) => {
+                                $("#modal").hide();
+                                search(curr);
+                            }
+                        })
+                    });
+
+                    row.append(id);
+                    row.append(code);
+                    row.append(name);
+                    row.append(dep);
+                    row.append(pos);
+                    row.append(btnE);
+                    $("#data").append(row);
+                });
+            }
+        })
+    }
+</script>

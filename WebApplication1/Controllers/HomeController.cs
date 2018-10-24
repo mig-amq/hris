@@ -17,16 +17,14 @@ namespace WebApplication1.Controllers
 
         public ActionResult About()
         {
-            Account a = new Account().FindByUsername("testCEO");
-
-            ViewBag.Message = a.Email;
+            ViewBag.Message = "Sad";
 
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Dashboard()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Dashboard";
 
             return View();
         }
