@@ -6,6 +6,7 @@ using System.Web;
 namespace WebApplication1.Models
 {
     using System.Data;
+    using System.Diagnostics;
 
     public class TrainingHistory
     {
@@ -58,8 +59,8 @@ namespace WebApplication1.Models
             param.Add("@Title", this.Title);
             param.Add("@Description", this.Description);
             param.Add("@Facilitator", this.Facilitator);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate.ToString("yyyy-MM-dd"));
+            param.Add("@EndDate", this.EndDate.ToString("yyyy-MM-dd"));
             param.Add("@Location", this.Location);
 
             this.TrainingHistoryID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
@@ -73,17 +74,18 @@ namespace WebApplication1.Models
 
         public TrainingHistory Update(int TrainingHistoryID, bool recursive = true)
         {
-            string set = "UPDATE TrainingHistory SET Title = @Title AND "
-                         + "Description = @Description AND Facilitator = @Facilitator AND "
-                         + "StartDate = @StartDate AND EndDate = @EndDate AND "
-                         + "Location = @Location WHERE TrainingHistoryID = " + TrainingHistoryID;
+            string set = "UPDATE TrainingHistory SET Title = @Title, "
+                         + "Description = @Description, Facilitator = @Facilitator, "
+                         + "StartDate = @StartDate, EndDate = @EndDate, "
+                         + "Location = @Location OUTPUT INSERTED.TrainingHistoryID WHERE TrainingHistoryID = " + TrainingHistoryID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
+            Debug.WriteLine(this.StartDate.ToString("yyyy-MM-dd"));
             param.Add("@Title", this.Title);
             param.Add("@Description", this.Description);
             param.Add("@Facilitator", this.Facilitator);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate.ToString("yyyy-MM-dd"));
+            param.Add("@EndDate", this.EndDate.ToString("yyyy-MM-dd"));
             param.Add("@Location", this.Location);
 
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
@@ -94,7 +96,7 @@ namespace WebApplication1.Models
         {
             this.DBHandler.Execute<Int32>(
                 CRUD.DELETE,
-                "DELETE FROM TrainingHistory WHERE TrainingHistoryID = " + this.TrainingHistoryID);
+                "DELETE FROM TrainingHistory OUTPUT DELETED.TrainingHistoryID WHERE TrainingHistoryID = " + this.TrainingHistoryID);
             return this;
         }
     }

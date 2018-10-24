@@ -7,6 +7,8 @@ using System.Web.Mvc;
 namespace WebApplication1.Controllers
 {
     using System.Data;
+    using System.Diagnostics;
+    using System.Globalization;
     using System.Text.RegularExpressions;
     using System.Web.Http;
 
@@ -23,7 +25,7 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Training/Create
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult Create(FormCollection form)
         {
 
@@ -42,12 +44,12 @@ namespace WebApplication1.Controllers
                     tr.Title = form.GetValue("title").AttemptedValue;
                     tr.Location = form.GetValue("loc").AttemptedValue;
 
-                    string start = form.GetValue("start-month").AttemptedValue + "/" + form.GetValue("start-day").AttemptedValue
+                    string start = (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("start-day").AttemptedValue) + 1).ToString("00")
                                    + "/" + form.GetValue("start-year").AttemptedValue;
-                    string end = form.GetValue("end-month").AttemptedValue + "/" + form.GetValue("end-day").AttemptedValue
-                                   + "/" + form.GetValue("end-year").AttemptedValue;
-                    tr.StartDate = DateTime.Parse(start);
-                    tr.EndDate = DateTime.Parse(end);
+                    string end = (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("end-day").AttemptedValue) + 1).ToString("00")
+                                 + "/" + form.GetValue("end-year").AttemptedValue;
+                    tr.StartDate = DateTime.ParseExact(start, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    tr.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                     tr.Create();
                 }
             }
@@ -71,7 +73,42 @@ namespace WebApplication1.Controllers
 
             return Content(json.ToString(), "application/json");
         }
-        [System.Web.Mvc.HttpGet]
+
+        [HttpGet]
+        public ContentResult Get()
+        {
+            JObject json = new JObject();
+            json["training"] = JObject.FromObject(new TrainingHistory(Int32.Parse(Request.QueryString["ID"].ToString())));
+
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpPost]
+        public ContentResult Update(FormCollection form)
+        {
+            JObject json = new JObject();
+            json["error"] = false;
+            json["message"] = "";
+            
+            TrainingHistory th = new TrainingHistory(Int32.Parse(form.GetValue("id").AttemptedValue));
+            th.Description = form.GetValue("desc").AttemptedValue;
+            th.Title = form.GetValue("title").AttemptedValue;
+            th.Facilitator = form.GetValue("faci").AttemptedValue;
+            th.Location = form.GetValue("loc").AttemptedValue;
+            th.StartDate = DateTime.ParseExact(
+                form.GetValue("start-year").AttemptedValue + "-"
+                                                       + (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "-"
+                                                       + Int32.Parse(form.GetValue("start-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            th.EndDate = DateTime.ParseExact(
+                form.GetValue("end-year").AttemptedValue + "-"
+                                                       + (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "-"
+                                                       + Int32.Parse(form.GetValue("end-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            th.Update();
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpGet]
         public ContentResult GetTrainings()
         {
             JObject json = new JObject();

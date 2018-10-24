@@ -1,4 +1,5 @@
-﻿@{
+﻿@using WebApplication1.Models
+@{
     ViewBag.Title = "Training";
     ViewBag.Active = "Training";
 }
@@ -7,7 +8,7 @@
     <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
     <div id="modal-form" data-action="add">
         <h2 class="title">Add/Edit Training Program</h2>
-        <form>
+        <form id="training">
             <div class="cluster">
                 <p class="sub-title">General Details</p>
                 <input type="text" placeholder="Title" name="title" autofocus />
@@ -97,7 +98,7 @@
         search(1);
     })
 
-    $("#modal-form form").submit((e) => {
+    $(document).on('submit', "#modal-form[data-action=add] form", (e) => {
         e.preventDefault();
         var form = new FormData($("#modal-form form")[0]);
 
@@ -115,11 +116,55 @@
                 }
             }
         })
+    });
 
-    })
+    $(document).on('submit', "#modal-form[data-action=edit] form", (e) => {
+        e.preventDefault();
+        
+        var form = new FormData($("#training")[0]);
+        form.append("ID", $("#modal-form[data-action=edit]").attr("data-id"));
+
+        $.ajax({
+            url: "/Training/Update",
+            method: "POST",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (!data.error) {
+                    $("#modal").hide();
+                }
+            }
+        })
+    });1
 
     function load(n) {
-        
+        $("#modal-form").attr("data-id", n);
+
+        $.ajax({
+            url: "/Training/Get",
+            data: {
+                ID: n
+            },
+            method: "GET",
+            success: (data) => {
+                var start = new Date(data.training.StartDate);
+                var end = new Date(data.training.EndDate);
+
+                $("#modal-form input[name=title]").val(data.training.Title);
+                $("#modal-form textarea[name=desc]").val(data.training.Description);
+                $("#modal-form input[name=faci]").val(data.training.Facilitator);
+                $("#modal-form input[name=loc]").val(data.training.Location);
+
+                $("#modal-form select[name=start-month]").val(start.getMonth());
+                $("#modal-form select[name=start-day]").val(start.getDate());
+                $("#modal-form select[name=start-year]").val(start.getFullYear());
+
+                $("#modal-form select[name=end-month]").val(end.getMonth());
+                $("#modal-form select[name=end-day]").val(end.getDate());
+                $("#modal-form select[name=end-year]").val(end.getFullYear());
+            }
+    })
     }
 
     function search(n) {
@@ -153,7 +198,7 @@
                 data.trainings.forEach((o, i, a) => {
                     let s = new Date(o.StartDate);
                     let e = new Date(o.EndDate);
-                    console.log(o);
+
                     let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear() + " - "
                                     + (e.getMonth() + 1) + "/" + (e.getDate()) + "/" + e.getFullYear();
                     let row = $("<tr></tr>");
@@ -162,6 +207,7 @@
                     let name = $("<td></td>").text(o.Facilitator);
                     let dep = $("<td></td>").text(schedule);
                     let pos = $("<td></td>").text(o.Location);
+                    
                     let btnE = $("<td class='multiple-buttons'><button class='hallow modal-trigger' data-id='" + o.EmployeeID + "'>Edit</button><button class='hallow red'>Delete</button></td>");
                     btnE.children("button.modal-trigger").click(() => {
                         $('#modal-form').attr('data-action', 'edit')
@@ -176,8 +222,8 @@
                                 ID: o.TrainingHistoryID
                             },
                             success: (data) => {
-                                row.remove();
                                 $("#modal").hide();
+                                search(curr);
                             }
                         })
                     });
