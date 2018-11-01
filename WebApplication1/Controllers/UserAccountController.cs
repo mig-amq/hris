@@ -46,16 +46,6 @@ namespace WebApplication1.Controllers
                     Session["user"] = a;
 
                     json["message"] = "You logged in successfully! Please wait...";
-
-                    if (form.Get("remember") != null && form.GetValue("remember").ToString() == "on")
-                    { // check if the Remember Me was checked
-                        // create and store a cookie
-                        HttpCookie cookie = new HttpCookie("userCookie");
-                        cookie.Value = a.AccountID.ToString();
-                        cookie.Expires = DateTime.Now.AddYears(1);
-
-                        Response.Cookies.Add(cookie);
-                    }
                 }
                 else
                 { // return an error if the user is trying to log in again

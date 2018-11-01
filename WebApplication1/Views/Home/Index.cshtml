@@ -31,11 +31,11 @@
         <br/>
         <input type="password" placeholder="Password" name="password" value="123"/>
         <span class="options">
-            <label for="remember"><input type="checkbox" name="remember" id="remember" /> <span>remember me</span></label>
+            <label for="remember"></label>
             <a href="/UserAccount/Forgot" id="forgot">forgot password?</a>
         </span>
         <br/>
-        <button type="submit">Sign in</button>
+        <button type="submit" id="sign-in">Sign in</button>
         @{
           var Alert = (ViewData["Alert"] != null) ? (JObject)ViewData["Alert"] : new JObject();
         } 
@@ -51,6 +51,8 @@
     $(document).ready(() => {
         $("#login").submit((e) => {
             e.preventDefault();
+            $("button#sign-in").attr("disabled", "true");
+            $("button#sign-in").text("Logging in...");
 
             var form = new FormData($("#login")[0]);
             var div = $("#alert");
@@ -63,6 +65,9 @@
                 processData: false,
                 contentType: false,
                 success: (response) => {
+                    $("button#sign-in").text("Sign in");
+                    $("button#sign-in").attr("disabled", "false");
+
                     if (response.error)
                         div.addClass("error");
                     else

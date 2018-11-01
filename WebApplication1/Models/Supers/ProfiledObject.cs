@@ -16,9 +16,9 @@ namespace WebApplication1.Models.Supers
             this.DBHandler = new DBHandler();
         }
 
-        public ProfiledObject(int TableID) : this()
+        public ProfiledObject(int TableID, bool byPrimary = false) : this()
         {
-            this.FindProfile(TableID);
+            this.FindProfile(TableID, byPrimary:byPrimary);
         }
 
         public abstract ProfiledObject FindProfile(int TableID, bool recursive = true, bool byPrimary = false);

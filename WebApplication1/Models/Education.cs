@@ -6,6 +6,7 @@ using System.Web;
 namespace WebApplication1.Models
 {
     using System.Data;
+    using System.Diagnostics;
 
     public enum EducationType
     {
@@ -19,8 +20,8 @@ namespace WebApplication1.Models
     {
         public string Name { get; set; }
         public string Address { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public string Start { get; set; }
+        public string End { get; set; }
         public EducationType Type { get; set; }
         public bool Exists { get; set; }
 
@@ -40,13 +41,17 @@ namespace WebApplication1.Models
         public EducationLevel College { get; set; }
         public EducationLevel PostGraduate { get; set; }
 
-        public Education()
+        public Education(bool instantiate = true)
         {
             DBHandler = new DBHandler();
-            Elementary = new EducationLevel(EducationType.Elementary);
-            HighSchool = new EducationLevel(EducationType.HighSchool);
-            College = new EducationLevel(EducationType.College);
-            PostGraduate = new EducationLevel(EducationType.PostGraduate);
+
+            if (instantiate)
+            {
+                Elementary = new EducationLevel(EducationType.Elementary);
+                HighSchool = new EducationLevel(EducationType.HighSchool);
+                College = new EducationLevel(EducationType.College);
+                PostGraduate = new EducationLevel(EducationType.PostGraduate);
+            }
         }
 
         public Education(int EducationID) : this()
@@ -66,23 +71,23 @@ namespace WebApplication1.Models
                 this.EducationID = EducationID;
                 this.Elementary.Name = row["Elementary"].ToString();
                 this.Elementary.Address = row["ElemAddress"].ToString();
-                this.Elementary.Start = DateTime.Parse(row["ElemStart"].ToString());
-                this.Elementary.End = DateTime.Parse(row["ElemEnd"].ToString());
+                this.Elementary.Start = row["ElemStart"].ToString();
+                this.Elementary.End = row["ElemEnd"].ToString();
 
                 this.HighSchool.Name = row["HighSchool"].ToString();
                 this.HighSchool.Address = row["HighSchool"].ToString();
-                this.HighSchool.Start = DateTime.Parse(row["HSStartYear"].ToString());
-                this.HighSchool.End = DateTime.Parse(row["HSEndYear"].ToString());
+                this.HighSchool.Start = row["HSStartYear"].ToString();
+                this.HighSchool.End = row["HSEndYear"].ToString();
 
                 this.College.Name = row["College"].ToString();
                 this.College.Address = row["CollegeAddress"].ToString();
-                this.College.Start = DateTime.Parse(row["CollegeStartYear"].ToString());
-                this.College.End = DateTime.Parse(row["CollegeEndYear"].ToString());
+                this.College.Start = row["CollegeStartYear"].ToString();
+                this.College.End = row["CollegeEndYear"].ToString();
 
                 this.PostGraduate.Name = row["PostGrad"].ToString();
                 this.PostGraduate.Address = row["PostGradAddress"].ToString();
-                this.PostGraduate.Start = DateTime.Parse(row["PostGradStartYear"].ToString());
-                this.PostGraduate.End = DateTime.Parse(row["PostGradEndYear"].ToString());
+                this.PostGraduate.Start = row["PostGradStartYear"].ToString();
+                this.PostGraduate.End = row["PostGradEndYear"].ToString();
             }
 
             return this;
@@ -91,15 +96,15 @@ namespace WebApplication1.Models
         public Education Create()
         {
             string columns = "INSERT INTO EducationalBackground (";
-            string values = " OUPUT INSERTED.EducationID VALUES(";
+            string values = " OUTPUT INSERTED.EducationID VALUES(";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             if (this.Elementary != null)
             {
                 columns += "Elementary, ElemStartYear, ElemEndYear, ElemAddress";
                 param.Add("@Elementary", this.Elementary.Name);
-                param.Add("@ElemStartYear", this.Elementary.Start.ToString("yyyy-MM-dd"));
-                param.Add("@ElemEndYear", this.Elementary.End.ToString("yyyy-MM-dd"));
+                param.Add("@ElemStartYear", this.Elementary.Start);
+                param.Add("@ElemEndYear", this.Elementary.End);
                 param.Add("@ElemAddress", this.Elementary.Address);
 
                 if (this.HighSchool != null || this.College != null || this.PostGraduate != null)
@@ -112,8 +117,8 @@ namespace WebApplication1.Models
             {
                 columns += "HighSchool, HSStartYear, HSEndYear, HSAddress";
                 param.Add("@HighSchool", this.HighSchool.Name);
-                param.Add("@HSStartYear", this.HighSchool.Start.ToString("yyyy-MM-dd"));
-                param.Add("@HSEndYear", this.HighSchool.End.ToString("yyyy-MM-dd"));
+                param.Add("@HSStartYear", this.HighSchool.Start);
+                param.Add("@HSEndYear", this.HighSchool.End);
                 param.Add("@HSAddress", this.HighSchool.Address);
 
                 if (this.College != null || this.PostGraduate != null)
@@ -126,8 +131,8 @@ namespace WebApplication1.Models
             {
                 columns += "College, CollegeStartYear, CollegeEndYear, CollegeAddress";
                 param.Add("@College", this.College.Name);
-                param.Add("@CollegeStartYear", this.College.Start.ToString("yyyy-MM-dd"));
-                param.Add("@CollegeEndYear", this.College.End.ToString("yyyy-MM-dd"));
+                param.Add("@CollegeStartYear", this.College.Start);
+                param.Add("@CollegeEndYear", this.College.End);
                 param.Add("@CollegeAddress", this.College.Address);
 
                 if (this.PostGraduate != null)
@@ -140,8 +145,8 @@ namespace WebApplication1.Models
             {
                 columns += "PostGrad, PostGradStartYear, PostGradEndYear, PostGradAddress";
                 param.Add("@PostGrad", this.PostGraduate.Name);
-                param.Add("@PostGradStartYear", this.PostGraduate.Start.ToString("yyyy-MM-dd"));
-                param.Add("@PostGradEndYear", this.PostGraduate.End.ToString("yyyy-MM-dd"));
+                param.Add("@PostGradStartYear", this.PostGraduate.Start);
+                param.Add("@PostGradEndYear", this.PostGraduate.End);
                 param.Add("@PostGradAddress", this.PostGraduate.Address);
             }
 
@@ -153,6 +158,7 @@ namespace WebApplication1.Models
             }
 
             values = values.Substring(0, values.Length - 1) + ")";
+            Debug.WriteLine(columns + values);
             this.EducationID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
         }
@@ -173,8 +179,8 @@ namespace WebApplication1.Models
                       + "ElemEndYear = @ElemEndYear AND ElemAddress = @ElemAddress";
 
                 param.Add("@Elementary", this.Elementary.Name);
-                param.Add("@ElemStartYear", this.Elementary.Start.ToString("yyyy-MM-dd"));
-                param.Add("@ElemEndYear", this.Elementary.End.ToString("yyyy-MM-dd"));
+                param.Add("@ElemStartYear", this.Elementary.Start);
+                param.Add("@ElemEndYear", this.Elementary.End);
                 param.Add("@ElemAddress", this.Elementary.Address);
 
                 if (this.HighSchool != null || this.College != null || this.PostGraduate != null)
@@ -188,8 +194,8 @@ namespace WebApplication1.Models
                 set += "HighSchool = @HighSchool AND HSStartYear = @HSStartYear AND "
                        + "HSEndYear = @HSEndYear AND HSAddress = @HSAddress";
                 param.Add("@HighSchool", this.HighSchool.Name);
-                param.Add("@HSStartYear", this.HighSchool.Start.ToString("yyyy-MM-dd"));
-                param.Add("@HSEndYear", this.HighSchool.End.ToString("yyyy-MM-dd"));
+                param.Add("@HSStartYear", this.HighSchool.Start);
+                param.Add("@HSEndYear", this.HighSchool.End);
                 param.Add("@HSAddress", this.HighSchool.Address);
 
                 if (this.College != null || this.PostGraduate != null)
@@ -203,8 +209,8 @@ namespace WebApplication1.Models
                 set += "College = @College AND CollegeStartYear = @CollegeStartYear AND"
                        + " CollegeEndYear = @CollegeEndYear AND CollegeAddress = @CollegeAddress";
                 param.Add("@College", this.College.Name);
-                param.Add("@CollegeStartYear", this.College.Start.ToString("yyyy-MM-dd"));
-                param.Add("@CollegeEndYear", this.College.End.ToLongDateString());
+                param.Add("@CollegeStartYear", this.College.Start);
+                param.Add("@CollegeEndYear", this.College.End);
                 param.Add("@CollegeAddress", this.College.Address);
 
                 if (this.PostGraduate != null)
@@ -218,8 +224,8 @@ namespace WebApplication1.Models
                 set += "PostGrad = @PostGrad AND PostGradStartYear = @PostGradStartYear AND"
                        + " PostGradEndYear = @PostGradEndYear AND PostGradAddress = @PostGradAddress";
                 param.Add("@PostGrad", this.PostGraduate.Name);
-                param.Add("@PostGradStartYear", this.PostGraduate.Start.ToString("yyyy-MM-dd"));
-                param.Add("@PostGradEndYear", this.PostGraduate.End.ToString("yyyy-MM-dd"));
+                param.Add("@PostGradStartYear", this.PostGraduate.Start);
+                param.Add("@PostGradEndYear", this.PostGraduate.End);
                 param.Add("@PostGradAddress", this.PostGraduate.Address);
             }
 

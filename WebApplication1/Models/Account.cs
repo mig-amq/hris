@@ -6,6 +6,7 @@ using System.Web;
 namespace WebApplication1.Models
 {
     using System.Data;
+    using System.Diagnostics;
 
     using WebApplication1.Models.Supers;
 
@@ -84,7 +85,8 @@ namespace WebApplication1.Models
                     this.Email = row["Email"].ToString();
                     this.AccountID = Int32.Parse(row["AccountID"].ToString());
                     this.Type = (AccountType) Enum.Parse(typeof(AccountType), row["Type"].ToString(), true);
-                    this.Locked = Boolean.Parse(row["Locked"].ToString());
+                    Debug.WriteLine("Locked: ", row["Locked"].ToString());
+                    this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
 
                     if (recursive)
                     {
@@ -122,24 +124,27 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Account Create(int DepartmentID = -1)
+        public Account Create(int DepartmentID = -1, bool recursive = true)
         {
             string columns = "INSERT INTO Account(Username, Email, Password, Profile, Type) OUTPUT INSERTED.AccountID ";
             string values = "VALUES(@Username, @Email, @Password, @Profile, @Type)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
 
-            if (this.Type == AccountType.Applicant)
+            if (recursive)
             {
-                ((Applicant)this.Profile).Create();
-            }
-            else if (DepartmentID != -1)
-            {
-                ((Employee)this.Profile).Create(DepartmentID);
-            }
-            else
-            {
-                throw new Exception("Failed to create a profile for this Account.");
+                if (this.Type == AccountType.Applicant)
+                {
+                    ((Applicant)this.Profile).Create();
+                }
+                else if (DepartmentID != -1)
+                {
+                    ((Employee)this.Profile).Create(DepartmentID);
+                }
+                else
+                {
+                    throw new Exception("Failed to create a profile for this Account.");
+                }
             }
 
             param.Add("@Username", this.Username);
@@ -174,14 +179,17 @@ namespace WebApplication1.Models
                     }
                 }
             }
-            string set = "UPDATE Account SET Username = @Username AND Password = @Password AND "
-                         + "Email = @Email AND Locked = @Locked AND Type = @Type WHERE AccountID = " + AccountID;
+            string set = "UPDATE Account SET Username = @Username, Password = @Password, "
+                         + "Email = @Email, Locked = @Locked, Type = @Type OUTPUT INSERTED.AccountID WHERE AccountID = " + AccountID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@Username", this.Username);
             param.Add("@Password", this.Password);
             param.Add("@Email", this.Email);
             param.Add("@Locked", this.Locked ? 1 : 0);
+            if (this.Profile != null)
+                param.Add("@Profile", this.Profile.Profile.ProfileID);
+
             param.Add("@Type", (int)this.Type);
 
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);

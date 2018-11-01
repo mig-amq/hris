@@ -44,10 +44,13 @@ body{
 	width: 100%;
 }
 
-#forgot, .options{
+#forgot{
+	display: block;
+	text-align: right;
 	color: var(--theme-color);
 	margin-top: 0.5em;
-	font-size: 0.8em;
+	font-size: 0.7em;
+	cursor: pointer;
 }
 
 #signup-link{
@@ -66,26 +69,6 @@ body{
 
 #signup-link a{
 	color: var(--theme-color);
-}
-
-.options {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.options label{
-    display: flex;
-    color: #666 !important;
-    font-size: 0.8em;
-    cursor: pointer;
-    align-items: center;
-}
-
-.options label input {
-   width: auto !important;
-   margin-top: 0 !important;
-   margin-right: 0.8em;
 }
 
 #signup-link a:hover{

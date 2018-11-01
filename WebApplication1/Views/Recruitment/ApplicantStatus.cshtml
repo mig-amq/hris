@@ -1,0 +1,151 @@
+﻿@using WebApplication1.Models
+@{
+    ViewBag.Active = "AS";
+    ViewBag.Title = "Applicant Status";
+
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+<div id="section-heading">
+    <div>
+        <h1 id="section-title">Application Status</h1>
+        <span>
+            Show
+            <select id="entries">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
+    </div>
+    <input type="text" placeholder="Search Application Status..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)" />
+</div>
+<br />
+<table>
+    <thead>
+        <tr id="heading-row">
+            <th>No.</th>
+            <th>Applicant Name</th>
+            <th>Contact Number</th>
+            <th>Desired Position</th>
+            <th>Skills</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="data">
+        
+    </tbody>
+</table>
+
+@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+{
+    <div id="result-summary">
+        <div>
+            <button class="footer-button">Generate Report</button>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(1);
+        });
+
+        function update(n, elem) {
+            if ($(elem).val() != 1) {
+                $.ajax({
+                    url: "/Recruitment/UpdateApplicant",
+                    data: {
+                        id: n,
+                        s: $(elem).val()
+                    },
+                    method: "POST",
+                    success: (data) => {
+                        if (!data.error) {
+                            $(elem).parent().text(data.message);
+                        }
+                    }
+                })
+            }
+        }
+
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/Recruitment/GetApplicants",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                    'query': $("#search").val().trim().replace(/\s+/, " "),
+                },
+                method: "GET",
+                success: (data) => {
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.applicants.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+                    console.log(data);
+                    data.applicants.forEach((o, i, a) => {
+                        console.log(o);
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>").text(o.ApplicantID);
+                        let name = $("<td></td>").text(o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName);
+                        let contact = $("<td></td>").text(o.Profile.Contact);
+                        let pos = $("<td></td>").text(o.DesiredPosition);
+                        let skills = $("<td></td>").text(o.Skills);
+                        let stat = $("<td></td>");
+
+                        if (o.Status == 1) {
+                            let sel = $("<select onchange='update(" +
+                                o.ApplicantID +
+                                ", this)'><option value=1 disabled selected>Change Status</option><option value=2>Approve</option><option value=3>Reject</option></select>");
+
+                            stat.append(sel);
+                        } else {
+                            if (o.Status == 2) {
+                                stat.text("Approved");
+                            } else {
+                                stat.text("Rejected");
+                            }
+                        }
+
+                        row.append(id);
+                        row.append(name);
+                        row.append(contact);
+                        row.append(pos);
+                        row.append(skills);
+                        row.append(stat);
+                        $("#data").append(row);
+                    });
+                },
+                error: (e) => {
+                    $("body").prepend(e.responseText);
+                }
+            })
+        }
+    </script>
+}
+else
+{
+
+}

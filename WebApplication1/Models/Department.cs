@@ -36,6 +36,8 @@ namespace WebApplication1.Models
         // Finance
         Accounting = 16,
         Finance = 17,
+
+        None = 18
     }
 
     public class Department
@@ -51,7 +53,7 @@ namespace WebApplication1.Models
         {
             this.DBHandler = new DBHandler();
 
-            if (this.DepartmentID != -1)
+            if (DepartmentID != -1)
             {
                 this.DepartmentID = DepartmentID;
                 this.Find(this.DepartmentID, recursive, byPrimary);
@@ -73,7 +75,19 @@ namespace WebApplication1.Models
                 if (recursive)
                 {
                     this.Branch = new Branch(Int32.Parse(row["Branch"].ToString()), recursive:false);
-                    this.DepartmentHead = (Employee) new Employee().FindProfile(Int32.Parse(row["DepartmentHead"].ToString()), byPrimary:true, recursive:false);
+                    try
+                    {
+
+                        this.DepartmentHead = (Employee)new Employee().FindProfile(
+                            Int32.Parse(row["DepartmentHead"].ToString()),
+                            byPrimary: true,
+                            recursive: false);
+
+                    }
+                    catch (Exception e)
+                    {
+                        this.DepartmentHead = null;
+                    }
                 }
             }
             return this;
@@ -108,9 +122,9 @@ namespace WebApplication1.Models
                 this.DepartmentHead.Update(recursive);
             }
 
-            string set = "UPDATE Department SET DepartmentName = @DepartmentName AND "
-                         + "DepartmentHead = @DepartmentHead AND Branch = @Branch AND "
-                         + "Type = @Type WHERE DepartmentID = " + this.DepartmentID;
+            string set = "UPDATE Department SET DepartmentName = @DepartmentName, "
+                         + "DepartmentHead = @DepartmentHead, Branch = @Branch, "
+                         + "Type = @Type OUTPUT INSERTED.DepartmentID WHERE DepartmentID = " + this.DepartmentID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@DepartmentName", this.DepartmentName);

@@ -56,7 +56,7 @@ namespace WebApplication1.Models
             param.Add("@JobTitle", this.JobTitle);
             param.Add("@JobDescription", this.JobDescription);
             param.Add("@Requirements", this.Requirements);
-            param.Add("@DatePosted", this.DatePosted.ToShortDateString());
+            param.Add("@DatePosted", this.DatePosted.ToString("yyyy-MM-dd"));
 
             this.PostingID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -69,15 +69,15 @@ namespace WebApplication1.Models
 
         public JobPosting Update(int PostingID, bool recursive = true)
         {
-            string set = "UPDATE JobPosting SET JobTitle = @JobTitle AND "
-                         + "JobDescription = @JobDescription AND "
-                         + "Requirements = @Requirements AND DatePosted = @DatePosted WHERE PostingID = " + PostingID;
+            string set = "UPDATE JobPosting SET JobTitle = @JobTitle, "
+                         + "JobDescription = @JobDescription, "
+                         + "Requirements = @Requirements, DatePosted = @DatePosted OUTPUT INSERTED.PostingID WHERE PostingID = " + PostingID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@JobTitle", this.JobTitle);
             param.Add("@JobDescription", this.JobDescription);
             param.Add("@Requirements", this.Requirements);
-            param.Add("@DatePosted", this.DatePosted.ToShortDateString());
+            param.Add("@DatePosted", this.DatePosted.ToString("yyyy-MM-dd"));
 
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;

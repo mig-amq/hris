@@ -1,17 +1,17 @@
 /* dashboard overall stylesheet */
 
 body{
-	margin-left: 17em;
+    margin-left: 17em;
 }
 
 #main-sidebar{
-	width: 17em;
-	height: 100%;
-	position: fixed;
-	top: 0;
-	left: 0;
-	background-color: var(--neutral-dark);
-	overflow-y: scroll;
+    width: 17em;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1B5049;
+    overflow-y: scroll;
 }
 
 #main-sidebar::-webkit-scrollbar { 
@@ -19,63 +19,63 @@ body{
 }
 
 #logo{
-	width: 2.7em;
-	height: 2.7em;
-	margin-right: 1em;
+    width: 2.7em;
+    height: 2.7em;
+    margin-right: 1em;
 }
 
 #logo-banner{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 1.5em 2.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5em 2.5em;
 }
 
 #logo-banner .title, #logo-banner .sub-title{
-	margin: 0;
-	padding: 0;
-	color: white;
+    margin: 0;
+    padding: 0;
+    color: white;
 }
 
 #logo-banner .sub-title{
-	font-size: 0.6em;
+    font-size: 0.6em;
 }
 
 nav ul{
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 nav ul li{
-	list-style-type: none;
-	color: white;
-	padding: 0.7em 2.7em;
-	font-size: 0.75em;
-	cursor: pointer;
+    list-style-type: none;
+    color: white;
+    padding: 0.7em 2.7em;
+    font-size: 0.78em;
+    cursor: pointer;
 }
 
 nav ul li:hover{
-	background-color: #2A2F33;
+    background-color: #0D332E;
 }
 
 nav ul li.active{
-	background-color: #1F2326;
-	color: white;
+    background-color: #0D332E;
+    color: white;
 }
 
 #main-sidebar hr{
-	margin: 0 2em;
-	border-color: #969AA6;
+    margin: 0 2em;
+    border-color: #2B7F74;
 }
 
 #main-sidebar div.cluster{
-	margin: 1.5em 0;
+    margin: 1.5em 0;
 }
 
 #main-sidebar div.cluster .cluster-label{
-	color: #969AA6;
-	margin: 0 3em;
-	margin-bottom: 0.7em;
+    color: #44C4B3;
+    margin: 0 3em;
+    margin-bottom: 0.7em;
 }
 
 header{
@@ -153,13 +153,13 @@ header{
 	margin-right: 1em;
 }
 
-#section-heading button{
+#section-heading button, .add-button{
 	font-size: 0.7em;
 	display: flex;
 	align-items: center;
 }
 
-#section-heading button img{
+#section-heading button img, .add-button img{
 	width: 1.5em;
 	margin-right: 0.9em;
 }
@@ -181,6 +181,27 @@ header{
 	background-size: 1.3em;
 	background-position: 10px;
 	background-color: white;
+}
+
+section div.cluster{
+	margin-bottom: 1.8em;
+}
+
+section div.cluster input, section div.cluster textarea,
+section div.cluster select{
+	margin-bottom: 0.7em;
+	display: block;
+}
+
+section div.cluster div.inline input,
+section div.cluster div.inline select{
+
+}
+
+section .sub-title{
+	color: var(--theme-color);
+	font-size: 1em;
+	margin: 1.5em 0;
 }
 
 #result-summary{
@@ -239,4 +260,13 @@ select#show-entries{
 	background-position: calc(100% - 15%);
 	padding-left: 1em;
 	padding-right: 1.5em;
+}
+
+.two-column-content{
+	display: flex;
+}
+
+.two-column-content div.cluster{
+	width: 40%;
+	margin-right: 5em;
 }

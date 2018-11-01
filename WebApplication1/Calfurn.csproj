@@ -165,6 +165,8 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobRequisitionController.cs" />
     <Compile Include="Controllers\Paginator.cs" />
+    <Compile Include="Controllers\Recruitment.cs" />
+    <Compile Include="Controllers\RecruitmentController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\UserAccountController.cs" />
@@ -233,6 +235,9 @@
     <Content Include="Views\UserAccount\Forgot.cshtml" />
     <Content Include="Views\Training\Index.cshtml" />
     <Content Include="Views\Employee\List.cshtml" />
+    <Content Include="Views\Employee\Add.cshtml" />
+    <Content Include="Views\Recruitment\Index.cshtml" />
+    <Content Include="Views\Recruitment\ApplicantStatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

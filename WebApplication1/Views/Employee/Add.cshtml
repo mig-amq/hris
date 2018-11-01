@@ -1,0 +1,370 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Active = "EAdd";
+
+    ViewBag.Title = "Add Employee";
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+{
+    <div id="section-heading">
+        <h1 id="section-title">Add Employee</h1>
+    </div>
+    <br/>
+    <form>
+        <div class="two-column-content">
+            <div class="cluster">
+                <p class="sub-title">Account</p>
+                <input type="text" name="username" placeholder="Employee Username" class="full"/>
+                <input type="password" name="password" placeholder="Employee Password" class="full"/>
+                <input type="email" name="email" placeholder="Employee Email" class="full" />
+                <select name="account-type" class="full">
+                    <option value="6" disabled="disabled" selected="selected">-- Select an Account Type --</option>
+                    <option value="1">CEO</option>
+                    <option value="2">Vice President</option>
+                    <option value="3">Department Head</option>
+                    <option value="4">Employee</option>
+                </select>
+            </div>
+        </div>
+        <div class="two-column-content">
+            <div class="cluster">
+                <p class="sub-title">Department</p>
+                <input type="text" name="employee-code" placeholder="Employee Code" class="full"/>
+                <select id="department" name="department" class="full">
+                    <option value="18">None</option>
+                    <option value="0">Special Projects</option>
+                    <option value="1">Internal Auditing</option>
+                    <option value="2">Tax Matters</option>
+                    <option value="3">Paralegal</option>
+                    <option value="4">Human Resources</option>
+                    <option value="5">Social/Environment</option>
+                    <option value="6">General Service</option>
+                    <option value="7">IT</option>
+                    <option value="8">Security</option>
+                    <option value="9">Sales & Marketing</option>
+                    <option value="10">Quality Assurance</option>
+                    <option value="11">Shipping</option>
+                    <option value="12">Research & Development</option>
+                    <option value="13">Production Planning</option>
+                    <option value="14">Production Furniture & Accessory</option>
+                    <option value="15">Logistics</option>
+                    <option value="16">Accounting</option>
+                    <option value="17">Finance</option>
+                </select>
+                <input type="text" name="employee-position" placeholder="Position" class="full"/>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Date of Hire</p>
+                <select id="month" name="month" class="full">
+                    <option value="-1" disabled="">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="day" class="full">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="year" class="full">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
+        </div>
+        <hr/>
+        <p class="sub-title">Employee History</p>
+        <div id="employee-history">
+            <button class="hallow add-button" onclick="event.preventDefault();addEH()">
+                <img src="@Url.Content("~/Content/assets/icons/add.svg")"/>
+                Add History
+            </button>
+        </div>
+        <hr/>
+        <p class="sub-title">Personal Details</p>
+        <div class="two-column-content">
+            <div class="cluster">
+                <input type="text" name="firstname" placeholder="First Name" class="full" />
+                <input type="text" name="lastname" placeholder="Last Name" class="full" />
+                <input type="text" name="middlename" placeholder="Middle Name" class="full" />
+                <select name="sex" class="full">
+                    <option value="-1">-- Select Sex --</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                </select>
+                <select name="civil-status" class="full">
+                    <option value="-1">-- Select Civil Status --</option>
+                    <option value="2">Single</option>
+                    <option value="1">Married</option>
+                    <option value="5">Widowed</option>
+                    <option value="4">Separated</option>
+                    <option value="4">Divorced</option>
+                </select>
+                <p class="sub-title">Birthdate</p>
+                <select id="month" name="birth-month" class="full">
+                    <option value="-1" disabled="">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="birth-day" class="full">
+                    <option value="-1" disabled="">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="birth-year" class="full">
+                    <option value="-1" disabled="">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+                
+                <p class="sub-title">Address</p>
+
+                <input type="text" name="house" placeholder="House Number" class="full" />
+                <input type="text" name="street" placeholder="Street" class="full" />
+                <input type="text" name="city" placeholder="City" class="full" />
+                <input type="text" name="province" placeholder="Province" class="full" />
+            </div>
+            <div class="cluster">
+
+                <input type="text" name="contact-number" placeholder="Contact Number" class="full"/>
+
+                <p class="sub-title">In case of emergency</p>
+                <input type="text" name="contact-person" placeholder="Contact Person" class="full"/>
+                <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full"/>
+                <input type="text" name="relationship" placeholder="Relationship" class="full"/>
+            </div>
+        </div>
+        <hr/>
+        <div class="two-column-content">
+            <div class="cluster">
+                <p class="sub-title">Elementary</p>
+                <input type="text" name="elementary-name" placeholder="School Name" class="full" />
+                <input type="text" name="elementary-address" placeholder="Address" class="full" />
+                <div>
+                    <select id="year" name="elementary-start-year" class="full">
+                        <option value="-1">-- Start Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="year" name="elementary-end-year" class="full">
+                        <option value="-1">-- End Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                </div>
+
+                <p class="sub-title">High School</p>
+                <input type="text" name="hs-name" placeholder="School Name" class="full" />
+                <input type="text" name="hs-address" placeholder="Address" class="full" />
+                <div>
+                    <select id="year" name="hs-start-year" class="full">
+                        <option value="-1">-- Start Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="year" name="hs-end-year" class="full">
+                        <option value="-1">-- End Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                </div>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">College</p>
+                <input type="text" name="college-name" placeholder="School Name" class="full" />
+                <input type="text" name="college-address" placeholder="Address" class="full" />
+                <div>
+                    <select id="year" name="college-start-year" class="full">
+                        <option value="-1">-- Start Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="year" name="college-end-year" class="full">
+                        <option value="-1">-- End Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                </div>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Post Graduate</p>
+                <input type="text" name="post-name" placeholder="School Name" class="full" />
+                <input type="text" name="post-address" placeholder="Address" class="full" />
+                <div>
+                    <select id="year" name="post-start-year" class="full">
+                        <option value="-1">-- Start Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="year" name="post-end-year" class="full">
+                        <option value="-1">-- End Year --</option>
+                        <!-- JS generated -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="full">Add New Employee</button>
+        <div class="alert"></div>
+    </form>
+   
+    <script>
+        $("form").on("submit", (e) => {
+            e.preventDefault();
+            var form = new FormData();
+            form.append("history", getEmploymentHistory());
+            form.append("education", getEducation());
+
+            form.append("username", $("input[name=username]").val());
+            form.append("password", $("input[name=password]").val());
+            form.append("type", $("select[name=account-type]").val());
+            form.append("email", $("input[name=email]").val());
+
+            form.append("code", $("input[name=employee-code]").val());
+            form.append("department", $("select[name=department]").val());
+            form.append("position", $("input[name=employee-position]").val());
+            form.append("hyear", $("select[name=year]").val());
+            form.append("hmonth", $("select[name=month]").val());
+            form.append("hday", $("select[name=day]").val());
+
+            form.append("firstname", $("input[name=firstname]").val());
+            form.append("middlename", $("input[name=middlename]").val());
+            form.append("lastname", $("input[name=lastname]").val());
+            form.append("sex", $("select[name=sex]").val());
+            form.append("status", $("select[name=civil-status]").val());
+            form.append("byear", $("select[name=birth-year]").val());
+            form.append("bmonth", $("select[name=birth-month]").val());
+            form.append("bday", $("select[name=birth-day]").val());
+
+            form.append("house", $("input[name=house]").val());
+            form.append("street", $("input[name=street]").val());
+            form.append("city", $("input[name=city]").val());
+            form.append("province", $("input[name=province]").val());
+
+            form.append("contact", $("input[name=contact-number]").val());
+            form.append("emergency-name", $("input[name=contact-person]").val());
+            form.append("emergency-number", $("input[name=contact-number-emergency]").val());
+            form.append("emergency-rel", $("input[name=relationship]").val());
+
+            $.ajax({
+                url: "/Employee/Create",
+                method: "POST",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    console.log(data);
+                }
+            })
+        });
+
+        function addEH() {
+            var container = $("<div class='two-column-content' data-container='employee-history'></div>");
+            var left = $("<div class='cluster'></div>");
+            var right = $("<div class='cluster'></div>");
+
+            var company = $("<input type='text' name='company' placeholder='Company' class='full'/>");
+            var address = $("<input type='text' name='address' placeholder='Address' class='full'/>");
+            var position = $("<input type='text' name='position' placeholder='Position' class='full'/>");
+            var cperson = $("<input type='text' name='cperson' placeholder='Contact Person' class='full'/>");
+            var number = $("<input type='phone' name='number' placeholder='Contact Number' class='full'/>");
+            var leave = $('<textarea placeholder="Reason for leaving" name="leave" class="full"></textarea>');
+
+            left.append(company);
+            left.append(address);
+            left.append(position);
+            left.append(cperson);
+            left.append(number);
+
+            var start = $("<select name='start' class='full'></select>");
+            var end = $("<select name='end' class='full'></select>");
+
+            start.append("<option selected disabled> -- Start Year -- </option>");
+            end.append("<option selected disabled> -- End Year -- </option>");
+
+            for (var i =  @DateTime.Now.Year; i >= 1960; i--) {
+                start.append('<option value="' + i + '">' + i + '</option>');
+                end.append('<option value="' + i + '">' + i + '</option>');
+            }
+
+            right.append(start);
+            right.append(end);
+            right.append(leave);
+
+            container.append(left);
+            container.append(right);
+
+            $("#employee-history").append("<br/>");
+            $("#employee-history").append(container);
+        }
+
+        function getEmploymentHistory() {
+            var json = [];
+            $("div[data-container='employee-history']").each((o, i) => {
+                var company = $(i).find("input[name='company']").val();
+                var address = $(i).find("input[name='address']").val();
+                var position = $(i).find("input[name='position']").val();
+                var cperson = $(i).find("input[name='cperson']").val();
+                var number = $(i).find("input[name='number']").val();
+                var leave = $(i).find("textarea[name='leave']").val();
+
+                var start = $(i).find("select[name='start']").val();
+                var end = $(i).find("select[name='end']").val();
+
+                if (company.length > 0 &&
+                    address.length > 0 &&
+                    position.length > 0 &&
+                    cperson.length > 0 &&
+                    number.length > 0) {
+                    json.push({
+                        company,
+                        address,
+                        position,
+                        cperson,
+                        number,
+                        start,
+                        end,
+                        leave
+                    });
+                }
+            });
+
+            return JSON.stringify(json);
+        }
+
+        function getEducation() {
+            var elementaryName = $("input[name=elementary-name]").val();
+            var elementaryAddress = $("input[name=elementary-address]").val();
+            var hsName = $("input[name=hs-name]").val();
+            var hsAddress = $("input[name=hs-address]").val();
+            var collegeName = $("input[name=college-name]").val();
+            var collegeAddress = $("input[name=college-address]").val();
+            var postName = $("input[name=post-name]").val();
+            var postAddress = $("input[name=post-address]").val();
+
+            var json = {};
+
+            if (elementaryName.length > 0 && elementaryAddress.length > 0)
+                json["elementary"] = {
+                    "name": elementaryName,
+                    "address": elementaryAddress,
+                    "start": $("select[name=elementary-start-year]").val(),
+                    "end": $("select[name=elementary-end-year").val()
+                };
+
+            if (hsName.length > 0 && hsAddress.length > 0)
+                json["hs"] = {
+                    "name": hsName,
+                    "address": hsAddress,
+                    "start": $("select[name=hs-start-year]").val(),
+                    "end": $("select[name=hs-end-year").val()
+                };
+
+            if (collegeName.length > 0 && collegeAddress.length > 0)
+                json["college"] = {
+                    "name": collegeName,
+                    "address": collegeAddress,
+                    "start": $("select[name=college-start-year]").val(),
+                    "end": $("select[name=college-end-year").val()
+                };
+
+            if (postName.length > 0 && postAddress.length > 0)
+                json["post"] = {
+                    "name": postName,
+                    "address": postAddress,
+                    "start": $("select[name=post-start-year]").val(),
+                    "end": $("select[name=post-end-year").val()
+                };
+            return JSON.stringify(json);
+        }
+    </script>
+}

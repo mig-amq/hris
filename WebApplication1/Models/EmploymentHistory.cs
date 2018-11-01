@@ -16,8 +16,8 @@ namespace WebApplication1.Models
         public string CompanyName { get; set; }
         public string Address { get; set; }
         public string Position { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public string LeavingReason { get; set; }
         public string ContactName { get; set; }
         public string ContactNo { get; set; }
@@ -44,8 +44,8 @@ namespace WebApplication1.Models
                 this.CompanyName = row["CompanyName"].ToString();
                 this.Address = row["Address"].ToString();
                 this.Position = row["Position"].ToString();
-                this.StartDate = DateTime.Parse(row["StartDate"].ToString());
-                this.EndDate = DateTime.Parse(row["EndDate"].ToString());
+                this.StartDate = row["StartDate"].ToString();
+                this.EndDate = row["EndDate"].ToString();
                 this.LeavingReason = row["LeavingReason"].ToString();
                 this.ContactName = row["ContactName"].ToString();
                 this.ContactNo = row["ContactNo"].ToString();
@@ -67,8 +67,8 @@ namespace WebApplication1.Models
                     emp.CompanyName = row["CompanyName"].ToString();
                     emp.Address = row["Address"].ToString();
                     emp.Position = row["Position"].ToString();
-                    emp.StartDate = DateTime.Parse(row["StartDate"].ToString());
-                    emp.EndDate = DateTime.Parse(row["EndDate"].ToString());
+                    emp.StartDate = row["StartDate"].ToString();
+                    emp.EndDate = row["EndDate"].ToString();
                     emp.LeavingReason = row["LeavingReason"].ToString();
                     emp.ContactName = row["ContactName"].ToString();
                     emp.ContactNo = row["ContactNo"].ToString();
@@ -82,10 +82,10 @@ namespace WebApplication1.Models
         }
         public EmploymentHistory Create(int ProfileID)
         {
-            string columns = "INSERT EmploymentHistory(Profile, CompanyName, "
+            string columns = "INSERT INTO EmploymentHistory(Profile, CompanyName, "
                              + "Address, Position, StartDate, EndDate, LeavingReason, "
                              + "ContactName, ContactNo) OUTPUT INSERTED.EmploymentHistoryID";
-            string values = "VALUES(@Profile, @CompanyName, @Address, @Position, "
+            string values = " VALUES(@Profile, @CompanyName, @Address, @Position, "
                             + "@StartDate, @EndDate, @LeavingReason, @ContactName, @ContactNo)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
@@ -93,10 +93,11 @@ namespace WebApplication1.Models
             param.Add("@CompanyName", this.CompanyName);
             param.Add("@Address", this.Address);
             param.Add("@Position", this.Position);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate);
+            param.Add("@EndDate", this.EndDate);
             param.Add("@ContactName", this.ContactName);
             param.Add("@ContactNo", this.ContactNo);
+            param.Add("@LeavingReason", this.LeavingReason);
 
             this.EmploymentHistoryID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -113,15 +114,15 @@ namespace WebApplication1.Models
                          + "Address = @Address AND Position = @Position AND "
                          + "StartDate = @StartDate AND EndDate = @EndDate AND "
                          + "LeavingReason = @LeavingReason AND ContactName = @ContactName AND "
-                         + "ContactNo = @ContactNo WHERE " 
+                         + "ContactNo = @ContactNo WHERE "
                          + (byProfile ? "Profile" : "EmploymentHistoryID") + "=" + EmploymentHistoryID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@CompanyName", this.CompanyName);
             param.Add("@Address", this.Address);
             param.Add("@Position", this.Position);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate);
+            param.Add("@EndDate", this.EndDate);
             param.Add("@LeavingReason", this.LeavingReason);
             param.Add("@ContactName", this.ContactName);
             param.Add("@ContactNo", this.ContactNo);

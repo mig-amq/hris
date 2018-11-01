@@ -17,6 +17,15 @@ button{
 	-moz-transition: all 0.3s ease;
 }
 
+button:disabled {
+    opacity: 0.8;
+    cursor: default;
+}
+
+button.full{
+	width: 100%;
+}
+
 button:hover{
 	border: thin solid var(--theme-dark-accent);
 	background-color: var(--theme-dark-accent);

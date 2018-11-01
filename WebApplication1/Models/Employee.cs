@@ -20,15 +20,14 @@ namespace WebApplication1.Models
         public DateTime DateInactive { get; set; }
         public StatusType Status { get; set; }
         public Department Department { get; set; }
-        public Branch Branch { get; set; }
         public string Code { get; set; }
         public string Position { get; set; }
 
         public Employee()
         {}
 
-        public Employee(int ProfileID)
-            : base(ProfileID)
+        public Employee(int ProfileID, bool byPrimary = false)
+            : base(ProfileID, byPrimary = false)
         {}
 
         public override ProfiledObject FindProfile(int TableID, bool recursive = true, bool byPrimary = false)
@@ -54,20 +53,11 @@ namespace WebApplication1.Models
                     this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
                     try
                     {
-                        this.Department = new Department(Int32.Parse(row["Department"].ToString()), recursive:false);
+                        this.Department = new Department(Int32.Parse(row["Department"].ToString()), recursive:true);
                     }
                     catch (Exception e)
                     {
                         this.Department = null;
-                    }
-
-                    try
-                    {
-                        this.Branch = new Branch(Int32.Parse(row["Branch"].ToString()), recursive: false);
-                    }
-                    catch (Exception e)
-                    {
-                        this.Branch = null;
                     }
                 }
             }
@@ -75,36 +65,38 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Employee Create(int DepartmentID)
+        public Employee Create(int DepartmentID = -1, bool recursive = false)
         {
-            if (this.Profile != null)
+            if (this.Profile != null && recursive)
             {
                 this.Profile.Create();
-                this.Department = new Department();
-                this.Department.Find(DepartmentID);
-
-                string columns = "INSERT INTO [dbo].[Employee](Profile, Department, EmploymentDate, DateInactive, Status, Code, Position)";
-                string values = "OUTPUT INSERTED.EmployeeID VALUES(@Profile, @Department, @EmploymentDate, @DateInactive, @Status, @Code, @Position)";
-                Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
-
-                param.Add("@Profile", this.Profile.ProfileID);
-                param.Add("@Department", this.Department.DepartmentID);
-                param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
-                param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
-                if (this.Department == null)
-                    param.Add("@Department", null);
-                else 
-                    param.Add("@Department", this.Department.DepartmentID);
-                param.Add("@Status", (int)this.Status);
-                param.Add("@Code", Code);
-                param.Add("@Position", Position);
-                if (this.Branch == null)
-                    param.Add("@Branch", null);
-                else
-                    param.Add("@Branch", this.Branch.BranchID);
-
-                this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             }
+
+            this.Department = new Department();
+            if (DepartmentID != -1)
+            {
+                this.Department.Find(DepartmentID, byPrimary: false);
+            }
+            else
+            {
+                this.Department.Find((int)DepartmentType.None, false, false);
+            }
+
+            string columns = "INSERT INTO [dbo].[Employee](Profile, Department, EmploymentDate, DateInactive, Status, Code, Position)";
+            string values = "OUTPUT INSERTED.EmployeeID VALUES(@Profile, @Department, @EmploymentDate, @DateInactive, @Status, @Code, @Position)";
+            Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+
+            if (this.Profile != null)
+                param.Add("@Profile", this.Profile.ProfileID);
+
+            param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
+            param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
+            param.Add("@Department", this.Department.DepartmentID);
+            param.Add("@Status", (int)this.Status);
+            param.Add("@Code", Code);
+            param.Add("@Position", Position);
+
+            this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
 
             return this;
         }
@@ -122,7 +114,8 @@ namespace WebApplication1.Models
             }
 
             string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate, "
-                         + "DateInactive = @DateInactive, Status = @Status, Department = @Department OUTPUT INSERTED.EmployeeID WHERE EmployeeID = " + EmployeeID;
+                         + "DateInactive = @DateInactive, Status = @Status, Department = @Department, Position = @Position"
+                         + " OUTPUT INSERTED.EmployeeID WHERE EmployeeID = " + EmployeeID;
 
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
@@ -141,10 +134,12 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Employee Delete()
+        public Employee Delete(bool recursive = false)
         {
             this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM Employee WHERE EmployeeID = " + this.EmployeeID);
-            this.Profile.Delete();
+
+            if (recursive)
+                this.Profile.Delete();
             return this;
         }
     }

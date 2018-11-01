@@ -1,0 +1,218 @@
+﻿@using WebApplication1.Models
+@{
+    ViewBag.Title = "Job Postings";
+    ViewBag.Active = "JP";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null)
+{
+    if (Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+    {
+        <div id="modal">
+            <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close"/>
+            <div id="modal-form">
+                <div class="modal-content">
+                    <h2 class="title">Post a New Job</h2>
+                    <form data-action="add">
+                        <div class="cluster">
+                            <p class="sub-title">Details</p>
+                            <input type="text" placeholder="Job Title" name="job-title" autofocus />
+                            <textarea placeholder="Job Description" name="job-desc"></textarea>
+                            <textarea placeholder="Requirements" name="job-req"></textarea>
+                        </div>
+                        <div class="cluster">
+                            <p class="sub-title">Date Posted</p>
+                            <select id="month" name="month">
+                                <option value="-1">-- Select month --</option>
+                                <!-- JS generated -->
+                            </select>
+                            <select id="day" name="day">
+                                <option value="-1">-- Select day --</option>
+                                <!-- JS generated -->
+                            </select>
+                            <select id="year" name="year">
+                                <option value="-1">-- Select year --</option>
+                                <!-- JS generated -->
+                            </select>
+                        </div>
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Job Posting</h1>
+            @if (Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            {
+                <button class="hallow modal-trigger" data-id="0" onclick="$('#modal-form').attr('data-action', 'add');">
+                    <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
+                    Add New
+                </button>
+            }
+        </div>
+        <input type="text" placeholder="Search Job Posting..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)"  />
+    </div>
+    <br />
+    <table>
+        <thead>
+            <tr id="heading-row">
+                <th>No.</th>
+                <th>Job Title</th>
+                <th>Requirements</th>
+                <th>Date Posted</th>
+            </tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+    <div id="result-summary">
+        <div>
+            <button class="footer-button">Generate Report</button>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+    {
+        <script>
+            $(document).on('submit', "#modal-form[data-action=add] form", (e) => {
+                e.preventDefault();
+                var form = new FormData($("#modal-form form")[0]);
+
+                $.ajax({
+                    url: "/Recruitment/Create",
+                    method: "POST",
+                    data: form,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    success: (data) => {
+                        if (!data.error) {
+                            $("#modal").hide();
+                            search(curr + 1);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', "#modal-form[data-action=edit] form", (e) => {
+                e.preventDefault();
+        
+                var form = new FormData($("form")[0]);
+                form.append("ID", $("#modal-form[data-action=edit]").attr("data-id"));
+
+                $.ajax({
+                    url: "/Recruitment/Update",
+                    method: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: (data) => {
+                        if (!data.error) {
+                            $("#modal").hide();
+                        }
+                    }
+                })
+            });
+            
+            function load(n) {
+                $.ajax({
+                    url: "/Recruitment/GetJob",
+                    method: "GET",
+                    data: {
+                        'id': n
+                    },
+                    success: (data) => {
+                        $("#modal-form").attr('data-id', n);
+                        var dt = new Date(data.jobs.DatePosted);
+                    
+                        $("form input[name=job-title]").val(data.jobs.JobTitle);
+                        $("form textarea[name=job-desc]").val(data.jobs.JobDescription);
+                        $("form textarea[name=job-req]").val(data.jobs.Requirements);
+                        $("form select[name=day]").val(dt.getDate());
+                        $("form select[name=month]").val(dt.getMonth());
+                        $("form select[name=year]").val(dt.getFullYear());
+                    }
+                })
+            }
+        </script>
+    }
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(1);
+        })
+
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/Recruitment/GetJobs",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                    'query': $("#search").val().trim().replace(/\s+/, " "),
+                },
+                method: "GET",
+                success: (data) => {
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.jobs.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+                    data.jobs.forEach((o, i, a) => {
+                        console.log(o);
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>").text(o.PostingID);
+                        let title = $("<td></td>").text(o.JobTitle);
+                        let req = $("<td></td>").text(o.Requirements);
+                        let date = $("<td></td>").text(new Date(o.DatePosted).toLocaleDateString());
+
+                        @if (Account != null && Account.Type == AccountType.DepartmentHead &&
+                                ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                        {
+                            <text>
+                                let btn = $("<td><button class='hallow modal-trigger' data-id='" + o.PostingID + "'>Edit</button></td>");
+                                btn.click(() => { $('#modal-form').attr('data-action', 'edit'); load(o.PostingID); })
+                            </text>
+                        }
+                        else
+                        {
+                            @:let btn = $("<td></td>");
+                        }
+
+                        row.append(id);
+                        row.append(title);
+                        row.append(req);
+                        row.append(date);
+                        row.append(btn);
+                        $("#data").append(row);
+                    });
+                }
+            })
+        }
+    </script>
+}
