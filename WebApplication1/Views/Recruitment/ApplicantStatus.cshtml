@@ -11,7 +11,7 @@
         <h1 id="section-title">Application Status</h1>
         <span>
             Show
-            <select id="entries">
+            <select id="show-entries" onchange="search(curr)">
                 <!-- JAVASCRIPT GENERATED -->
             </select>
             Entries
@@ -36,8 +36,6 @@
     </tbody>
 </table>
 
-@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
-{
     <div id="result-summary">
         <div>
             <button class="footer-button">Generate Report</button>
@@ -48,7 +46,8 @@
         </div>
     </div>
 
-    <script>
+@if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources) {
+<script>
         var curr = 1;
         $(document).ready(() => {
             search(1);

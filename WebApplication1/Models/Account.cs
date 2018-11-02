@@ -139,7 +139,7 @@ namespace WebApplication1.Models
                 }
                 else if (DepartmentID != -1)
                 {
-                    ((Employee)this.Profile).Create(DepartmentID);
+                    ((Employee)this.Profile).Create(DepartmentID, recursive);
                 }
                 else
                 {

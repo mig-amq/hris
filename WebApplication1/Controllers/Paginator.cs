@@ -35,6 +35,10 @@ namespace WebApplication1.Controllers
                 if (dt.Rows.Count > 0)
                 {
                     int pages = Int32.Parse(dt.Rows[0].ItemArray[0].ToString());
+
+                    if (this.Entries <= 0)
+                        this.Entries = 1;
+
                     this.Pages = (pages + this.Entries - 1) / this.Entries; // calculate # of pages
                     this.Total = Int32.Parse(dt.Rows[0].ItemArray[0].ToString());
 

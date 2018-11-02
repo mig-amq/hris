@@ -9,7 +9,7 @@ namespace WebApplication1.Models
 
     public enum LeaveStatus
     {
-        Requested = 1,
+        Pending = 1,
         Approved = 2,
         Denied = 3
     }
@@ -23,7 +23,6 @@ namespace WebApplication1.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Reason { get; set; }
-        public string Type { get; set; }
         public LeaveStatus Status { get; set; }
 
         public Leave(int LeaveID = -1)
@@ -48,7 +47,6 @@ namespace WebApplication1.Models
                 this.StartDate = DateTime.Parse(row["StartDate"].ToString());
                 this.EndDate = DateTime.Parse(row["EndDate"].ToString());
                 this.Reason = row["Reason"].ToString();
-                this.Type = row["Type"].ToString();
                 this.LeaveID = LeaveID;
                 this.Status = (LeaveStatus)Int32.Parse(row["Status"].ToString());
 
@@ -63,15 +61,14 @@ namespace WebApplication1.Models
 
         public Leave Create()
         {
-            string columns = "INSERT INTO Leave(Employee, StartDate, EndDate, Reason, Type, Status) OUPUT INSERTED.LeaveID ";
-            string values = " Values(@Employee, @StartDate, @EndDate, @Reason, @Type, @LeaveStatus)";
+            string columns = "INSERT INTO Leave(Employee, StartDate, EndDate, Reason, Status) OUTPUT INSERTED.LeaveID ";
+            string values = " Values(@Employee, @StartDate, @EndDate, @Reason, @LeaveStatus)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@Employee", this.Employee.EmployeeID);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate.ToString("yyyy-MM-dd"));
+            param.Add("@EndDate", this.EndDate.ToString("yyyy-MM-dd"));
             param.Add("@Reason", this.Reason);
-            param.Add("@Type", this.Type);
             param.Add("@LeaveStatus", (int) this.Status);
             this.LeaveID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -84,16 +81,15 @@ namespace WebApplication1.Models
 
         public Leave Update(int LeaveID, bool recursive = true)
         {
-            string set = "UPDATE Leave SET Employee = @Employee AND "
-                         + "StartDate = @StartDate AND EndDate = @EndDate AND "
-                         + "Reason = @Reason AND Type = @Type Status = @LeaveStatus WHERE LeaveID = " + LeaveID;
+            string set = "UPDATE Leave SET Employee = @Employee, "
+                         + "StartDate = @StartDate, EndDate = @EndDate, "
+                         + "Reason = @Reason, Status = @LeaveStatus OUTPUT INSERTED.LeaveID WHERE LeaveID = " + LeaveID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@Employee", this.Employee.EmployeeID);
-            param.Add("@StartDate", this.StartDate.ToShortDateString());
-            param.Add("@EndDate", this.EndDate.ToShortDateString());
+            param.Add("@StartDate", this.StartDate.ToString("yyyy-MM-dd"));
+            param.Add("@EndDate", this.EndDate.ToString("yyyy-MM-dd"));
             param.Add("@Reason", this.Reason);
-            param.Add("@Type", this.Type);
             param.Add("@LeaveStatus", (int)this.Status);
 
             this.DBHandler.Execute<Int32>(CRUD.CREATE, set, param);

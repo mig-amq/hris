@@ -1,0 +1,179 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "Leave Application";
+    ViewBag.Active = "LAP";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null)
+{
+    <div id="modal">
+        <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+        <div id="modal-form">
+            <div class="modal-content">
+                <h2 class="title">Apply for Leave</h2>
+                <form>
+                    <div class="cluster">
+                        <p class="sub-title">Start Date</p>
+                        <select id="month" name="start-month" class="full">
+                            <option value="-1">-- Select month --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="day" name="start-day" class="full">
+                            <option value="-1">-- Select day --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="year" name="start-year" class="full">
+                            <option value="-1">-- Select year --</option>
+                            <!-- JS generated -->
+                        </select>
+                    </div>
+                    <div class="cluster">
+                        <p class="sub-title">End Date</p>
+                        <select id="month" name="end-month" class="full">
+                            <option value="-1">-- Select month --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="day" name="end-day" class="full">
+                            <option value="-1">-- Select day --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="year" name="end-year" class="full">
+                            <option value="-1">-- Select year --</option>
+                            <!-- JS generated -->
+                        </select>
+                    </div>
+
+                    <textarea name="reason" placeholder="Reason/s"></textarea>
+                    <button type="submit" class="full">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Leave Application</h1>
+            <button class="hallow modal-trigger" data-id="0">
+                <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
+                Apply for Leave
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <span>
+                Show
+                <select id="show-entries" onchange="search(curr)">
+                    <!-- JAVASCRIPT GENERATED -->
+                </select>
+                Entries
+            </span>
+        </div>
+    </div>
+    <br />
+    <table>
+        <thead>
+            <tr id="heading-row">
+                <th>No.</th>
+                <th>Duration</th>
+                <th>Reason/s</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
+    </table>
+    <div id="result-summary">
+        <div>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(1);
+        })
+
+        $("form").on("submit", (e) => {
+            e.preventDefault();
+            var form = new FormData($("form")[0]);
+
+            $.ajax({
+                url: "/Leave/Create",
+                method: "POST",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    if (!data.error) {
+                        search(curr + 1);
+                        $("#modal").hide();
+                    }
+                }
+            });
+        })
+
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/Leave/Applications",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                    'personal': true,
+                },
+                method: "GET",
+                success: (data) => {
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.leaves.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+
+                    data.leaves.forEach((o, i, a) => {
+                        let s = new Date(o.StartDate);
+                        let e = new Date(o.EndDate);
+
+                        let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear() + " - "
+                            + (e.getMonth() + 1) + "/" + (e.getDate()) + "/" + e.getFullYear();
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>");
+                        let dur = $("<td></td>");
+                        let rea = $("<td></td>");
+                        let sta = $("<td></td>");
+
+                        id.text(o.LeaveID);
+                        rea.text(o.Reason);
+                        dur.text(schedule);
+                        sta.text(o.Status == 1 ? "Pending" : o.Status == 2 ? "Approved" : "Rejected");
+
+                        row.append(id);
+                        row.append(rea);
+                        row.append(dur);
+                        row.append(sta);
+                        $("#data").append(row);
+                    })
+                }
+            })
+        }
+    </script>
+}

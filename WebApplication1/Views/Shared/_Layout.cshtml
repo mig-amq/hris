@@ -9,21 +9,14 @@
         Account = new Account().FindById(Int32.Parse(Request.Cookies["userCookie"].ToString()));
         Session["user"] = Account;
     }
-
-    if (Account == null)
-    {
-        Response.Redirect("~/Home/Index");
-    }
 }
-
-@if (Account != null)
-{
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Calfurn - @ViewBag.Title</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700" />
+
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/css/element-framework/theme.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/css/element-framework/button.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/css/element-framework/field.css")" />
@@ -46,137 +39,180 @@
         </div>
     </div>
     <ul>
-        <ul>
-            <a href="/Recruitment"><li class="@(ViewBag.Active == "NOTIF" ? "active" : "")">Notifications</li></a>
-        </ul>
-        @if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP)
+
+        @if (Account == null)
         {
             <div class="cluster">
                 <h6 class="cluster-label">Recruitment</h6>
                 <ul>
                     <a href="/Recruitment"><li class="@(ViewBag.Active == "JP" ? "active" : "")">Job Posting</li></a>
-                    <a href="/Recruitment/ApplicantStatus"><li class="@(ViewBag.Active == "AS" ? "active" : "")">Application Status</li></a>
                 </ul>
             </div>
             <hr/>
+            <div class="cluster">
+                  <h6 class="cluster-label">Account</h6>
+                  <ul>
+                      <a href="/Home"><li>Log In</li></a>
+                      <a href="/Home/Signup"><li class="@(ViewBag.Active == "SIGN" ? "active" : "")">Sign Up</li></a>
+                  </ul>
+              </div>
         }
 
-        @if (Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+        @if (Account != null)
         {
-            <div class="cluster">
-                <h6 class="cluster-label">Employment</h6>
-                <ul>
-                    <a href="/Employee/Add">
-                        @if (ViewBag.Active == "EAdd")
-                        {
-                            <li class="active">Add Employee</li>
-                        }
-                        else
-                        {
-                            <li>Add Employee</li>
-                        }
-                    </a>
-                    <a href="/Employee/List">
-                        @if (ViewBag.Active == "EList")
-                        {
-                            <li class="active">Employee List</li>
-                        }
-                        else
-                        {
-                            <li>Employee List</li>
-                        }
-                    </a>
-                </ul>
-            </div>
-            <hr/>
-        }
-        @if (Account.Type == AccountType.Employee)
-        {
-            <div class="cluster">
-                <h6 class="cluster-label">Attendance</h6>
-                <ul>
-                    <a href="attendance-details.html"><li>Attendance Details</li></a>
-                </ul>
-            </div>
-        }
-        <hr/>
-        @if (Account.Type == AccountType.Employee)
-        {
-            <div class="cluster">
-                <h6 class="cluster-label">Leave</h6>
-                <ul>
-                    <a href="leave-approval.html"><li>Leave Approval</li></a>
-                </ul>
-            </div>
-            <hr/>
-        }
-        <div class="cluster">
-            <h6 class="cluster-label">Evaluation</h6>
             <ul>
-                @if (Account.Type == AccountType.CEO || Account.Type == AccountType.VP)
-                {
-                    <a href="apprisal.html"><li>Supervisory</li></a>
-                }
-                @if (Account.Type == AccountType.DepartmentHead)
-                {
-                    <a href="apprisal.html"><li>Non-Supervisory</li></a>
-                }
-                @if (Account.Type == AccountType.Employee)
-                {
-                    <a href="employee-evaluation.html"><li>Employee Evaluation</li></a>
-                }
+                <a href="/Recruitment"><li class="@(ViewBag.Active == "NOTIF" ? "active" : "")">Notifications</li></a>
             </ul>
-        </div>
-        @if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP)
-        {
-            <hr/>
-            <div class="cluster">
-                <h6 class="cluster-label">Training</h6>
-                <ul>
-                    @if (Account.Type == AccountType.DepartmentHead)
-                    {
-                        if (ViewBag.Active == "Training")
-                        {
-                            <a href="/Training"><li class="active">Training Programs</li></a>
-                        }
-                        else
-                        {
-                            <a href="/Training"><li>Training Programs</li></a>
-                        }
-                        <a href="assigned-trainings.html"><li>Employees with Assigned Trainings</li></a>
-                    }
+            if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP)
+            {
+                <div class="cluster">
+                    <h6 class="cluster-label">Recruitment</h6>
+                    <ul>
+                        <a href="/Recruitment"><li class="@(ViewBag.Active == "JP" ? "active" : "")">Job Posting</li></a>
+                        <a href="/Recruitment/ApplicantStatus"><li class="@(ViewBag.Active == "AS" ? "active" : "")">Application Status</li></a>
+                    </ul>
+                </div>
+            }
 
-                </ul>
-            </div>
+            if (Account.Type == AccountType.DepartmentHead || Account.Type == AccountType.Employee && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Employment</h6>
+                    <ul>
+                        <a href="/Employee/Add">
+                            @if (ViewBag.Active == "EAdd")
+                            {
+                                <li class="active">Add Employee</li>
+                            }
+                            else
+                            {
+                                <li>Add Employee</li>
+                            }
+                        </a>
+                        <a href="/Employee/List">
+                            @if (ViewBag.Active == "EList")
+                            {
+                                <li class="active">Employee List</li>
+                            }
+                            else
+                            {
+                                <li>Employee List</li>
+                            }
+                        </a>
+                    </ul>
+                </div>
+            }
+            if (Account.Type == AccountType.Employee || Account.Type == AccountType.DepartmentHead)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Attendance</h6>
+                    <ul>
+                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance Details</li></a>
+                    </ul>
+                </div>
+            }
+            if (Account.Type != AccountType.VP && Account.Type != AccountType.CEO && Account.Type != AccountType.Applicant)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Leave</h6>
+                    <ul>
+                        @if (Account.Type == AccountType.DepartmentHead || Account.Type == AccountType.Employee && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                        {
+                            <a href="/Leave/Approval"><li class="@(ViewBag.Active == "LEA" ? "active" : "")">Leave Approval</li></a>
+                        }
+
+                        @if (Account.Type == AccountType.Employee || Account.Type == AccountType.DepartmentHead)
+                        {
+                            <a href="/Leave/"><li class="@(ViewBag.Active == "LAP" ? "active" : "")">Leave Application</li></a>
+                        }
+                    </ul>
+                </div>
+            }
+            if (Account.Type != AccountType.Employee && Account.Type != AccountType.Applicant)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Evaluation</h6>
+                    <ul>
+                        @if (Account.Type == AccountType.CEO || Account.Type == AccountType.VP)
+                        {
+                            <a href="apprisal.html"><li>Supervisory</li></a>
+                        }
+                        @if (Account.Type == AccountType.DepartmentHead)
+                        {
+                            <a href="apprisal.html"><li>Non-Supervisory</li></a>
+                        }
+                    </ul>
+                </div>
+            }
+            if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP && Account.Type != AccountType.Applicant)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Training</h6>
+                    <ul>
+                        @if (Account.Type == AccountType.DepartmentHead)
+                        {
+                            if (ViewBag.Active == "Training")
+                            {
+                                <a href="/Training"><li class="active">Training Programs</li></a>
+                            }
+                            else
+                            {
+                                <a href="/Training"><li>Training Programs</li></a>
+                            }
+                        }
+                        <a href="/Training/Assigned"><li class="@(ViewBag.Active == "AT" ? "active" : "")">Assigned Trainings</li></a>
+
+                    </ul>
+                </div>
+            }
+
+            if (Account.Type == AccountType.DepartmentHead)
+            {
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">More</h6>
+                    <ul>
+                        <a href="/JobRequisition/List"><li class="@(ViewBag.Active == "REQLI" ? "active" : "")">View Requisitions</li></a>
+                        <a href="/JobRequisition"><li class="@(ViewBag.Active == "REQ" ? "active" : "")">Requisition Form</li></a>
+                    </ul>
+                </div>
+            }
         }
     </ul>
 </nav>
-<header>
-    <div id="account-wrapper">
-        <div id="profile-picture"></div>
-        <div>
-            <span id="profile-name">
-                @{
-                    ProfiledObject profile = Account.Profile;
-                }
-                @if (profile != null)
-                {
-                    @(profile.Profile.FirstName + " " + profile.Profile.LastName);
-                }
-            </span>
-            <span id="profile-email">@Account.Email</span>
+@if (Account != null)
+{
+    <header>
+        <div id="account-wrapper">
+            <div id="profile-picture"></div>
+            <div>
+                <span id="profile-name">
+                    @{
+                        ProfiledObject profile = Account.Profile;
+                    }
+                    @if (profile != null)
+                    {
+                        @(profile.Profile.FirstName + " " + profile.Profile.LastName);
+                    }
+                </span>
+                <span id="profile-email">@Account.Email</span>
+            </div>
+            <img src="@Url.Content("~/Content/assets/icons/arrow-down-2.svg")" id="profile-dropdown" />
         </div>
-        <img src="@Url.Content("~/Content/assets/icons/arrow-down-2.svg")" id="profile-dropdown" />
-    </div>
-    <div id="account-dropdown">
-        <ul>
-            <a href="/UserAccount/LogOut"><li>Logout</li></a>
-        </ul>
-    </div>
-</header>
+        <div id="account-dropdown">
+            <ul>
+                <a href="/UserAccount/LogOut"><li>Logout</li></a>
+            </ul>
+        </div>
+    </header>
+}
 <section>
     @RenderBody()
 </section>
 </body>
 </html>
-}

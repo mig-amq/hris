@@ -158,8 +158,8 @@ namespace WebApplication1.Models
             }
 
             values = values.Substring(0, values.Length - 1) + ")";
-            Debug.WriteLine(columns + values);
-            this.EducationID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
+            if (param.Keys.Count > 0)
+                this.EducationID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
         }
 

@@ -1,0 +1,183 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "Leave Approval";
+    ViewBag.Active = "LEA";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+{
+<div id="modal">
+    <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+    <div id="modal-form">
+        <h2 class="title">Request</h2>
+        <form data-id="-1">
+            <div class="cluster">
+                <p class="sub-title">Start Date</p>
+                <p id="start-date"></p>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">End Date</p>
+                <p id="end-date"></p>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Reason</p>
+                <p id="reason"></p>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Status</p>
+                <select name="leave-status">
+                    <option value="1">Pending</option>
+                    <option value="2">Approve</option>
+                    <option value="3">Reject</option>
+                </select>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Leave Approval</h1>
+            <span>
+                Show
+                <select id="show-entries">
+                    <!-- JAVASCRIPT GENERATED -->
+                </select>
+                Entries
+            </span>
+        </div>
+        <input type="text" placeholder="Search Leave Approval..." id="search" class="search" onkeypress="if(event.keyCode == 13) search(curr)"/>
+    </div>
+    <br/>
+    <table>
+        <thead>
+        <tr id="heading-row">
+            <th>No.</th>
+            <th>Code</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Position</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
+    </table>
+    <div id="result-summary">
+        <div>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(curr);
+        })
+
+        $("form").on("submit", (e) => {
+            e.preventDefault();
+            let id = $("form").attr('data-id');
+            let v = $("select[name=leave-status]").val();
+
+            console.log(id + " " + v);
+            $.ajax({
+                url: "/Leave/Update",
+                method: "POST",
+                data: {
+                    id,
+                    v
+                },
+                success: (data) => {
+                    if (!data.error) {
+                        search(curr);
+                        $("#modal").hide();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+        })
+        function load(o) {
+            $("form").attr('data-id', o.LeaveID);
+            var opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            let s = new Date(o.StartDate);
+            let e = new Date(o.EndDate);
+
+            $("#start-date").text(s.toLocaleDateString("en-EN", opt));
+            $("#end-date").text(e.toLocaleDateString("en-EN", opt));
+            $("#reason").text(o.Reason);
+            
+            $("select[name=leave-status]").val((o.Status >= 1 && o.Status <= 3) ? o.Status : 1);
+        }
+
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/Leave/Applications",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                    'query': $("#search").val().trim().replace(/\s+/, " "),
+                    'personal': false,
+                },
+                method: "GET",
+                success: (data) => {
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.leaves.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+
+                    data.leaves.forEach((o, i, a) => {
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>");
+                        let code = $("<td></td>");
+                        let emp = $("<td></td>");
+                        let dep = $("<td></td>");
+                        let pos = $("<td></td>");
+                        let sel = $("<td><button class='hallow modal-trigger'>View Request</button></td>");
+
+                        sel.find("button").on("click", (e) => load(o));
+
+                        id.text(o.LeaveID);
+                        code.text(o.Employee.Code);
+                        emp.text(o.Employee.Profile.FirstName + " " + o.Employee.Profile.MiddleName + " " + o.Employee.Profile.LastName);
+                        dep.text(o.Employee.Department.DepartmentName);
+                        pos.text(o.Employee.Position);
+
+                        row.append(id);
+                        row.append(code);
+                        row.append(emp);
+                        row.append(dep);
+                        row.append(pos);
+                        row.append(sel);
+                        $("#data").append(row);
+                    })
+                }
+            })
+        }
+    </script>
+}

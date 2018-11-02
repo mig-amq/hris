@@ -25,3 +25,21 @@ textarea{
 input:focus, textarea:focus{
 	border: thin solid var(--theme-color);
 }
+
+
+div.radio-inline{
+    display: flex;
+    margin: 1.8em 0;
+    justify-content: space-evenly;
+}
+
+div.radio-inline label{
+    display: flex;
+    margin-right: 1.5em;
+    flex-direction: column;
+}
+
+input[type="radio"]{
+    display: inline;
+    margin-right: 0.8em;
+}

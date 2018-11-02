@@ -7,7 +7,7 @@
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
 }
 
-@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+@if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
 {
     <div id="section-heading">
         <h1 id="section-title">Add Employee</h1>
@@ -28,52 +28,50 @@
                     <option value="4">Employee</option>
                 </select>
             </div>
+        <div class="cluster">
+            <p class="sub-title">Department</p>
+            <input type="text" name="employee-code" placeholder="Employee Code" class="full"/>
+            <select id="department" name="department" class="full">
+                <option value="18">None</option>
+                <option value="0">Special Projects</option>
+                <option value="1">Internal Auditing</option>
+                <option value="2">Tax Matters</option>
+                <option value="3">Paralegal</option>
+                <option value="4">Human Resources</option>
+                <option value="5">Social/Environment</option>
+                <option value="6">General Service</option>
+                <option value="7">IT</option>
+                <option value="8">Security</option>
+                <option value="9">Sales & Marketing</option>
+                <option value="10">Quality Assurance</option>
+                <option value="11">Shipping</option>
+                <option value="12">Research & Development</option>
+                <option value="13">Production Planning</option>
+                <option value="14">Production Furniture & Accessory</option>
+                <option value="15">Logistics</option>
+                <option value="16">Accounting</option>
+                <option value="17">Finance</option>
+            </select>
+            <input type="text" name="employee-position" placeholder="Position" class="full"/>
         </div>
-        <div class="two-column-content">
-            <div class="cluster">
-                <p class="sub-title">Department</p>
-                <input type="text" name="employee-code" placeholder="Employee Code" class="full"/>
-                <select id="department" name="department" class="full">
-                    <option value="18">None</option>
-                    <option value="0">Special Projects</option>
-                    <option value="1">Internal Auditing</option>
-                    <option value="2">Tax Matters</option>
-                    <option value="3">Paralegal</option>
-                    <option value="4">Human Resources</option>
-                    <option value="5">Social/Environment</option>
-                    <option value="6">General Service</option>
-                    <option value="7">IT</option>
-                    <option value="8">Security</option>
-                    <option value="9">Sales & Marketing</option>
-                    <option value="10">Quality Assurance</option>
-                    <option value="11">Shipping</option>
-                    <option value="12">Research & Development</option>
-                    <option value="13">Production Planning</option>
-                    <option value="14">Production Furniture & Accessory</option>
-                    <option value="15">Logistics</option>
-                    <option value="16">Accounting</option>
-                    <option value="17">Finance</option>
-                </select>
-                <input type="text" name="employee-position" placeholder="Position" class="full"/>
-            </div>
-            <div class="cluster">
-                <p class="sub-title">Date of Hire</p>
-                <select id="month" name="month" class="full">
-                    <option value="-1" disabled="">-- Select month --</option>
-                    <!-- JS generated -->
-                </select>
-                <select id="day" name="day" class="full">
-                    <option value="-1">-- Select day --</option>
-                    <!-- JS generated -->
-                </select>
-                <select id="year" name="year" class="full">
-                    <option value="-1">-- Select year --</option>
-                    <!-- JS generated -->
-                </select>
-            </div>
+        <div class="cluster">
+            <p class="sub-title">Date of Hire</p>
+            <select id="month" name="month" class="full">
+                <option value="-1" disabled="">-- Select month --</option>
+                <!-- JS generated -->
+            </select>
+            <select id="day" name="day" class="full">
+                <option value="-1">-- Select day --</option>
+                <!-- JS generated -->
+            </select>
+            <select id="year" name="year" class="full">
+                <option value="-1">-- Select year --</option>
+                <!-- JS generated -->
+            </select>
+        </div>
         </div>
         <hr/>
-        <p class="sub-title">Employee History</p>
+        <p class="sub-title">Employment History</p>
         <div id="employee-history">
             <button class="hallow add-button" onclick="event.preventDefault();addEH()">
                 <img src="@Url.Content("~/Content/assets/icons/add.svg")"/>
@@ -176,8 +174,7 @@
                         <!-- JS generated -->
                     </select>
                 </div>
-            </div>
-            <div class="cluster">
+
                 <p class="sub-title">Post Graduate</p>
                 <input type="text" name="post-name" placeholder="School Name" class="full" />
                 <input type="text" name="post-address" placeholder="Address" class="full" />

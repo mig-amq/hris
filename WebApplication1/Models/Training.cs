@@ -8,7 +8,7 @@ namespace WebApplication1.Models
     using System.Data;
     using System.Diagnostics;
 
-    public class TrainingHistory
+    public class Training
     {
         private DBHandler DBHandler;
         public int TrainingHistoryID { get; set; }
@@ -19,7 +19,7 @@ namespace WebApplication1.Models
         public DateTime EndDate { get; set; }
         public string Location { get; set; }
 
-        public TrainingHistory(int TrainingHistoryID = -1)
+        public Training(int TrainingHistoryID = -1)
         {
             this.DBHandler = new DBHandler();
 
@@ -30,7 +30,7 @@ namespace WebApplication1.Models
             }
         }
 
-        public TrainingHistory Find(int TrainingHistoryID)
+        public Training Find(int TrainingHistoryID)
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM TrainingHistory WHERE TrainingHistoryID = " + TrainingHistoryID))
             {
@@ -49,7 +49,7 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public TrainingHistory Create()
+        public Training Create()
         {
             string columns = "INSERT INTO TrainingHistory(Title, Description, Facilitator, "
                              + "StartDate, EndDate, Location) OUTPUT INSERTED.TrainingHistoryID ";
@@ -67,12 +67,12 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public TrainingHistory Update(bool recursive = true)
+        public Training Update(bool recursive = true)
         {
             return this.Update(this.TrainingHistoryID, recursive);
         }
 
-        public TrainingHistory Update(int TrainingHistoryID, bool recursive = true)
+        public Training Update(int TrainingHistoryID, bool recursive = true)
         {
             string set = "UPDATE TrainingHistory SET Title = @Title, "
                          + "Description = @Description, Facilitator = @Facilitator, "
@@ -92,7 +92,7 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public TrainingHistory Delete()
+        public Training Delete()
         {
             this.DBHandler.Execute<Int32>(
                 CRUD.DELETE,

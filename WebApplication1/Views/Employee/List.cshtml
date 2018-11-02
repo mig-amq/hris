@@ -7,7 +7,7 @@
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
 }
 
-@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+@if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
 {
     <div id="modal">
         <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />

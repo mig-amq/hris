@@ -49,7 +49,10 @@ namespace WebApplication1.Models
                     {
                         foreach (KeyValuePair<string, dynamic> kv in param)
                         {
-                            command.Parameters.AddWithValue(kv.Key, kv.Value);
+                            if (kv.Value.GetType() == typeof(DateTime))
+                                command.Parameters.AddWithValue(kv.Key, kv.Value.ToString("yyyy-MM-dd"));
+                            else
+                                command.Parameters.AddWithValue(kv.Key, kv.Value);
                         }
                     }
 

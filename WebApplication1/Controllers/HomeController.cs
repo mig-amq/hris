@@ -15,10 +15,8 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Signup()
         {
-            ViewBag.Message = "Sad";
-
             return View();
         }
 

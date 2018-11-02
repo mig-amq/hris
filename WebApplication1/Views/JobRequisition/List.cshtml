@@ -1,0 +1,208 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "Manpower Requisition Requests";
+    ViewBag.Active = "REQLI";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && Account.Type == AccountType.DepartmentHead)
+{
+    <div id="modal">
+        <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+        <div id="modal-form">
+            <div class="modal-content">
+                <h2 class="title">Requisition Information</h2>
+                <form data-id="-1">
+                    <div class="cluster">
+                        <p class="sub-title">Position</p>
+                        <p id="position"></p>
+                        <hr style="margin: 0;" />
+                        <p class="sub-title">Vacancy Reason/Type</p>
+                        <p id="reason"></p>
+                        <hr style="margin: 0;" />
+                        <p class="sub-title">Qualifications</p>
+                        <p id="qualification"></p>
+                        <hr style="margin: 0;" />
+                        <p class="sub-title">Experience Required</p>
+                        <p id="experience"></p>
+                        <hr style="margin: 0;" />
+                        <p class="sub-title">Skills Required</p>
+                        <p id="skills"></p>
+                        <hr style="margin: 0;" />
+                        <p class="sub-title">Description</p>
+                        <p id="description"></p>
+                    </div>
+                    <div class="cluster">
+                        <p class="sub-title">Status</p>
+                        <select name="status">
+                            <option value="1">Pending</option>
+                            <option value="2">Finished</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="full">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Requisition Requests</h1>
+            <span>
+                Show
+                <select id="show-entries" onchange="search(curr)">
+                    <!-- JAVASCRIPT GENERATED -->
+                </select>
+                Entries
+            </span>
+        </div>
+    </div>
+    <br />
+    <table>
+        <thead>
+            <tr id="heading-row">
+                <th>No.</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Date Requested</th>
+                <th>Expected Joining Date</th>
+                
+                @if (((Employee)Account.Profile).Department.Type != DepartmentType.HumanResources)
+                {
+                    <th>Status</th>
+                }
+            </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
+    </table>
+    <div id="result-summary">
+        <div>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(1);
+        })
+
+        $("form").on("submit", (e) => {
+            e.preventDefault();
+
+            let v = $("select[name=status]").val();
+            let id = $("form").attr('data-id');
+
+            $.ajax({
+                url: "/JobRequisition/Update",
+                method: "POST",
+                data: {
+                    id, v
+                },
+                success: (data) => {
+                    if (!data.error) {
+                        $("#modal").hide();
+                        search(curr);
+                    }
+                }
+            })
+        });
+
+        function load(o) {
+            $("form").attr('data-id', o.RequisitionID);
+
+            $("#position").text(o.Position);
+            $("#reason").text(o.ReasonforVacancy);
+            $("#qualification").text(o.Qualification);
+            $("#experience").text(o.ExperienceRequired);
+            $("#skills").text(o.SkillsRequired);
+            $("#description").text(o.Description);
+
+            $("select[name=status]").val(o.Status);
+        }
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/JobRequisition/GetRequisitions",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                },
+                method: "GET",
+                success: (data) => {
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.requisitions.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+                    data.requisitions.forEach((o, i, a) => {
+                        console.log(o);
+                        var opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                        let d = new Date(o.Date);
+                        let e = new Date(o.ExpectedJoiningDate);
+
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>");
+                        let pos = $("<td></td>");
+                        let dep = $("<td></td>");
+                        let date = $("<td></td>");
+                        let exp = $("<td></td>");
+
+                        @if (((Employee)Account.Profile).Department.Type != DepartmentType.HumanResources)
+                        {
+                            <text>
+                                let sta = $("<td>" + (o.Status == 1 ? "Pending" : "Finished") + "</td>");
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                let sta = $("<td><button class='hallow modal-trigger'>Review</button></td>");
+                                sta.find("button").on("click", (e) => {
+                                    load(o);
+                                });
+
+                            </text>
+                        }
+
+                        id.text(o.RequisitionID);
+                        pos.text(o.Position);
+                        dep.text(o.Department.DepartmentName);
+                        date.text(d.toLocaleDateString("en-EN", opt))
+                        exp.text(e.toLocaleDateString("en-EN", opt));
+
+                        row.append(id);
+                        row.append(pos);
+                        row.append(dep);
+                        row.append(date);
+                        row.append(exp);
+                        row.append(sta);
+
+                        $("#data").append(row);
+                    });
+                }
+            })
+        }
+    </script>
+}

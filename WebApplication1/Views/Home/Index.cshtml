@@ -22,7 +22,7 @@
 </head>
 <body>
 <div id="login-form">
-    <img src="~/Content/assets/images/calfurn-logo.png" id="logo" />
+    <img src="@Url.Content("~/Content/assets/images/calfurn-logo.png")" id="logo" />
     <h3 class="title">Calfurn Mfg. Philippines, Inc.</h3>
     <p class="sub-title">Human Resource Information System</p>
     <hr/>
@@ -44,7 +44,8 @@
 </div>
 <br/>
 <div id="signup-link">
-    <p>Don't have an account? <a href="signup.html">Register here</a>.</p>
+    <p>Don't have an account? <a href="/Home/Signup">Register here</a>.</p>
+    <p>or view job postings <a href="/Recruitment/">here</a>.</p>
 </div>
 
 <script>

@@ -5,7 +5,7 @@ using System.Web.Mvc;
 namespace WebApplication1.Controllers
 {
     using System.Collections.Generic;
-
+    using System.Globalization;
     using Newtonsoft.Json.Linq;
 
     using WebApplication1.Models;
@@ -100,51 +100,117 @@ namespace WebApplication1.Controllers
 
         // POST: UserAccount/Create
         [HttpPost]
-        public ActionResult Create(FormCollection form)
+        public ActionResult ApplicantCreate(FormCollection form)
         {
-            JObject json = new JObject();
-            json["error"] = false;
-            json["message"] = "";
+                JObject json = new JObject();
+                json["error"] = false;
+                json["message"] = "";
 
-            Account creator = (Account)Session["user"];
+                Account ac = new Account();
+                ac.Profile = new Applicant();
 
-            if (creator.Type == AccountType.DepartmentHead && ((Employee) creator.Profile).Department.Type == DepartmentType.HumanResources)
-            {
-                if ((AccountType)form.GetValue("type").ConvertTo(typeof(AccountType)) == AccountType.Applicant)
+                ac.Username = form.GetValue("username").AttemptedValue;
+                ac.Password = form.GetValue("password").AttemptedValue;
+                ac.Email = form.GetValue("email").AttemptedValue;
+                ac.Type = AccountType.Applicant;
+
+                ((Applicant)ac.Profile).Skills = form.GetValue("skills").AttemptedValue;
+                ((Applicant)ac.Profile).DesiredPosition = form.GetValue("desired").AttemptedValue;
+                ((Applicant)ac.Profile).Status = ApplicantStatus.Undecided;
+                ((Applicant)ac.Profile).Profile = new Profile();
+                ((Applicant)ac.Profile).Profile.FirstName = form.GetValue("firstname").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.MiddleName = form.GetValue("middlename").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.LastName = form.GetValue("lastname").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.Sex = (SexType)Int32.Parse(form.GetValue("sex").AttemptedValue);
+                ((Applicant)ac.Profile).Profile.CivilStatus = (CivilStatusType)Int32.Parse(form.GetValue("status").AttemptedValue);
+
+                ((Applicant)ac.Profile).Profile.BirthDate = DateTime.ParseExact(
+                    form.GetValue("byear").AttemptedValue + "-"
+                                                          + (Int32.Parse(form.GetValue("bmonth").AttemptedValue) + 1).ToString("00") + "-"
+                                                          + Int32.Parse(form.GetValue("bday").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                ((Applicant)ac.Profile).Profile.Contact = form.GetValue("contact").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.ContactPerson = form.GetValue("emergency-name").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.CPersonNo = form.GetValue("emergency-number").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.CPersonRel = form.GetValue("emergency-rel").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.HouseNo = form.GetValue("house").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.City = form.GetValue("city").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.Province = form.GetValue("province").AttemptedValue;
+                ((Applicant)ac.Profile).Profile.Street = form.GetValue("street").AttemptedValue;
+                
+                JObject education = JObject.Parse(form.GetValue("education").AttemptedValue);
+                JArray history = JArray.Parse(form.GetValue("history").AttemptedValue);
+
+                Education edu = new Education(instantiate: false);
+                bool hasProperties = false;
+
+                foreach (JProperty property in education.Properties())
                 {
-                    Employee emp = new Employee();
-                    emp.Status = StatusType.Active;
-                    emp.Profile = new Profile();
-                    emp.Profile.FirstName = form.GetValue("FirstName").ToString();
-                    emp.Profile.MiddleName = form.GetValue("MiddleName").ToString();
-                    emp.Profile.LastName = form.GetValue("LastName").ToString();
-
-                    emp.Profile.HouseNo = form.GetValue("HouseNo").ToString();
-                    emp.Profile.City = form.GetValue("City").ToString();
-                    emp.Profile.Street = form.GetValue("Street").ToString();
-                    emp.Profile.Province = form.GetValue("Province").ToString();
-                    emp.Profile.Sex = (SexType)form.GetValue("Sex").ConvertTo(typeof(SexType));
-
-                    emp.Profile.Contact = form.GetValue("Contact").ToString().Replace(" ", "");
-                    emp.Profile.CPersonNo = form.GetValue("CPersonNo").ToString().Replace(" ", "");
-                    emp.Profile.CPersonRel = form.GetValue("CPerson").ToString();
-                    emp.Profile.ContactPerson = form.GetValue("ContactPerson").ToString();
-
-                    emp.Profile.BirthDate = DateTime.Parse(form.GetValue("BirthDate").ToString());
-                    emp.Profile.Education = new Education();
+                    if (property.Name == "elementary")
+                    {
+                        edu.Elementary = new EducationLevel(EducationType.Elementary);
+                        edu.Elementary.Name = property.Value["name"].ToString();
+                        edu.Elementary.Address = property.Value["address"].ToString();
+                        edu.Elementary.Start = property.Value["start"].ToString();
+                        edu.Elementary.End = property.Value["end"].ToString();
+                        hasProperties = true;
+                    }
+                    else if (property.Name == "hs")
+                    {
+                        edu.HighSchool = new EducationLevel(EducationType.HighSchool);
+                        edu.HighSchool.Name = property.Value["name"].ToString();
+                        edu.HighSchool.Address = property.Value["address"].ToString();
+                        edu.HighSchool.Start = property.Value["start"].ToString();
+                        edu.HighSchool.End = property.Value["end"].ToString();
+                        hasProperties = true;
+                    }
+                    else if (property.Name == "college")
+                    {
+                        edu.College = new EducationLevel(EducationType.College);
+                        edu.College.Name = property.Value["name"].ToString();
+                        edu.College.Address = property.Value["address"].ToString();
+                        edu.College.Start = property.Value["start"].ToString();
+                        edu.College.End = property.Value["end"].ToString();
+                        hasProperties = true;
+                    }
+                    else if (property.Name == "post")
+                    {
+                        edu.PostGraduate = new EducationLevel(EducationType.PostGraduate);
+                        edu.PostGraduate.Name = property.Value["name"].ToString();
+                        edu.PostGraduate.Address = property.Value["address"].ToString();
+                        edu.PostGraduate.Start = property.Value["start"].ToString();
+                        edu.PostGraduate.End = property.Value["end"].ToString();
+                        hasProperties = true;
+                    }
                 }
+
+                List<EmploymentHistory> hist = new List<EmploymentHistory>();
+
+                foreach (JObject o in history)
+                {
+                    EmploymentHistory temp = new EmploymentHistory();
+                    temp.Address = o.GetValue("address").ToString();
+                    temp.CompanyName = o.GetValue("company").ToString();
+                    temp.Position = o.GetValue("position").ToString();
+                    temp.ContactName = o.GetValue("cperson").ToString();
+                    temp.ContactNo = o.GetValue("number").ToString();
+                    temp.StartDate = o.GetValue("start").ToString();
+                    temp.EndDate = o.GetValue("end").ToString();
+                    temp.LeavingReason = o.GetValue("leave").ToString();
+                    hist.Add(temp);
+                }
+
+                if (hasProperties == true)
+                    ((Applicant)ac.Profile).Profile.Education = edu;
                 else
+                    ((Applicant)ac.Profile).Profile.Education = null;
+
+                ac.Create();
+                foreach (EmploymentHistory o in hist)
                 {
-
+                    o.Create(((Applicant)ac.Profile).Profile.ProfileID);
                 }
-            }
-            else
-            {
-                json["error"] = true;
-                json["message"] = "Uh oh! You're not the HR head, you can't make an account :c";
-            }
-
-            return Json(json, JsonRequestBehavior.AllowGet);
+                return Content(json.ToString(), "application/json");
         }
 
         // GET: UserAccount/Forgot

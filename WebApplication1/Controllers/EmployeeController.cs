@@ -182,6 +182,7 @@ namespace WebApplication1.Controllers
             JArray history = JArray.Parse(form.GetValue("history").AttemptedValue);
 
             Education edu = new Education(instantiate:false);
+            bool hasProperties = false;
 
             foreach (JProperty property in education.Properties())
             {
@@ -192,6 +193,7 @@ namespace WebApplication1.Controllers
                     edu.Elementary.Address = property.Value["address"].ToString();
                     edu.Elementary.Start = property.Value["start"].ToString();
                     edu.Elementary.End = property.Value["end"].ToString();
+                    hasProperties = true;
                 } else if (property.Name == "hs")
                 {
                     edu.HighSchool = new EducationLevel(EducationType.HighSchool);
@@ -199,6 +201,7 @@ namespace WebApplication1.Controllers
                     edu.HighSchool.Address = property.Value["address"].ToString();
                     edu.HighSchool.Start = property.Value["start"].ToString();
                     edu.HighSchool.End = property.Value["end"].ToString();
+                    hasProperties = true;
                 } else if (property.Name == "college")
                 {
                     edu.College = new EducationLevel(EducationType.College);
@@ -206,6 +209,7 @@ namespace WebApplication1.Controllers
                     edu.College.Address = property.Value["address"].ToString();
                     edu.College.Start = property.Value["start"].ToString();
                     edu.College.End = property.Value["end"].ToString();
+                    hasProperties = true;
                 } else if (property.Name == "post")
                 {
                     edu.PostGraduate = new EducationLevel(EducationType.PostGraduate);
@@ -213,6 +217,7 @@ namespace WebApplication1.Controllers
                     edu.PostGraduate.Address = property.Value["address"].ToString();
                     edu.PostGraduate.Start = property.Value["start"].ToString();
                     edu.PostGraduate.End = property.Value["end"].ToString();
+                    hasProperties = true;
                 }
             }
 
@@ -232,7 +237,10 @@ namespace WebApplication1.Controllers
                 hist.Add(temp);
             }
             
-            ((Employee)ac.Profile).Profile.Education = edu;
+            if (hasProperties == true)
+                ((Employee)ac.Profile).Profile.Education = edu;
+            else
+                ((Employee)ac.Profile).Profile.Education = null;
 
             ac.Create(Int32.Parse(form.GetValue("department").AttemptedValue));
             foreach (EmploymentHistory o in hist)

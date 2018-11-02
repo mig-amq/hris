@@ -8,6 +8,12 @@ namespace WebApplication1.Models
     using System.Collections;
     using System.Data;
 
+    public enum AppraisalStatus
+    {
+        Pending = 1,
+        Finished = 2
+    }
+
     public enum AppraisalType
     {
         Supervisory = 1,
@@ -32,6 +38,7 @@ namespace WebApplication1.Models
         public Employee DiscussedWith { get; set; }
         public DateTime DateDiscussed { get; set; }
         public AppraisalType Type { get; set; }
+        public AppraisalStatus Status { get; set; }
 
         public Appraisal(int TableID = -1, bool byDiscussed = false)
         {
@@ -44,8 +51,8 @@ namespace WebApplication1.Models
 
         public Appraisal Find(int TableID, bool recursive = true, bool byDiscussed = false)
         {
-            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, 
-                "SELECT * FROM Appraisal WHERE " + 
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ,
+                "SELECT * FROM Appraisal WHERE " +
                 (byDiscussed ? " DiscussedWith " : " AppraisalID ") + " = " + TableID))
             {
                 DataRow row = dt.Rows[0];
@@ -62,6 +69,7 @@ namespace WebApplication1.Models
                 this.DateNoted = DateTime.Parse(row["DateNoted"].ToString());
                 this.DateDiscussed = DateTime.Parse(row["DateDiscussed"].ToString());
                 this.Type = (AppraisalType)Int32.Parse(row["Type"].ToString());
+                this.Status = (AppraisalStatus)Int32.Parse(row["Status"].ToString());
 
                 if (recursive)
                 {
@@ -96,12 +104,13 @@ namespace WebApplication1.Models
                     ap.DateNoted = DateTime.Parse(row["DateNoted"].ToString());
                     ap.DateDiscussed = DateTime.Parse(row["DateDiscussed"].ToString());
                     ap.Type = (AppraisalType)Int32.Parse(row["Type"].ToString());
+                    ap.Status = (AppraisalStatus)Int32.Parse(row["Status"].ToString());
 
                     if (recursive)
                     {
                         ap.Evaluator = (Employee)new Employee().FindProfile(Int32.Parse(row["Evalutator"].ToString()), byPrimary: true);
                         ap.NotedBy = (Employee)new Employee().FindProfile(Int32.Parse(row["NotedBy"].ToString()), byPrimary: true);
-                        ap.DiscussedWith = (Employee)new Employee().FindProfile(Int32.Parse(row["DiscussedWith"].ToString()), byPrimary:true);
+                        ap.DiscussedWith = (Employee)new Employee().FindProfile(Int32.Parse(row["DiscussedWith"].ToString()), byPrimary: true);
                     }
 
                     appraisals.Add(ap);
@@ -116,14 +125,14 @@ namespace WebApplication1.Models
             string columns = "INSERT INTO Appraisal(CoveredPeriod, Criteria, "
                              + "Rating, TechComp, InterSkills, CommComp, Total, "
                              + "Comments, Evaluator, DatePrepared, NotedBy, DateNoted, "
-                             + "DiscussedWith, DateDiscussed, Type) OUTPUT INSERTED.AppraisalID ";
+                             + "DiscussedWith, DateDiscussed, Type, Status) OUTPUT INSERTED.AppraisalID ";
             string values = " VALUES(@CoveredPeriod, @Criteria, @Rating, @TechComp,"
                             + " @InterSkills, @CommComp, @Total, @Comments, @Evaluator, "
-                            + "@DatePrepare, @NotedBy, @DateNoted, @DiscussedWith, @DateDiscussed, @Type)";
+                            + "@DatePrepare, @NotedBy, @DateNoted, @DiscussedWith, @DateDiscussed, @Type, @Status)";
 
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
-            param.Add("@CoveredPeriod", this.CoveredPeriod.ToShortDateString());
+            param.Add("@CoveredPeriod", this.CoveredPeriod.ToString("yyyy-MM-dd"));
             param.Add("@Criteria", this.Critera);
             param.Add("@Rating", this.Rating);
             param.Add("@TechComp", this.TechComp);
@@ -132,12 +141,13 @@ namespace WebApplication1.Models
             param.Add("@Total", this.Total);
             param.Add("@Comments", this.Comments);
             param.Add("@Evaluator", this.Evaluator.EmployeeID);
-            param.Add("@DatePrepared", this.DatePrepared.ToShortDateString());
+            param.Add("@DatePrepared", this.DatePrepared.ToString("yyyy-MM-dd"));
             param.Add("@NotedBy", this.NotedBy.EmployeeID);
-            param.Add("@DateNoted", this.DateNoted.ToShortDateString());
+            param.Add("@DateNoted", this.DateNoted.ToString("yyyy-MM-dd"));
             param.Add("@DiscussedWith", this.DiscussedWith.EmployeeID);
-            param.Add("@DateDiscussed", this.DateDiscussed.ToShortDateString());
+            param.Add("@DateDiscussed", this.DateDiscussed.ToString("yyyy-MM-dd"));
             param.Add("@Type", (int)this.Type);
+            param.Add("@Status", (int)this.Status);
 
             this.AppraisalID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -150,18 +160,18 @@ namespace WebApplication1.Models
 
         public Appraisal Update(int TableID, bool recursive = true, bool byDiscussed = false)
         {
-            string set = "UPDATE Appraisal SET CoveredPeriod = @CoveredPeriod AND "
-                         + "Criteria = @Criteria AND Rating = @Rating AND "
-                         + "TechComp = @TechComp AND InterSkills = @InterSkills AND "
-                         + "CommComp = @CommComp AND Total = @Total AND "
-                         + "Comments = @Comments AND Evaluator = @Evaluator AND "
-                         + "DatePrepared = @DatePrepared AND NotedBy = @NotedBy AND "
-                         + "DateNoted = @DateNoted AND DiscussedWith = @DiscussedWith AND "
-                         + "DateDiscussed = @DateDiscussed AND Type = @Type WHERE " + 
+            string set = "UPDATE Appraisal SET CoveredPeriod = @CoveredPeriod, "
+                         + "Criteria = @Criteria, Rating = @Rating, "
+                         + "TechComp = @TechComp, InterSkills = @InterSkills, "
+                         + "CommComp = @CommComp, Total = @Total, "
+                         + "Comments = @Comments, Evaluator = @Evaluator, "
+                         + "DatePrepared = @DatePrepared, NotedBy = @NotedBy, "
+                         + "DateNoted = @DateNoted, DiscussedWith = @DiscussedWith, "
+                         + "DateDiscussed = @DateDiscussed, Type = @Type OUTPUT INSERTED.AppraisalID WHERE " +
                          (byDiscussed ? " DiscussedWith " : " AppraisalID ") + " = " + TableID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
-            param.Add("@CoveredPeriod", this.CoveredPeriod.ToShortDateString());
+            param.Add("@CoveredPeriod", this.CoveredPeriod.ToString("yyyy-MM-dd"));
             param.Add("@Criteria", this.Critera);
             param.Add("@Rating", this.Rating);
             param.Add("@TechComp", this.TechComp);
@@ -170,12 +180,13 @@ namespace WebApplication1.Models
             param.Add("@Total", this.Total);
             param.Add("@Comments", this.Comments);
             param.Add("@Evaluator", this.Evaluator.EmployeeID);
-            param.Add("@DatePrepared", this.DatePrepared.ToShortDateString());
+            param.Add("@DatePrepared", this.DatePrepared.ToString("yyyy-MM-dd"));
             param.Add("@NotedBy", this.NotedBy.EmployeeID);
-            param.Add("@DateNoted", this.DateNoted.ToShortDateString());
+            param.Add("@DateNoted", this.DateNoted.ToString("yyyy-MM-dd"));
             param.Add("@DiscussedWith", this.DiscussedWith.EmployeeID);
-            param.Add("@DateDiscussed", this.DateDiscussed.ToShortDateString());
+            param.Add("@DateDiscussed", this.DateDiscussed.ToString("yyyy-MM-dd"));
             param.Add("@Type", (int)this.Type);
+            param.Add("@Status", (int)this.Status);
 
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;

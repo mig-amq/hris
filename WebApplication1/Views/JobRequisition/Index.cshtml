@@ -1,0 +1,100 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "Manpower Requisition Form";
+    ViewBag.Active = "REQ";
+    
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && Account.Type == AccountType.DepartmentHead)
+{
+    <div id="section-heading">
+        <h1 id="section-title">Manpower Requisition Form</h1>
+    </div>
+    <br/>
+    <form>
+        <p><span class="spot">Date:</span> @{@DateTime.Now.ToString("MMMM dd, yyyy")}</p>
+        <div class="two-column-content">
+            <div class="cluster">
+                <textarea placeholder="Reason for Vacancy" name="reason" class="full"></textarea>
+                <p class="sub-title">Type of Vacancy</p>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="requisition-type" value="Resignation"> Resignation
+                    </label>
+                    <label>
+                        <input type="radio" name="requisition-type" value="Termination"> Termination
+                    </label>
+                    <label>
+                        <input type="radio" name="requisition-type" value="New Position"> New Position
+                    </label>
+                </div>
+                <textarea placeholder="Qualification Requirements or Equivalent" name="qualification" class="full"></textarea>
+                <textarea placeholder="Experience Required" name="experience" class="full"></textarea>
+                <textarea placeholder="Skills Required" name="skills" class="full"></textarea>
+            </div>
+
+            <div class="cluster">
+                <input type="text" name="position" placeholder="Position" class="full" />
+
+                <p class="sub-title">Expected Joining Date</p>
+                <select id="month" name="month" class="full">
+                    <option value="-1" disabled="">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="day" class="full">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="year" class="full">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+
+                <select name="supervision" class="full">
+                    <option value="-1" selected disabled>Select Supervisor</option>
+                </select>
+                <textarea placeholder="Brief Description of Works" name="description" class="full"></textarea>
+            </div>
+        </div>
+        <button type="submit" class="full">Submit</button>
+    </form>
+    <script>
+        $(document).ready(() => {
+            loadSupervisors();
+        });
+
+        function loadSupervisors() {
+            $.ajax({
+                url: "/JobRequisition/GetSupervisors",
+                method: "GET",
+                success: (data) => {
+                    $("select[name=supervision] option:not(:first-child)").remove();
+
+                    data.supervisors.forEach((o, i, a) => {
+                        let opt = $("<option value='" + o.EmployeeID + "'>" + o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName + "</option>");
+
+                        $("select[name=supervision]").append(opt);
+                    });
+                }
+            })
+        }
+
+        $("form").on("submit", (e) => {
+            e.preventDefault();
+            var form = new FormData($("form")[0]);
+
+            $.ajax({
+                url: "/JobRequisition/Requisition",
+                method: "POST",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    console.log(data);
+                }
+            })
+        })
+    </script>
+}

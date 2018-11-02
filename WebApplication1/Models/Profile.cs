@@ -106,7 +106,8 @@ namespace WebApplication1.Models
             string columns = "INSERT INTO [dbo].[Profile] (FirstName, LastName, MiddleName, BirthDate, Sex, "
                              + "CivilStatus, Contact, ContactPerson, CPersonNo, CPersonRel, "
                              + "HouseNo, Street, City, Province, Education) OUTPUT INSERTED.ProfileID ";
-            string values = "VALUES(";
+            string values = "VALUES(@FirstName, @LastName, @MiddleName, @BirthDate, @Sex, @CivilStatus, @Contact,"
+                            + " @ContactPerson, @CPersonNo, @CPersonRel, @HouseNo, @Street, @City, @Province, @Education)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@FirstName", this.FirstName);
@@ -123,14 +124,11 @@ namespace WebApplication1.Models
             param.Add("@Street", this.Street);
             param.Add("@City", this.City);
             param.Add("@Province", this.Province);
-            param.Add("@Education", this.Education.EducationID);
+            if (this.Education != null)
+                param.Add("@Education", this.Education.EducationID);
+            else
+                param.Add("@Education", DBNull.Value);
 
-            foreach (KeyValuePair<string, dynamic> kv in param)
-            {
-                values += kv.Key + ",";
-            }
-
-            values = values.Substring(0, values.Length - 1) + ")";
             this.ProfileID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
         }

@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace WebApplication1.Controllers
 {
-    public class ApplicantController : Controller
+    public class AttendanceController : Controller
     {
-        // GET: Applicant
+        // GET: Attendance
         public ActionResult Index()
         {
             return View();

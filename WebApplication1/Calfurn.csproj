@@ -157,13 +157,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\ApplicantController.cs" />
-    <Compile Include="Controllers\DepartmentHeadController.cs" />
+    <Compile Include="Controllers\AttendanceController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\GlobalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobRequisitionController.cs" />
+    <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\Paginator.cs" />
     <Compile Include="Controllers\Recruitment.cs" />
     <Compile Include="Controllers\RecruitmentController.cs" />
@@ -176,6 +175,7 @@
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Applicant.cs" />
     <Compile Include="Models\Appraisal.cs" />
+    <Compile Include="Models\AssignedTraining.cs" />
     <Compile Include="Models\Attendance.cs" />
     <Compile Include="Models\AttendanceTime.cs" />
     <Compile Include="Models\Branch.cs" />
@@ -190,7 +190,7 @@
     <Compile Include="Models\Supers\ProfiledObject.cs" />
     <Compile Include="Models\Supers\SecureObject.cs" />
     <Compile Include="Models\Department.cs" />
-    <Compile Include="Models\TrainingHistory.cs" />
+    <Compile Include="Models\Training.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -230,7 +230,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Home\Signup.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\UserAccount\Forgot.cshtml" />
     <Content Include="Views\Training\Index.cshtml" />
@@ -238,13 +238,18 @@
     <Content Include="Views\Employee\Add.cshtml" />
     <Content Include="Views\Recruitment\Index.cshtml" />
     <Content Include="Views\Recruitment\ApplicantStatus.cshtml" />
+    <Content Include="Views\Training\Assigned.cshtml" />
+    <Content Include="Views\Leave\Index.cshtml" />
+    <Content Include="Views\Leave\Approval.cshtml" />
+    <Content Include="Views\JobRequisition\Index.cshtml" />
+    <Content Include="Views\JobRequisition\List.cshtml" />
+    <Content Include="Views\Attendance\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\Applicant\" />
     <Folder Include="Views\DepartmentHead\" />
-    <Folder Include="Views\JobRequisition\" />
     <Folder Include="Views\Reports\" />
   </ItemGroup>
   <ItemGroup>

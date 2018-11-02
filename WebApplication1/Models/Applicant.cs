@@ -53,18 +53,18 @@ namespace WebApplication1.Models
             if (this.Profile != null)
             {
                 this.Profile.Create();
-
-                string columns = "INSERT INTO Applicant(Profile, Skills, DesiredPosition, Status) OUTPUT INSERTED.ApplicantID";
-                string values = " Values(@Profile, @Skills, @DesiredPosition, @Status)";
-                Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
-
-                param.Add("@Profile", this.Profile.ProfileID);
-                param.Add("@Skills", this.Skills);
-                param.Add("@DesiredPositon", this.DesiredPosition);
-                param.Add("@Status", (int)this.Status);
-
-                this.ApplicantID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             }
+            
+            string columns = "INSERT INTO Applicant(Profile, Skills, DesiredPosition, Status) OUTPUT INSERTED.ApplicantID";
+            string values = " Values(@Profile, @Skills, @DesiredPosition, @Status)";
+            Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+
+            param.Add("@Profile", this.Profile.ProfileID);
+            param.Add("@Skills", this.Skills);
+            param.Add("@DesiredPosition", this.DesiredPosition);
+            param.Add("@Status", (int)this.Status);
+
+            this.ApplicantID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
         }
 
@@ -80,10 +80,11 @@ namespace WebApplication1.Models
                 this.Profile.Update(recursive);
             }
 
-            string set = "UPDATE Applicant SET Skills = @Skills, "
+            string set = "UPDATE Applicant SET Skills = @Skills, Profile = @Profile, "
                          + "DesiredPosition = @DesiredPosition, Status = @Status OUTPUT INSERTED.ApplicantID WHERE ApplicantID = " + this.ApplicantID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
+            param.Add("@Profile", this.Profile.ProfileID);
             param.Add("@Skills", this.Skills);
             param.Add("@DesiredPosition", this.DesiredPosition);
             param.Add("@Status", (int)this.Status);
