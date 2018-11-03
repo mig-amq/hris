@@ -11,7 +11,7 @@ namespace WebApplication1.Controllers
     using WebApplication1.Models;
     using WebApplication1.Models.Supers;
 
-    public class UserAccountController : Controller
+    public class UserAccountController : GlobalController
     {
         [HttpPost]
         public ActionResult LoginNoAjax(FormCollection form)
@@ -52,6 +52,10 @@ namespace WebApplication1.Controllers
                     json["error"] = true;
                     json["message"] = "Looks like you're already logged in!";
                 }
+            } else if (a.Locked)
+            {
+                json["error"] = true;
+                json["message"] = "Uh Oh! You entered an incorrect password three times, your account has been locked, please contact the HR...";
             }
             else
             { // return an error if the username and password combination is not in the DB
@@ -61,8 +65,13 @@ namespace WebApplication1.Controllers
 
                     if (Int32.Parse(Session["count"].ToString()) >= 3)
                     {
-                        a.Locked = true;
-                        a.Update();
+                        if (a.Exists)
+                        {
+                            a.Locked = true;
+                            a.Update();
+                        }
+
+                        Session["count"] = 0;
                     }
                 }
                 else

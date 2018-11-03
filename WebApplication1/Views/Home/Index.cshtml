@@ -67,7 +67,7 @@
                 contentType: false,
                 success: (response) => {
                     $("button#sign-in").text("Sign in");
-                    $("button#sign-in").attr("disabled", "false");
+                    $("button#sign-in").removeAttr("disabled");
 
                     if (response.error)
                         div.addClass("error");

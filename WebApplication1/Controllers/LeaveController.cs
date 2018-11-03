@@ -121,6 +121,29 @@ namespace WebApplication1.Controllers
             l.Reason = form.GetValue("reason").AttemptedValue;
 
             l.Create();
+
+            DBHandler db = new DBHandler();
+            using (DataTable dt = db.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
+                + ((int)DepartmentType.HumanResources)))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    Notification notifHR = new Notification();
+                    notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
+
+                    if (this.GetAccount().Profile.Profile.ProfileID != notifHR.Account.AccountID)
+                    {
+                        notifHR.TimeStamp = DateTime.Now;
+                        notifHR.Status = NotificationStatus.Unread;
+
+                        notifHR.Message = l.Employee.Profile.FirstName + " " + l.Employee.Profile.MiddleName + " " + l.Employee.Profile.LastName + " applied for a sick leave on " + start + " - " + end;
+                        notifHR.Create();
+                    }
+                }
+            }
+
             return Content(json.ToString(), "application/json");
         }
 

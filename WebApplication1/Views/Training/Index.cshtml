@@ -85,7 +85,11 @@
             <th>Facilitator</th>
             <th>Schedule/Time</th>
             <th>Location</th>
-            <th></th>
+            @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            {
+                
+                <th></th>
+            }
         </tr>
         </thead>
         <tbody id="data">
@@ -100,7 +104,7 @@
         <span class="active">1</span>
     </div>
 </div>
-@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+@if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
 {
     <script>
         $(document).on('submit', "#modal-form[data-action=add] form", (e) => {
@@ -223,7 +227,13 @@
                     let name = $("<td></td>").text(o.Facilitator);
                     let dep = $("<td></td>").text(schedule);
                     let pos = $("<td></td>").text(o.Location);
-                    
+
+
+                    row.append(id);
+                    row.append(code);
+                    row.append(name);
+                    row.append(dep);
+                    row.append(pos);
                     @if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                     {
                             <text>
@@ -250,15 +260,10 @@
                                         }
                                     })
                                 });
+                                
+                                row.append(btnE);
                             </text>
                      }
-
-                    row.append(id);
-                    row.append(code);
-                    row.append(name);
-                    row.append(dep);
-                    row.append(pos);
-                    row.append(btnE);
                     $("#data").append(row);
                 });
             }

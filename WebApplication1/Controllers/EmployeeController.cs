@@ -16,7 +16,7 @@ namespace WebApplication1.Controllers
 
     using WebApplication1.Models;
 
-    public class EmployeeController : Controller
+    public class EmployeeController : GlobalController
     {
         private DBHandler DBHandler = new DBHandler();
 

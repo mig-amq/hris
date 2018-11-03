@@ -286,6 +286,14 @@ namespace WebApplication1.Controllers
                 at.Status = TrainingStatus.Pending;
 
                 at.Create(false);
+
+                Notification notif = new Notification();
+                notif.Account = new Account().FindByProfile(at.Profile.ProfileID);
+                notif.Message = "You've been assigned to a Training service, please check the Assigned Trainings page.";
+                notif.Status = NotificationStatus.Unread;
+                notif.TimeStamp = DateTime.Now;
+
+                notif.Create();
             }
             else
             {

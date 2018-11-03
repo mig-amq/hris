@@ -12,7 +12,7 @@ namespace WebApplication1.Controllers
     using System.Text.RegularExpressions;
     using WebApplication1.Models;
 
-    public class RecruitmentController : Controller
+    public class RecruitmentController : GlobalController
     {
         // GET: Recruitment
         public ActionResult Index()
@@ -217,6 +217,15 @@ namespace WebApplication1.Controllers
                         ac.Profile = e;
 
                         ac.Update(recursive:false);
+
+                        Notification notif = new Notification();
+                        notif.Account = ac;
+                        notif.Message =
+                            "Congratulations! You've been approved for employment, please wait for further information, you will be contacted through phone or email.";
+                        notif.Status = NotificationStatus.Unread;
+                        notif.TimeStamp = DateTime.Now;
+
+                        notif.Create();
                     }
                 }
 

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace WebApplication1.Controllers
 {
+    using System.Data;
     using WebApplication1.Models;
 
     public class GlobalController : Controller
@@ -28,6 +29,25 @@ namespace WebApplication1.Controllers
         public Account GetAccount()
         {
             return Session["user"] != null ? (Account)Session["user"] : null;
+        }
+
+        public int GetNotificationNum()
+        {
+            if (GetAccount() != null)
+            {
+                DBHandler db = new DBHandler();
+                Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+                param.Add("@Status", (int)NotificationStatus.Unread);
+                param.Add("@Account", this.GetAccount().AccountID);
+
+                using (DataTable dt = db.Execute<DataTable>(CRUD.READ, "SELECT COUNT(*) AS Count FROM Notification WHERE Status = @Status AND Account = @Account", param)) { 
+                    int count = Int32.Parse(dt.Rows[0]["Count"].ToString());
+
+                    return count;
+                }
+            }
+
+            return 0;
         }
     }
 }

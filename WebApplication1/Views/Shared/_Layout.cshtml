@@ -1,5 +1,6 @@
 ﻿@using WebApplication1.Models
 @using WebApplication1.Models.Supers
+@using System.Data;
 
 @{
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
@@ -9,6 +10,8 @@
         Account = new Account().FindById(Int32.Parse(Request.Cookies["userCookie"].ToString()));
         Session["user"] = Account;
     }
+
+    int notifNums = ((WebApplication1.Controllers.GlobalController)this.ViewContext.Controller).GetNotificationNum();
 }
 
 <!DOCTYPE html>
@@ -61,7 +64,15 @@
         @if (Account != null)
         {
             <ul>
-                <a href="/Recruitment"><li class="@(ViewBag.Active == "NOTIF" ? "active" : "")">Notifications</li></a>
+                <a href="/Recruitment">
+
+                    <li class="@(ViewBag.Active == "NOTIF" ? "active" : "")" style="display: flex; align-items: center;">
+                        Notifications
+                        <span class="ping">
+                            @notifNums
+                        </span>
+                    </li>
+                </a>
             </ul>
             if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP)
             {
@@ -69,7 +80,11 @@
                     <h6 class="cluster-label">Recruitment</h6>
                     <ul>
                         <a href="/Recruitment"><li class="@(ViewBag.Active == "JP" ? "active" : "")">Job Posting</li></a>
-                        <a href="/Recruitment/ApplicantStatus"><li class="@(ViewBag.Active == "AS" ? "active" : "")">Application Status</li></a>
+                        
+                        @if (Account.Type == AccountType.Applicant || ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                        {
+                            <a href="/Recruitment/ApplicantStatus"><li class="@(ViewBag.Active == "AS" ? "active" : "")">Application Status</li></a>
+                        }
                     </ul>
                 </div>
             }

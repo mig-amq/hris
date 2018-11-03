@@ -193,10 +193,6 @@ section div.cluster {
         display: block;
     }
 
-    section div.cluster div.inline input,
-    section div.cluster div.inline select {
-    }
-
 section .sub-title {
     color: var(--theme-color);
     font-size: 1em;
@@ -278,4 +274,13 @@ select#show-entries {
 form div.info {
     margin: 1.5em 10%;
     margin-left: 0;
+}
+
+.ping {
+    font-size: 0.8em;
+    background-color: #ff0000;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 10px;
+    font-weight: bold;
 }

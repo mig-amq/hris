@@ -164,7 +164,6 @@
     <Compile Include="Controllers\JobRequisitionController.cs" />
     <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\Paginator.cs" />
-    <Compile Include="Controllers\Recruitment.cs" />
     <Compile Include="Controllers\RecruitmentController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
@@ -185,6 +184,7 @@
     <Compile Include="Models\EmploymentHistory.cs" />
     <Compile Include="Models\JobPosting.cs" />
     <Compile Include="Models\Leave.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RequisitionForm.cs" />
     <Compile Include="Models\Supers\ProfiledObject.cs" />
@@ -244,6 +244,7 @@
     <Content Include="Views\JobRequisition\Index.cshtml" />
     <Content Include="Views\JobRequisition\List.cshtml" />
     <Content Include="Views\Attendance\Index.cshtml" />
+    <Content Include="Views\Home\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

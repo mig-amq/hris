@@ -73,7 +73,7 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Account FindById(int id, bool recursive = false)
+        public Account FindById(int id, bool recursive = true)
         {
             using (DataTable result = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Account WHERE AccountID = " + id))
             {
@@ -109,18 +109,17 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Account Find(string username, string password, bool hashed)
+        public Account FindByProfile(int ProfileID, bool recursive = true)
         {
-            return this;
-        }
-
-        public Account Find(string username, string password)
-        {
-            return this;
-        }
-
-        public Account Find(string username)
-        {
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT AccountID FROM Account WHERE Profile = " + ProfileID))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    this.FindById(Int32.Parse(dt.Rows[0]["AccountID"].ToString()), recursive);
+                }
+            }
             return this;
         }
 

@@ -6,11 +6,12 @@ using System.Web.Mvc;
 
 namespace WebApplication1.Controllers
 {
-    public class AttendanceController : Controller
+    public class AttendanceController : GlobalController
     {
         // GET: Attendance
         public ActionResult Index()
         {
+
             return View();
         }
     }

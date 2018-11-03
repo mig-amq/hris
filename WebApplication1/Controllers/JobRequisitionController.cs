@@ -55,6 +55,32 @@ namespace WebApplication1.Controllers
                 rf.Status = RequisitionStatus.Pending;
 
                 rf.Create();
+
+                Notification notifS = new Notification();
+                notifS.Account = new Account().FindByProfile(rf.UnderSupervision.Profile.ProfileID);
+                notifS.Message = "Info: You have been assigned to supervise an incoming manpower requisition.";
+                notifS.TimeStamp = DateTime.Now;
+                notifS.Status = NotificationStatus.Unread;
+
+                notifS.Create();
+                DBHandler db = new DBHandler();
+                using (DataTable dt = db.Execute<DataTable>(
+                    CRUD.READ,
+                    "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
+                    + ((int)DepartmentType.HumanResources)))
+                {
+                    foreach(DataRow row in dt.Rows)
+                    {
+                        Notification notifHR = new Notification();
+                        notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
+                        notifHR.TimeStamp = DateTime.Now;
+                        notifHR.Status = NotificationStatus.Unread;
+                        notifHR.Message = "A new requisition form was issued by the "
+                                          + (rf.UnderSupervision.Department.Type) + " department for the position: <b>" + rf.Position + "</b>";
+
+                        notifHR.Create();
+                    }
+                }
                 json["message"] = "Successfully completed request, please wait for further notification...";
             }
 

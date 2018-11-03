@@ -8,7 +8,7 @@ namespace WebApplication1.Controllers
 {
     using WebApplication1.Models;
 
-    public class HomeController : Controller
+    public class HomeController : GlobalController
     {
         public ActionResult Index()
         {            
