@@ -45,6 +45,10 @@
                         <option value="1">Active</option>
                         <option value="2">Inactive</option>
                     </select>
+                    <select name="locked" id="locked">
+                        <option value="1">Unlocked</option>
+                        <option value="2">Locked</option>
+                    </select>
                 </div>
                 <div class="cluster" id="employment-date">
                     <p class="sub-title">Employment Date</p>
@@ -62,6 +66,7 @@
                     </select>
                 </div>
                 <button type="submit">Save</button>
+                <div id="alert"></div>
             </form>
         </div>
     </div>
@@ -94,7 +99,6 @@
     </table>
     <div id="result-summary">
         <div>
-            <button class="footer-button">Generate Report</button>
             <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
         </div>
         <div id="pagination">
@@ -121,6 +125,14 @@
                     processData: false,
                     contentType: false,
                     success: (data) => {
+
+                        if (data.error)
+                            $("#alert").addClass('error');
+                        else
+                            $("#alert").addClass('success');
+
+                        $("#alert").text(data.message);
+
                         if (!data.error) {
                             location.reload();
                         }
@@ -139,7 +151,6 @@
                 },
                 method: "GET",
                 success: (data) => {
-                    console.log(data);
                     $("#data").empty();
                     $("#pagination").empty();
                     if (data.pages > 0) {
@@ -221,6 +232,8 @@
                         .attr("selected", true);
 
                     $("#modal-form select[name=status] option[value='" + data.employee.Status + "']").attr("selected", true);
+
+                    $("#modal-form select[name=locked] option[value='" + (data.Locked ? 2 : 1) + "']").attr("selected", true);
                 }
             })
         }

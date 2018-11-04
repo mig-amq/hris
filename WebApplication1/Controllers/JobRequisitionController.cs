@@ -17,11 +17,24 @@ namespace WebApplication1.Controllers
         // GET: JobRequisition
         public ActionResult Index()
         {
+            if (!this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            if (!this.CheckLogin(AccountType.DepartmentHead))
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
         public ActionResult List()
         {
+            if (!this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            if (!this.CheckLogin(AccountType.DepartmentHead) || 
+                !(!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources))
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
@@ -32,56 +45,81 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = true;
 
-            if (this.CheckLogin(AccountType.DepartmentHead))
+            string[] keys = new string[]
+                            {
+                                "month", "day", "year", "description", "position", "reason", "skills", "qualification",
+                                "experience", "supervision", "requisition-type", "description"
+                            };
+
+            if (this.HasValues(form, keys))
             {
-                string sched = (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("day").AttemptedValue) + 1).ToString("00")
-                               + "/" + form.GetValue("year").AttemptedValue;
-
-                RequisitionForm rf = new RequisitionForm();
-                rf.Date = DateTime.Now;
-                rf.Department = ((Employee)this.GetAccount().Profile).Department;
-                rf.RequestedBy = ((Employee)this.GetAccount().Profile);
-
-                rf.Description = form.GetValue("description").AttemptedValue;
-                rf.Position = form.GetValue("position").AttemptedValue;
-                rf.ReasonforVacancy = form.GetValue("reason").AttemptedValue;
-                rf.SkillsRequired = form.GetValue("skills").AttemptedValue;
-                rf.Qualification = form.GetValue("qualification").AttemptedValue;
-                rf.ExperienceRequired = form.GetValue("experience").AttemptedValue;
-                rf.UnderSupervision = new Employee(Int32.Parse(form.GetValue("supervision").AttemptedValue));
-                rf.Type = form.GetValue("requisition-type").AttemptedValue;
-                rf.ExpectedJoiningDate = DateTime.ParseExact(sched, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                rf.Description = form.GetValue("description").AttemptedValue;
-                rf.Status = RequisitionStatus.Pending;
-
-                rf.Create();
-
-                Notification notifS = new Notification();
-                notifS.Account = new Account().FindByProfile(rf.UnderSupervision.Profile.ProfileID);
-                notifS.Message = "Info: You have been assigned to supervise an incoming manpower requisition.";
-                notifS.TimeStamp = DateTime.Now;
-                notifS.Status = NotificationStatus.Unread;
-
-                notifS.Create();
-                DBHandler db = new DBHandler();
-                using (DataTable dt = db.Execute<DataTable>(
-                    CRUD.READ,
-                    "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
-                    + ((int)DepartmentType.HumanResources)))
+                if (this.CheckLogin(AccountType.DepartmentHead))
                 {
-                    foreach(DataRow row in dt.Rows)
+                    try
                     {
-                        Notification notifHR = new Notification();
-                        notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
-                        notifHR.TimeStamp = DateTime.Now;
-                        notifHR.Status = NotificationStatus.Unread;
-                        notifHR.Message = "A new requisition form was issued by the "
-                                          + (rf.UnderSupervision.Department.Type) + " department for the position: <b>" + rf.Position + "</b>";
+                        string sched = (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "/"
+                                        + (Int32.Parse(form.GetValue("day").AttemptedValue) + 1)
+                                           .ToString("00") + "/"+ form.GetValue("year").AttemptedValue;
 
-                        notifHR.Create();
+                        RequisitionForm rf = new RequisitionForm();
+                        rf.Date = DateTime.Now;
+                        rf.Department = ((Employee)this.GetAccount().Profile).Department;
+                        rf.RequestedBy = ((Employee)this.GetAccount().Profile);
+
+                        rf.Description = form.GetValue("description").AttemptedValue;
+                        rf.Position = form.GetValue("position").AttemptedValue;
+                        rf.ReasonforVacancy = form.GetValue("reason").AttemptedValue;
+                        rf.SkillsRequired = form.GetValue("skills").AttemptedValue;
+                        rf.Qualification = form.GetValue("qualification").AttemptedValue;
+                        rf.ExperienceRequired = form.GetValue("experience").AttemptedValue;
+                        rf.UnderSupervision = new Employee(Int32.Parse(form.GetValue("supervision").AttemptedValue));
+                        rf.Type = form.GetValue("requisition-type").AttemptedValue;
+                        rf.ExpectedJoiningDate = DateTime.ParseExact(sched, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                        rf.Description = form.GetValue("description").AttemptedValue;
+                        rf.Status = RequisitionStatus.Pending;
+
+                        rf.Create();
+                    
+
+                        Notification notifS = new Notification();
+                        notifS.Account = new Account().FindByProfile(rf.UnderSupervision.Profile.ProfileID);
+                        notifS.Message = "Info: You have been assigned to supervise an incoming manpower requisition.";
+                        notifS.TimeStamp = DateTime.Now;
+                        notifS.Status = NotificationStatus.Unread;
+
+                        notifS.Create();
+                        DBHandler db = new DBHandler();
+                        using (DataTable dt = db.Execute<DataTable>(
+                            CRUD.READ,
+                            "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
+                            + ((int)DepartmentType.HumanResources)))
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                Notification notifHR = new Notification();
+                                notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
+                                notifHR.TimeStamp = DateTime.Now;
+                                notifHR.Status = NotificationStatus.Unread;
+                                notifHR.Message = "A new requisition form was issued by the "
+                                                  + (rf.UnderSupervision.Department.Type) + " department for the position: <b>" + rf.Position + "</b>";
+
+                                notifHR.Create();
+                            }
+                        }
+
+                        json["message"] = "Successfully completed request, please wait for further notification...";
+                    }
+                    catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
                     }
                 }
-                json["message"] = "Successfully completed request, please wait for further notification...";
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "You are not authorized to continue...";
+                }
             }
 
             return Content(json.ToString(), "application/json");
@@ -94,14 +132,26 @@ namespace WebApplication1.Controllers
             List<Employee> Employees = new List<Employee>();
             DBHandler db = new DBHandler();
 
-            string sql = "SELECT EmployeeID FROM Employee WHERE Department = "
-                         + ((Employee)this.GetAccount().Profile).Department.DepartmentID;
-
-            using (DataTable dt = db.Execute<DataTable>(CRUD.READ, sql))
+            if (!this.CheckLogin(AccountType.Applicant))
             {
-                foreach (DataRow row in dt.Rows)
+                string sql = "SELECT EmployeeID FROM Employee WHERE Department = "
+                             + ((Employee)this.GetAccount().Profile).Department.DepartmentID;
+
+                using (DataTable dt = db.Execute<DataTable>(CRUD.READ, sql))
                 {
-                    Employees.Add((Employee) new Employee().FindProfile(Int32.Parse(row["EmployeeID"].ToString()), byPrimary:true));
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        try
+                        {
+                            Employee emp = (Employee)new Employee().FindProfile(
+                                Int32.Parse(row["EmployeeID"].ToString()),
+                                byPrimary: true);
+                            Employees.Add(emp);
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                    }
                 }
             }
 
@@ -156,7 +206,8 @@ namespace WebApplication1.Controllers
 
             if (form.GetValue("id") != null && form.GetValue("v") != null)
             {
-                if (((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                if (this.CheckLogin(AccountType.DepartmentHead) || this.CheckLogin(AccountType.Employee) && 
+                    ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
                 {
                     try
                     {
@@ -168,7 +219,7 @@ namespace WebApplication1.Controllers
                     catch (Exception e)
                     {
                         json["error"] = true;
-                        json["message"] = "Uh oh! Invalid data sent.";
+                        json["message"] = "Invalid data sent.";
                     }
                 }
                 else
@@ -180,7 +231,7 @@ namespace WebApplication1.Controllers
             else
             {
                 json["error"] = true;
-                json["message"] = "Oops! Some data failed to send to the server";
+                json["message"] = "Form is incomplete";
             }
 
             return Content(json.ToString(), "application/json");

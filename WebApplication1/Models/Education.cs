@@ -71,11 +71,11 @@ namespace WebApplication1.Models
                 this.EducationID = EducationID;
                 this.Elementary.Name = row["Elementary"].ToString();
                 this.Elementary.Address = row["ElemAddress"].ToString();
-                this.Elementary.Start = row["ElemStart"].ToString();
-                this.Elementary.End = row["ElemEnd"].ToString();
+                this.Elementary.Start = row["ElemStartYear"].ToString();
+                this.Elementary.End = row["ElemEndYear"].ToString();
 
                 this.HighSchool.Name = row["HighSchool"].ToString();
-                this.HighSchool.Address = row["HighSchool"].ToString();
+                this.HighSchool.Address = row["HSAddress"].ToString();
                 this.HighSchool.Start = row["HSStartYear"].ToString();
                 this.HighSchool.End = row["HSEndYear"].ToString();
 
@@ -175,8 +175,8 @@ namespace WebApplication1.Models
 
             if (this.Elementary != null)
             {
-                set = "Elementary = @Elementary AND ElemStartYear = @ElemStartYear AND "
-                      + "ElemEndYear = @ElemEndYear AND ElemAddress = @ElemAddress";
+                set += "Elementary = @Elementary , ElemStartYear = @ElemStartYear , "
+                      + "ElemEndYear = @ElemEndYear , ElemAddress = @ElemAddress";
 
                 param.Add("@Elementary", this.Elementary.Name);
                 param.Add("@ElemStartYear", this.Elementary.Start);
@@ -185,14 +185,14 @@ namespace WebApplication1.Models
 
                 if (this.HighSchool != null || this.College != null || this.PostGraduate != null)
                 {
-                    set += " AND ";
+                    set += " , ";
                 }
             }
 
             if (this.HighSchool != null)
             {
-                set += "HighSchool = @HighSchool AND HSStartYear = @HSStartYear AND "
-                       + "HSEndYear = @HSEndYear AND HSAddress = @HSAddress";
+                set += "HighSchool = @HighSchool , HSStartYear = @HSStartYear , "
+                       + "HSEndYear = @HSEndYear , HSAddress = @HSAddress";
                 param.Add("@HighSchool", this.HighSchool.Name);
                 param.Add("@HSStartYear", this.HighSchool.Start);
                 param.Add("@HSEndYear", this.HighSchool.End);
@@ -200,14 +200,14 @@ namespace WebApplication1.Models
 
                 if (this.College != null || this.PostGraduate != null)
                 {
-                    set += " AND ";
+                    set += " , ";
                 }
             }
 
             if (this.College != null)
             {
-                set += "College = @College AND CollegeStartYear = @CollegeStartYear AND"
-                       + " CollegeEndYear = @CollegeEndYear AND CollegeAddress = @CollegeAddress";
+                set += "College = @College , CollegeStartYear = @CollegeStartYear ,"
+                       + " CollegeEndYear = @CollegeEndYear , CollegeAddress = @CollegeAddress";
                 param.Add("@College", this.College.Name);
                 param.Add("@CollegeStartYear", this.College.Start);
                 param.Add("@CollegeEndYear", this.College.End);
@@ -215,14 +215,14 @@ namespace WebApplication1.Models
 
                 if (this.PostGraduate != null)
                 {
-                    set += " AND ";
+                    set += " , ";
                 }
             }
 
             if (this.PostGraduate != null)
             {
-                set += "PostGrad = @PostGrad AND PostGradStartYear = @PostGradStartYear AND"
-                       + " PostGradEndYear = @PostGradEndYear AND PostGradAddress = @PostGradAddress";
+                set += "PostGrad = @PostGrad, PostGradStartYear = @PostGradStartYear, "
+                       + " PostGradEndYear = @PostGradEndYear , PostGradAddress = @PostGradAddress";
                 param.Add("@PostGrad", this.PostGraduate.Name);
                 param.Add("@PostGradStartYear", this.PostGraduate.Start);
                 param.Add("@PostGradEndYear", this.PostGraduate.End);

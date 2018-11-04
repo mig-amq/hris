@@ -26,7 +26,7 @@ namespace WebApplication1.Models
         {
             this.DBHandler = new DBHandler();
 
-            if (TableID == -1)
+            if (TableID != -1)
             {
                 if (byPrimary) this.NotificationID = TableID;
                 this.Find(TableID, recursive, byPrimary);

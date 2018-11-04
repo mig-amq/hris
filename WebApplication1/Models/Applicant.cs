@@ -31,17 +31,25 @@ namespace WebApplication1.Models
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Applicant WHERE " + (byPrimary ? " ApplicantID " : " Profile ") + " = " + TableID))
             {
-                DataRow row = dt.Rows[0];
-
-                // Fill Applicant Object
-                this.ApplicantID = Int32.Parse(row["ApplicantID"].ToString());
-                this.Skills = row["Skills"].ToString();
-                this.DesiredPosition = row["DesiredPosition"].ToString();
-                this.Status = (ApplicantStatus)Int32.Parse(row["Status"].ToString());
-
-                if (recursive)
+                if (dt.Rows.Count > 0)
                 {
-                    this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
+                    DataRow row = dt.Rows[0];
+
+                    // Fill Applicant Object
+                    this.ApplicantID = Int32.Parse(row["ApplicantID"].ToString());
+                    this.Skills = row["Skills"].ToString();
+                    this.DesiredPosition = row["DesiredPosition"].ToString();
+                    this.Status = (ApplicantStatus)Int32.Parse(row["Status"].ToString());
+
+                    if (recursive)
+                    {
+                        this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
+                    }
+                }
+                else
+                {
+                    throw new Exception(
+                        "Cannot find employee with the " + (byPrimary ? " primary " : " profile ") + "id: " + TableID);
                 }
             }
 

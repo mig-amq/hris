@@ -22,6 +22,10 @@ namespace WebApplication1.Controllers
 
         public ActionResult ApplicantStatus()
         {
+            if (!this.CheckLogin(AccountType.Applicant) &&
+                ((Employee)this.GetAccount().Profile).Department.Type != DepartmentType.HumanResources)
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
@@ -29,7 +33,15 @@ namespace WebApplication1.Controllers
         public ContentResult GetJob()
         {
             JObject json = new JObject();
-            json["jobs"] = JObject.FromObject(new JobPosting(Int32.Parse(Request.QueryString["id"])));
+
+            try
+            {
+                json["jobs"] = JObject.FromObject(new JobPosting(Int32.Parse(Request.QueryString["id"])));
+            }
+            catch (Exception e)
+            {
+                json["jobs"] = "";
+            }
 
             return Content(json.ToString(), "application/json");
         }
@@ -93,15 +105,32 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            JobPosting job = new JobPosting();
-            job.JobTitle = form.GetValue("job-title").AttemptedValue;
-            job.JobDescription = form.GetValue("job-desc").AttemptedValue;
-            job.Requirements = form.GetValue("job-req").AttemptedValue;
-            job.DatePosted = DateTime.ParseExact(
-                form.GetValue("year").AttemptedValue + "-"
-                                                     + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
-                                                     + Int32.Parse(form.GetValue("day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            job.Create();
+            string[] keys = new string[]
+                            {
+                                "job-title", "job-desc", "job-req", "year", "month", "day"
+                            };
+
+            if (this.HasValues(form, keys))
+            {
+                if (!this.CheckLogin(AccountType.Applicant) &&
+                    ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                {
+                    JobPosting job = new JobPosting();
+                    job.JobTitle = form.GetValue("job-title").AttemptedValue;
+                    job.JobDescription = form.GetValue("job-desc").AttemptedValue;
+                    job.Requirements = form.GetValue("job-req").AttemptedValue;
+                    job.DatePosted = DateTime.ParseExact(
+                        form.GetValue("year").AttemptedValue + "-"
+                                                             + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
+                                                             + Int32.Parse(form.GetValue("day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    job.Create();
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "You are not authorized to continue";
+                }
+            }
 
             return Content(json.ToString(), "application/json");
         }
@@ -113,15 +142,27 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            JobPosting job = new JobPosting(Int32.Parse(form.GetValue("ID").AttemptedValue));
-            job.JobTitle = form.GetValue("job-title").AttemptedValue;
-            job.JobDescription = form.GetValue("job-desc").AttemptedValue;
-            job.Requirements = form.GetValue("job-req").AttemptedValue;
-            job.DatePosted = DateTime.ParseExact(
-                form.GetValue("year").AttemptedValue + "-"
-                                                           + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
-                                                           + Int32.Parse(form.GetValue("day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            job.Update();
+            string[] keys = new string[]
+                                {
+                                    "job-title", "job-desc", "job-req", "year", "month", "day"
+                                };
+
+            if (this.HasValues(form, keys))
+            {
+                if (!this.CheckLogin(AccountType.Applicant) &&
+                    ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                {
+                    JobPosting job = new JobPosting(Int32.Parse(form.GetValue("ID").AttemptedValue));
+                    job.JobTitle = form.GetValue("job-title").AttemptedValue;
+                    job.JobDescription = form.GetValue("job-desc").AttemptedValue;
+                    job.Requirements = form.GetValue("job-req").AttemptedValue;
+                    job.DatePosted = DateTime.ParseExact(
+                        form.GetValue("year").AttemptedValue + "-"
+                                                             + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
+                                                             + Int32.Parse(form.GetValue("day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    job.Update();
+                }
+            }
 
             return Content(json.ToString(), "application/json");
         }
@@ -187,54 +228,81 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            Applicant a = new Applicant(Int32.Parse(form.GetValue("id").AttemptedValue), true);
-            a.Status = (ApplicantStatus)Int32.Parse(form.GetValue("s").AttemptedValue);
-            a.Update(false);
+            string[] keys = new string[] {"id", "v"};
 
-            if (a.Status == Models.ApplicantStatus.Accepted)
+            if (!this.CheckLogin(AccountType.Applicant) &&
+                ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
             {
-                json["message"] = "Accepted";
-
-                // create employee data containing applicant profile
-                Employee e = new Employee();
-                e.EmploymentDate = DateTime.Now;
-                e.Position = "New Employee";
-                e.Code = Guid.NewGuid().ToString();
-                e.Profile = a.Profile;
-                e.Create();
-
-                DBHandler db = new DBHandler();
-
-                // update applicant account if it exists
-                using (DataTable dt = db.Execute<DataTable>(
-                    CRUD.READ,
-                    "SELECT * FROM Account WHERE Profile = " + a.Profile.ProfileID))
+                if (this.HasValues(form, keys))
                 {
-                    if (dt.Rows.Count == 1)
+                    try
                     {
-                        Account ac = new Account().FindById(Int32.Parse(dt.Rows[0]["AccountID"].ToString()), false);
-                        ac.Type = AccountType.Employee;
-                        ac.Profile = e;
+                        Applicant a = new Applicant(Int32.Parse(form.GetValue("id").AttemptedValue), true);
+                        a.Status = (ApplicantStatus)Int32.Parse(form.GetValue("s").AttemptedValue);
+                        a.Update(false);
 
-                        ac.Update(recursive:false);
+                        if (a.Status == Models.ApplicantStatus.Accepted)
+                        {
+                            json["message"] = "Accepted";
 
-                        Notification notif = new Notification();
-                        notif.Account = ac;
-                        notif.Message =
-                            "Congratulations! You've been approved for employment, please wait for further information, you will be contacted through phone or email.";
-                        notif.Status = NotificationStatus.Unread;
-                        notif.TimeStamp = DateTime.Now;
+                            // create employee data containing applicant profile
+                            Employee e = new Employee();
+                            e.EmploymentDate = DateTime.Now;
+                            e.Position = "New Employee";
+                            e.Code = Guid.NewGuid().ToString();
+                            e.Profile = a.Profile;
+                            e.Create();
 
-                        notif.Create();
+                            DBHandler db = new DBHandler();
+
+                            // update applicant account if it exists
+                            using (DataTable dt = db.Execute<DataTable>(
+                                CRUD.READ,
+                                "SELECT * FROM Account WHERE Profile = " + a.Profile.ProfileID))
+                            {
+                                if (dt.Rows.Count == 1)
+                                {
+                                    Account ac = new Account().FindById(Int32.Parse(dt.Rows[0]["AccountID"].ToString()), false);
+                                    ac.Type = AccountType.Employee;
+                                    ac.Profile = e;
+
+                                    ac.Update(recursive: false);
+
+                                    Notification notif = new Notification();
+                                    notif.Account = ac;
+                                    notif.Message =
+                                        "Congratulations! You've been approved for employment, please wait for further information, you will be contacted through phone or email.";
+                                    notif.Status = NotificationStatus.Unread;
+                                    notif.TimeStamp = DateTime.Now;
+
+                                    notif.Create();
+                                }
+                            }
+
+                            // delete applicant data
+                            // a.Delete();
+                        }
+                        else
+                        {
+                            json["message"] = "Rejected";
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
                     }
                 }
-
-                // delete applicant data
-                // a.Delete();
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
+                }
             }
             else
             {
-                json["message"] = "Rejected";
+                json["error"] = true;
+                json["message"] = "You are not authorized to continue";
             }
 
             return Content(json.ToString(), "application/json");

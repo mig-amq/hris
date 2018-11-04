@@ -36,6 +36,7 @@
                         </select>
                     </div>
                     <button type="submit">Save</button>
+                    <div id="alert"></div>
                 </form>
             </div>
         </div>
@@ -45,8 +46,16 @@
 <div id="section-heading">
     <div>
         <h1 id="section-title">Job Posting</h1>
+        <span>
+            Show
+            <select id="show-entries" onchange="search(curr)">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
         @if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
         {
+            <text>&nbsp;&nbsp;&nbsp;</text>
             <button class="hallow modal-trigger" data-id="0" onclick="$('#modal-form').attr('data-action', 'add');">
                 <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
                 Add New
@@ -69,7 +78,11 @@
 </table>
 <div id="result-summary">
     <div>
-        <button class="footer-button">Generate Report</button>
+        @if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+        {
+
+            <button class="footer-button">Generate Report</button>
+        }
         <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
     </div>
     <div id="pagination">
@@ -92,6 +105,13 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
+
                     if (!data.error) {
                         $("#modal").hide();
                         search(curr + 1);
@@ -113,6 +133,12 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
                     if (!data.error) {
                         $("#modal").hide();
                     }

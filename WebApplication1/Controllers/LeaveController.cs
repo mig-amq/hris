@@ -17,11 +17,19 @@ namespace WebApplication1.Controllers
         // GET: Leave
         public ActionResult Index()
         {
+            if (this.CheckLogin(AccountType.Applicant))
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
         public ActionResult Approval()
         {
+
+            if (!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type
+                != DepartmentType.HumanResources)
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
@@ -108,40 +116,73 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            Leave l = new Leave();
-            string start = (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("start-day").AttemptedValue) + 1).ToString("00")
-                           + "/" + form.GetValue("start-year").AttemptedValue;
-            string end = (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("end-day").AttemptedValue) + 1).ToString("00")
-                         + "/" + form.GetValue("end-year").AttemptedValue;
+            string[] keys = new string[]
+                            {
+                                "start-month", "start-day", "start-year", "end-month", "end-day", "end-year", "reason"
+                            };
 
-            l.Employee = (Employee)this.GetAccount().Profile;
-            l.StartDate = DateTime.ParseExact(start, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            l.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-            l.Status = LeaveStatus.Pending;
-            l.Reason = form.GetValue("reason").AttemptedValue;
-
-            l.Create();
-
-            DBHandler db = new DBHandler();
-            using (DataTable dt = db.Execute<DataTable>(
-                CRUD.READ,
-                "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
-                + ((int)DepartmentType.HumanResources)))
+            if (!this.CheckLogin(AccountType.Applicant))
             {
-                foreach (DataRow row in dt.Rows)
+                if (this.HasValues(form, keys))
                 {
-                    Notification notifHR = new Notification();
-                    notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
-
-                    if (this.GetAccount().Profile.Profile.ProfileID != notifHR.Account.AccountID)
+                    try
                     {
-                        notifHR.TimeStamp = DateTime.Now;
-                        notifHR.Status = NotificationStatus.Unread;
+                        Leave l = new Leave();
+                        string start = (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "/"
+                                        + (Int32.Parse(form.GetValue("start-day").AttemptedValue) + 1).ToString("00") + "/"
+                                        + form.GetValue("start-year").AttemptedValue;
+                        string end = (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "/"
+                                       + (Int32.Parse(form.GetValue("end-day").AttemptedValue) + 1).ToString("00") + "/"
+                                        + form.GetValue("end-year").AttemptedValue;
 
-                        notifHR.Message = l.Employee.Profile.FirstName + " " + l.Employee.Profile.MiddleName + " " + l.Employee.Profile.LastName + " applied for a sick leave on " + start + " - " + end;
-                        notifHR.Create();
+                        l.Employee = (Employee)this.GetAccount().Profile;
+                        l.StartDate = DateTime.ParseExact(start, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                        l.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                        l.Status = LeaveStatus.Pending;
+                        l.Reason = form.GetValue("reason").AttemptedValue;
+
+                        l.Create();
+
+                        DBHandler db = new DBHandler();
+                        using (DataTable dt = db.Execute<DataTable>(
+                            CRUD.READ,
+                            "SELECT E.Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE D.Type = "
+                            + ((int)DepartmentType.HumanResources)))
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                Notification notifHR = new Notification();
+                                notifHR.Account = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()));
+
+                                if (this.GetAccount().Profile.Profile.ProfileID != notifHR.Account.AccountID)
+                                {
+                                    notifHR.TimeStamp = DateTime.Now;
+                                    notifHR.Status = NotificationStatus.Unread;
+
+                                    notifHR.Message = l.Employee.Profile.FirstName + " " + l.Employee.Profile.MiddleName
+                                                      + " " + l.Employee.Profile.LastName + " applied for a sick leave on "
+                                                      + start + " - " + end;
+                                    notifHR.Create();
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
                     }
                 }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
+                }
+            }
+            else
+            {
+                json["error"] = true;
+                json["message"] = "You are not authorized to continue";
             }
 
             return Content(json.ToString(), "application/json");
@@ -163,23 +204,32 @@ namespace WebApplication1.Controllers
                         Leave Leave = new Leave(Int32.Parse(form.GetValue("id").AttemptedValue));
                         Leave.Status = (LeaveStatus)Int32.Parse(form.GetValue("V").AttemptedValue);
                         Leave.Update(recursive:false);
+
+                        Notification notif = new Notification();
+                        notif.Account = new Account().FindByProfile(Leave.Employee.Profile.ProfileID);
+                        notif.Message = "<b>Info:</b> Your leave request #" + Leave.LeaveID + " has been updated to: <i>" 
+                                        + (Leave.Status == LeaveStatus.Approved ? 
+                                               " Approved " : Leave.Status == LeaveStatus.Denied ? " Denied " : " Pending ") + "</i>";
+                        notif.TimeStamp = DateTime.Now;
+                        notif.Status = NotificationStatus.Unread;
+                        notif.Create();
                     }
                     catch (Exception e)
                     {
                         json["error"] = true;
-                        json["message"] = "Uh oh! Invalid data sent.";
+                        json["message"] = e.Message;
                     }
                 }
                 else
                 {
                     json["error"] = true;
-                    json["message"] = "Oops! Looks like you're not an HR!";
+                    json["message"] = "You are not authorized to continue";
                 }
             }
             else
             {
                 json["error"] = true;
-                json["message"] = "Oops! Some data failed to send to the server";
+                json["message"] = "Form is incomplete";
             }
             return Content(json.ToString(), "application/json");
         }

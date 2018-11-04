@@ -10,6 +10,29 @@ input, textarea{
 	font-size: 0.8em;
 }
 
+#alert {
+    display: none;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: var(--border-radius);
+}
+
+#alert.error, #alert.success, #alert.info {
+    display: block;
+}
+
+#alert.error {
+    background-color: #e02c2c;
+}
+
+#alert.success {
+    background-color: #5eb854;
+}
+
+#alert.info {
+    background-color: #408dcc;
+}
 input.half, textarea.half{
 	width: 50%;
 }

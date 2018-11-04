@@ -2,6 +2,11 @@
 
 function clearModalForm() {
     $("#modal form")[0].reset();
+
+    if ($("#alert") != null) {
+        $("#alert").attr('class', '');
+        $("#alert").text("");
+    }
 }
 
 $(document).on('click', '.modal-trigger', () => {

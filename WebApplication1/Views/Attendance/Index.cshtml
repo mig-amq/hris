@@ -4,5 +4,115 @@
     ViewBag.Active = "ATE";
 }
 
-<h2>Index</h2>
+<div id="modal">
+    <img src="assets/icons/close.svg" id="modal-close" />
+    <div id="modal-form-table">
+        <h2>Attendance Details of <span class="spot">Rachel Green</span></h2>
+        <table>
+            <thead>
+            <tr class="heading-row">
+                <th>Date</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Overtime</th>
+                <th>Late</th>
+                <th>Leave</th>
+                <th>Undertime</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>08/18/2018</td>
+                <td>20</td>
+                <td>1</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>08/19/2018</td>
+                <td>17</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>4</td>
+                <td>0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<div id="section-heading">
+    <div>
+        <h1 id="section-title">Attendance Details</h1>
+        <span>
+            Show
+            <select id="show-entries">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
+    </div>
+    <input type="text" placeholder="Search Attendance Details..." class="search" />
+</div>
+<br/>
+<table>
+    <thead>
+    <tr class="heading-row">
+        <th>No.</th>
+        <th>Code</th>
+        <th>Employee Name</th>
+        <th>Total Working Days</th>
+        <th>Present</th>
+        <th>Absent</th>
+        <th>Overtime</th>
+        <th>Late</th>
+        <th>Leave</th>
+        <th>Undertime</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>01</td>
+        <td>0001</td>
+        <td>Rachel Green</td>
+        <td>21</td>
+        <td>20</td>
+        <td>1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td><button class="hallow modal-trigger">View Details</button></td>
+    </tr>
+    <tr>
+        <td>02</td>
+        <td>0002</td>
+        <td>Chris De La Cruz</td>
+        <td>21</td>
+        <td>17</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>4</td>
+        <td>0</td>
+        <td><button class="hallow modal-trigger">View Details</button></td>
+    </tr>
+    </tbody>
+</table>
+<div id="result-summary">
+    <div>
+        <button class="footer-button">Generate Report</button>
+        <span id="result-count">Showing <b>1 - 15</b> out of 289 results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+    </div>
+</div>

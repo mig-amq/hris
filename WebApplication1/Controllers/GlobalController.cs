@@ -7,6 +7,7 @@ using System.Web.Mvc;
 namespace WebApplication1.Controllers
 {
     using System.Data;
+    using System.Diagnostics;
     using WebApplication1.Models;
 
     public class GlobalController : Controller
@@ -24,6 +25,18 @@ namespace WebApplication1.Controllers
             }
 
             return false;
+        }
+
+        public Boolean IsLoggedIn()
+        {
+            try
+            {
+                return ((Account) Session["user"]).Exists;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public Account GetAccount()
@@ -48,6 +61,15 @@ namespace WebApplication1.Controllers
             }
 
             return 0;
+        }
+
+        public Boolean HasValues(FormCollection form, string[] keys)
+        {
+            foreach(string key in keys)
+                if (!form.AllKeys.Contains(key) && !String.IsNullOrEmpty(form.GetValue(key).AttemptedValue))
+                    return false;
+
+            return true;
         }
     }
 }

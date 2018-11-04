@@ -37,7 +37,13 @@ namespace WebApplication1.Models
         Accounting = 16,
         Finance = 17,
 
-        None = 18
+        None = 18,
+
+        CorporateServicesBranch = 19,
+        AdministrationBranch = 20,
+        SalesAndMarketingBranch = 21,
+        OperationsBranch = 22,
+        FinanceBranch = 23,
     }
 
     public class Department

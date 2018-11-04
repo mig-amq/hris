@@ -30,6 +30,8 @@ namespace WebApplication1.Models
         public string Password { get; set; }
         public string Email { get; set; }
         public bool Locked { get; set; }
+        public string Security { get; set; }
+        public string Answer { get; set; }
         public ProfiledObject Profile { get; set; }
 
         public Account()
@@ -50,6 +52,8 @@ namespace WebApplication1.Models
                     this.AccountID = Int32.Parse(row["AccountID"].ToString());
                     this.Type = (AccountType)Int32.Parse(row["Type"].ToString());
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
+                    this.Security = row["Security"].ToString();
+                    this.Answer = row["Answer"].ToString();
 
                     if (recursive)
                     {
@@ -87,6 +91,8 @@ namespace WebApplication1.Models
                     this.Type = (AccountType) Enum.Parse(typeof(AccountType), row["Type"].ToString(), true);
                     Debug.WriteLine("Locked: ", row["Locked"].ToString());
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
+                    this.Security = row["Security"].ToString();
+                    this.Answer = row["Answer"].ToString();
 
                     if (recursive)
                     {
@@ -125,8 +131,8 @@ namespace WebApplication1.Models
 
         public Account Create(int DepartmentID = -1, bool recursive = true)
         {
-            string columns = "INSERT INTO Account(Username, Email, Password, Profile, Type) OUTPUT INSERTED.AccountID ";
-            string values = "VALUES(@Username, @Email, @Password, @Profile, @Type)";
+            string columns = "INSERT INTO Account(Username, Email, Password, Profile, Type, Security, Answer) OUTPUT INSERTED.AccountID ";
+            string values = "VALUES(@Username, @Email, @Password, @Profile, @Type, @Security, @Answer)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
 
@@ -151,6 +157,8 @@ namespace WebApplication1.Models
             param.Add("@Password", this.Password);
             param.Add("@Profile", this.Profile.Profile.ProfileID);
             param.Add("@Type", (int)this.Type);
+            param.Add("@Security", this.Security);
+            param.Add("@Answer", this.Answer);
 
             this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -179,7 +187,8 @@ namespace WebApplication1.Models
                 }
             }
             string set = "UPDATE Account SET Username = @Username, Password = @Password, "
-                         + "Email = @Email, Locked = @Locked, Type = @Type OUTPUT INSERTED.AccountID WHERE AccountID = " + AccountID;
+                         + "Email = @Email, Locked = @Locked, Type = @Type, Security = @Security, Answer = @Answer"
+                         + " OUTPUT INSERTED.AccountID WHERE AccountID = " + AccountID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@Username", this.Username);
@@ -190,6 +199,8 @@ namespace WebApplication1.Models
                 param.Add("@Profile", this.Profile.Profile.ProfileID);
 
             param.Add("@Type", (int)this.Type);
+            param.Add("@Security", this.Security);
+            param.Add("@Answer", this.Answer);
 
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;

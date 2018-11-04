@@ -20,6 +20,6 @@ function readyDay(){
 }
 
 function readyYear(){
-	for(var x = 2018; x >= 1960; x--)
+	for(var x = new Date().getFullYear() + 5; x >= 1960; x--)
 		$("select#year").append('<option value="' + x + '">' + x + '</option>');
 }

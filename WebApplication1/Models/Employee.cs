@@ -27,38 +27,46 @@ namespace WebApplication1.Models
         {}
 
         public Employee(int ProfileID, bool byPrimary = false)
-            : base(ProfileID, byPrimary = false)
+            : base(ProfileID, byPrimary)
         {}
 
         public override ProfiledObject FindProfile(int TableID, bool recursive = true, bool byPrimary = false)
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT * FROM Employee WHERE " + (byPrimary ? " EmployeeID " : " Profile ") + " = " + TableID))
             {
-                DataRow row = dt.Rows[0];
-                
-                // Fill Employee Object
-                this.EmployeeID = Int32.Parse(row["EmployeeID"].ToString());
-                this.Status = (StatusType)Enum.Parse(typeof(StatusType), row["Status"].ToString(), true);
-                this.Code = row["Code"].ToString();
-                this.Position = row["Position"].ToString();
-                this.EmploymentDate = DateTime.Parse(row["EmploymentDate"].ToString());
-
-                if (this.Status == StatusType.Inactive)
-                    this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
-                else
-                    this.DateInactive = DateTime.MaxValue;
-
-                if (recursive)
+                if (dt.Rows.Count > 0)
                 {
-                    this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
-                    try
+                    DataRow row = dt.Rows[0];
+
+                    // Fill Employee Object
+                    this.EmployeeID = Int32.Parse(row["EmployeeID"].ToString());
+                    this.Status = (StatusType)Enum.Parse(typeof(StatusType), row["Status"].ToString(), true);
+                    this.Code = row["Code"].ToString();
+                    this.Position = row["Position"].ToString();
+                    this.EmploymentDate = DateTime.Parse(row["EmploymentDate"].ToString());
+
+                    if (this.Status == StatusType.Inactive)
+                        this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
+                    else
+                        this.DateInactive = DateTime.MaxValue;
+
+                    if (recursive)
                     {
-                        this.Department = new Department(Int32.Parse(row["Department"].ToString()), recursive:true);
+                        this.Profile = new Profile(Int32.Parse(row["Profile"].ToString()));
+                        try
+                        {
+                            this.Department = new Department(Int32.Parse(row["Department"].ToString()), recursive: true);
+                        }
+                        catch (Exception e)
+                        {
+                            this.Department = null;
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        this.Department = null;
-                    }
+                }
+                else
+                {
+                    throw new Exception(
+                        "Cannot find employee with the " + (byPrimary ? " primary " : " profile ") + "id: " + TableID);
                 }
             }
 

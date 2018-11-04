@@ -54,21 +54,26 @@
             </select>
             <input type="text" name="employee-position" placeholder="Position" class="full"/>
         </div>
-        <div class="cluster">
-            <p class="sub-title">Date of Hire</p>
-            <select id="month" name="month" class="full">
-                <option value="-1" disabled="">-- Select month --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="day" name="day" class="full">
-                <option value="-1">-- Select day --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="year" name="year" class="full">
-                <option value="-1">-- Select year --</option>
-                <!-- JS generated -->
-            </select>
-        </div>
+            <div class="cluster">
+                <p class="sub-title">Date of Hire</p>
+                <select id="month" name="month" class="full">
+                    <option value="-1" disabled="">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="day" class="full">
+                    <option value="-1">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="year" class="full">
+                    <option value="-1">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
+            <div class="cluster">
+                <p class="sub-title">Security:</p>
+                <input type="text" name="question" class="full" placeholder="Security Question" />
+                <input type="password" name="answer" class="full" placeholder="Security Answer" />
+            </div>
         </div>
         <hr/>
         <p class="sub-title">Employment History</p>
@@ -91,7 +96,7 @@
                     <option value="2">Female</option>
                 </select>
                 <select name="civil-status" class="full">
-                    <option value="-1">-- Select Civil Status --</option>
+                    <option value="2">-- Select Civil Status --</option>
                     <option value="2">Single</option>
                     <option value="1">Married</option>
                     <option value="5">Widowed</option>
@@ -191,7 +196,7 @@
             </div>
         </div>
         <button type="submit" class="full">Add New Employee</button>
-        <div class="alert"></div>
+        <div id="alert"></div>
     </form>
    
     <script>
@@ -205,6 +210,8 @@
             form.append("password", $("input[name=password]").val());
             form.append("type", $("select[name=account-type]").val());
             form.append("email", $("input[name=email]").val());
+            form.append("question", $("input[name=question]").val());
+            form.append("answer", $("input[name=answer]").val());
 
             form.append("code", $("input[name=employee-code]").val());
             form.append("department", $("select[name=department]").val());
@@ -239,7 +246,12 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    console.log(data);
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
                 }
             })
         });

@@ -29,6 +29,14 @@ namespace WebApplication1.Controllers
         {
             List<DataRow> results = new List<DataRow>();
 
+            string orderby = " ORDER BY SCOPE_IDENTITY() DESC ";
+
+            if (sql.ToUpper().IndexOf("ORDER BY") != -1)
+            {
+                orderby = sql.Substring(sql.IndexOf("ORDER BY"));
+                sql = sql.Substring(0, sql.IndexOf("ORDER BY"));
+            }
+
             // Count all records the query returns
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, "SELECT COUNT(*) FROM (" + sql + ") T2"))
             {
@@ -45,7 +53,7 @@ namespace WebApplication1.Controllers
                     if (this.Page <= this.Pages) // check if current page fits in the number of pages
                     {
 
-                        sql += " ORDER BY SCOPE_IDENTITY() DESC OFFSET " + this.Entries * (this.Page - 1) +
+                        sql += orderby + " OFFSET " + this.Entries * (this.Page - 1) +
                                " ROWS FETCH NEXT " + this.Entries + " ROWS ONLY ";
                         using (DataTable res = this.DBHandler.Execute<DataTable>(CRUD.READ, sql))
                         {

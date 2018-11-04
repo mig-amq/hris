@@ -21,42 +21,84 @@ namespace WebApplication1.Controllers
         // GET: Training
         public ActionResult Index()
         {
+            if (!this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            if (this.CheckLogin(AccountType.VP) || this.CheckLogin(AccountType.CEO) || this.CheckLogin(AccountType.Applicant))
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
+        }
+
+        [HttpGet]
+        public ActionResult Assigned()
+        {
+            if (!this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            if (this.CheckLogin(AccountType.VP) || this.CheckLogin(AccountType.CEO) || this.CheckLogin(AccountType.Applicant))
+                return this.RedirectToAction("Dashboard", "Home");
+
+            return this.View();
         }
 
         // POST: Training/Create
         [HttpPost]
         public ActionResult Create(FormCollection form)
         {
-
             JObject json = new JObject();
             json["error"] = false;
             json["message"] = "";
 
-            // check if the logged in user is the HR Head
-            if (this.CheckLogin(AccountType.DepartmentHead))
-            {
-                if (((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
-                {
-                    Training tr = new Training();
-                    tr.Description = form.GetValue("desc").AttemptedValue;
-                    tr.Facilitator = form.GetValue("faci").AttemptedValue;
-                    tr.Title = form.GetValue("title").AttemptedValue;
-                    tr.Location = form.GetValue("loc").AttemptedValue;
+            string[] keys = new string[]
+                                {
+                                    "desc", "faci", "title", "loc", "start-month", "start-day", "start-year",
+                                    "end-month", "end-day", "end-year"
+                                };
 
-                    string start = (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("start-day").AttemptedValue) + 1).ToString("00")
-                                   + "/" + form.GetValue("start-year").AttemptedValue;
-                    string end = (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "/" + (Int32.Parse(form.GetValue("end-day").AttemptedValue) + 1).ToString("00")
-                                 + "/" + form.GetValue("end-year").AttemptedValue;
-                    tr.StartDate = DateTime.ParseExact(start, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                    tr.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
-                    tr.Create();
+            if (this.HasValues(form, keys))
+            {
+                // check if the logged in user is the HR Head
+                if (!this.CheckLogin(AccountType.Applicant))
+                {
+                    if (((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                    {
+                        try
+                        {
+                            Training tr = new Training();
+                            tr.Description = form.GetValue("desc").AttemptedValue;
+                            tr.Facilitator = form.GetValue("faci").AttemptedValue;
+                            tr.Title = form.GetValue("title").AttemptedValue;
+                            tr.Location = form.GetValue("loc").AttemptedValue;
+
+                            string start = (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00")
+                                           + "/"
+                                           + (Int32.Parse(form.GetValue("start-day").AttemptedValue) + 1).ToString("00")
+                                           + "/" + form.GetValue("start-year").AttemptedValue;
+                            string end = (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00")
+                                         + "/" + (Int32.Parse(form.GetValue("end-day").AttemptedValue) + 1).ToString(
+                                             "00") + "/" + form.GetValue("end-year").AttemptedValue;
+                            tr.StartDate = DateTime.ParseExact(start, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                            tr.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                            tr.Create();
+                        }
+                        catch (Exception e)
+                        {
+                            json["error"] = true;
+                            json["message"] = e.Message;
+                        }
+                    }
+                }
+                else // else return an error
+                {
+                    json["error"] = true;
+                    json["message"] = "You are not authorized to continue";
                 }
             }
-            else // else return an error
+            else
             {
                 json["error"] = true;
-                json["message"] = "Uh Oh! You don't have the required priveleges to do that.";
+                json["message"] = "Form is incomplete";
             }
 
             return Content(json.ToString(), "application/json");
@@ -69,8 +111,23 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            Training tr = new Training(Int32.Parse(form.GetValue("ID").AttemptedValue)).Delete();
-
+            if(!this.CheckLogin(AccountType.Applicant) && 
+               ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources){
+                if (form.GetValue("ID") != null)
+                {
+                    Training tr = new Training(Int32.Parse(form.GetValue("ID").AttemptedValue)).Delete();
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Invalid Training number";
+                }
+            }
+            else
+            {
+                json["error"] = true;
+                json["message"] = "You are not authorized to continue";
+            }
             return Content(json.ToString(), "application/json");
         }
 
@@ -78,7 +135,15 @@ namespace WebApplication1.Controllers
         public ContentResult Get()
         {
             JObject json = new JObject();
-            json["training"] = JObject.FromObject(new Training(Int32.Parse(Request.QueryString["ID"].ToString())));
+
+            try
+            {
+                Training tr = new Training(Int32.Parse(Request.QueryString["ID"].ToString()));
+                json["training"] = JObject.FromObject(tr);
+            } catch (Exception e)
+            {
+                json["training"] = "";
+            }
 
             return Content(json.ToString(), "application/json");
         }
@@ -89,22 +154,50 @@ namespace WebApplication1.Controllers
             JObject json = new JObject();
             json["error"] = false;
             json["message"] = "";
-            
-            Training th = new Training(Int32.Parse(form.GetValue("id").AttemptedValue));
-            th.Description = form.GetValue("desc").AttemptedValue;
-            th.Title = form.GetValue("title").AttemptedValue;
-            th.Facilitator = form.GetValue("faci").AttemptedValue;
-            th.Location = form.GetValue("loc").AttemptedValue;
-            th.StartDate = DateTime.ParseExact(
-                form.GetValue("start-year").AttemptedValue + "-"
-                                                       + (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "-"
-                                                       + Int32.Parse(form.GetValue("start-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            th.EndDate = DateTime.ParseExact(
-                form.GetValue("end-year").AttemptedValue + "-"
-                                                       + (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "-"
-                                                       + Int32.Parse(form.GetValue("end-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            th.Update();
+            string[] keys = new string[]
+                                {
+                                    "id", "desc", "title", "faci", "loc", "start-year", "start-month", "start-day",
+                                    "end-month", "end-year", "end-day"
+                                };
+
+            if (this.HasValues(form, keys))
+            {
+                if (!this.CheckLogin(AccountType.Applicant) &&
+                    ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                {
+                    try
+                    {
+                        Training th = new Training(Int32.Parse(form.GetValue("id").AttemptedValue));
+                        th.Description = form.GetValue("desc").AttemptedValue;
+                        th.Title = form.GetValue("title").AttemptedValue;
+                        th.Facilitator = form.GetValue("faci").AttemptedValue;
+                        th.Location = form.GetValue("loc").AttemptedValue;
+                        th.StartDate = DateTime.ParseExact(
+                            form.GetValue("start-year").AttemptedValue + "-"
+                                                                       + (Int32.Parse(form.GetValue("start-month").AttemptedValue) + 1).ToString("00") + "-"
+                                                                       + Int32.Parse(form.GetValue("start-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                        th.EndDate = DateTime.ParseExact(
+                            form.GetValue("end-year").AttemptedValue + "-"
+                                                                     + (Int32.Parse(form.GetValue("end-month").AttemptedValue) + 1).ToString("00") + "-"
+                                                                     + Int32.Parse(form.GetValue("end-day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                        th.Update();
+                    } catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
+                    }
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "You are not authorized to continue";
+                }
+
+                json["error"] = true;
+                json["message"] = "Form is incomplete";
+            }
             return Content(json.ToString(), "application/json");
         }
 
@@ -157,12 +250,6 @@ namespace WebApplication1.Controllers
             json["total"] = pt.Total;
             json["trainings"] = JArray.FromObject(Training);
             return Content(json.ToString(), "application/json");
-        }
-
-        [HttpGet]
-        public ActionResult Assigned()
-        {
-            return this.View();
         }
 
         [HttpPost]
@@ -229,10 +316,25 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            if (form.GetValue("v") != null && Int32.Parse(form.GetValue("v").AttemptedValue) <= 2 || Int32.Parse(form.GetValue("v").AttemptedValue) >= 1) { 
-                AssignedTraining at = new AssignedTraining(Int32.Parse(form.GetValue("id").AttemptedValue));
-                at.Status = (TrainingStatus)Int32.Parse(form.GetValue("v").AttemptedValue);
-                at.Update(false);
+            if (!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type
+                == DepartmentType.HumanResources)
+            {
+                if (form.GetValue("v") != null && Int32.Parse(form.GetValue("v").AttemptedValue) <= 2 || Int32.Parse(form.GetValue("v").AttemptedValue) >= 1)
+                {
+                    AssignedTraining at = new AssignedTraining(Int32.Parse(form.GetValue("id").AttemptedValue));
+                    at.Status = (TrainingStatus)Int32.Parse(form.GetValue("v").AttemptedValue);
+                    at.Update(false);
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
+                }
+            }
+            else
+            {
+                json["error"] = true;
+                json["message"] = "You are not authorized to continue";
             }
 
             return Content(json.ToString(), "application/json");
@@ -275,30 +377,48 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            if (form.GetValue("profile") != null && form.GetValue("training") != null)
+            if (!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type
+                == DepartmentType.HumanResources)
             {
-                Profile Profile = new Profile(Int32.Parse(form.GetValue("profile").AttemptedValue));
-                Training Training = new Training(Int32.Parse(form.GetValue("training").AttemptedValue));
+                if (form.GetValue("profile") != null && form.GetValue("training") != null)
+                {
+                    try
+                    {
+                        Profile Profile = new Profile(Int32.Parse(form.GetValue("profile").AttemptedValue));
+                        Training Training = new Training(Int32.Parse(form.GetValue("training").AttemptedValue));
 
-                AssignedTraining at = new AssignedTraining();
-                at.Profile = Profile;
-                at.Training = Training;
-                at.Status = TrainingStatus.Pending;
+                        AssignedTraining at = new AssignedTraining();
+                        at.Profile = Profile;
+                        at.Training = Training;
+                        at.Status = TrainingStatus.Pending;
 
-                at.Create(false);
+                        at.Create(false);
 
-                Notification notif = new Notification();
-                notif.Account = new Account().FindByProfile(at.Profile.ProfileID);
-                notif.Message = "You've been assigned to a Training service, please check the Assigned Trainings page.";
-                notif.Status = NotificationStatus.Unread;
-                notif.TimeStamp = DateTime.Now;
+                        Notification notif = new Notification();
+                        notif.Account = new Account().FindByProfile(at.Profile.ProfileID);
+                        notif.Message =
+                            "You've been assigned to a Training service, please check the Assigned Trainings page.";
+                        notif.Status = NotificationStatus.Unread;
+                        notif.TimeStamp = DateTime.Now;
 
-                notif.Create();
+                        notif.Create();
+                    }
+                    catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
+                    }
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
+                }
             }
             else
             {
                 json["error"] = true;
-                json["message"] = "Oops! Some data failed to send to the server";
+                json["message"] = "You are not authorized to continue";
             }
 
             return Content(json.ToString(), "application/json");

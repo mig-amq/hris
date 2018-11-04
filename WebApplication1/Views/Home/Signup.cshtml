@@ -27,21 +27,11 @@
             <input type="text" name="desired" placeholder="Desired Position" class="full" />
             <textarea name="skills" placeholder="Applicant Skills" class="full"></textarea>
         </div>
-
+        
         <div class="cluster">
-            <p class="sub-title">Date of Hire</p>
-            <select id="month" name="month" class="full">
-                <option value="-1" disabled="">-- Select month --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="day" name="day" class="full">
-                <option value="-1">-- Select day --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="year" name="year" class="full">
-                <option value="-1">-- Select year --</option>
-                <!-- JS generated -->
-            </select>
+            <p class="sub-title">Security:</p>
+            <input type="text" name="question" class="full" placeholder="Security Question" />
+            <input type="password" name="answer" class="full" placeholder="Security Answer" />
         </div>
     </div>
     <hr />
@@ -65,7 +55,7 @@
                 <option value="2">Female</option>
             </select>
             <select name="civil-status" class="full">
-                <option value="-1">-- Select Civil Status --</option>
+                <option value="2">-- Select Civil Status --</option>
                 <option value="2">Single</option>
                 <option value="1">Married</option>
                 <option value="5">Widowed</option>
@@ -165,7 +155,7 @@
         </div>
     </div>
     <button type="submit" class="full">Sign Up</button>
-    <div class="alert"></div>
+    <div id="alert"></div>
 </form>
 
 <script>
@@ -180,6 +170,8 @@
             form.append("email", $("input[name=email]").val());
             form.append("skills", $("textarea[name=skills]").val());
             form.append("desired", $("input[name=desired]").val());
+            form.append("question", $("input[name=question]").val());
+            form.append("answer", $("input[name=answer]").val());
 
             form.append("code", $("input[name=code]").val());
             form.append("department", $("select[name=department]").val());
@@ -214,7 +206,12 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    console.log(data);
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
                 }
             })
         });

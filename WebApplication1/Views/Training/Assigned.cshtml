@@ -31,6 +31,7 @@
                     </div>
                 </div>
                 <button type="submit">Assign Training</button>
+                <div id="alert"></div>
             </form>
         </div>
     </div>
@@ -73,7 +74,11 @@
     </table>
     <div id="result-summary">
         <div>
-            <button class="footer-button">Generate Report</button>
+            @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            {
+            
+                <button class="footer-button">Generate Report</button>
+            }
             <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
         </div>
         <div id="pagination">
@@ -95,7 +100,13 @@
                     processData: false,
                     contentType: false,
                     success: (data) => {
-                        console.log(data);
+                        if (data.error)
+                            $("#alert").addClass('error');
+                        else
+                            $("#alert").addClass('success');
+                    
+                        $("#alert").text(data.message);
+
                         if (!data.error) {
                             search(curr + 1);
                             $("#modal").hide();
@@ -139,6 +150,8 @@
                         v: $(elem).val()
                     },
                     success: (data) => {
+                        if (data.error)
+                            alert(data.message);
                     }
                 })
             }

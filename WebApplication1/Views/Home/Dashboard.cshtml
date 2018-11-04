@@ -1,3 +1,142 @@
-﻿@{
+﻿@using WebApplication1.Models
+@{
     ViewBag.Title = " Dashboard Profile";
+    ViewBag.Active = "HOME";
+
+    Account Account = Session["user"] != null ? ((Account)Session["user"]) : null;
+}
+
+@if (Account != null)
+{
+    <h1>Account Profile</h1>
+    <hr/>
+    <h3>@Account.Profile.Profile.FirstName @Account.Profile.Profile.MiddleName @Account.Profile.Profile.LastName</h3>
+    <p>
+        <b>Position:</b>
+        @if (Account.Type == AccountType.Applicant)
+        {
+            <text>Pending Applicant</text>
+        }
+        else
+        {
+            @(((Employee)Account.Profile).Position)
+        }
+    </p>
+    <div class="two-column-content">
+        <div class="cluster">
+            <p>
+                <b>Employment History:</b>
+                @{
+                    foreach (EmploymentHistory empH in ((Employee)Account.Profile).Profile.EmploymentHistories)
+                    {
+                        <text>
+                            <ul>
+                                <li>
+                                    <b>@empH.CompanyName</b>
+                                    <ul>
+                                        <li>@empH.Position</li>
+                                        <li>@empH.StartDate.Replace("-", "/") - @empH.EndDate.Replace("-", "/")</li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </text>
+                    }
+
+                    if (((Employee)Account.Profile).Profile.EmploymentHistories.Count == 0)
+                    {
+                        <text>None</text>
+                    }
+                }
+            </p>
+
+            <p>
+                <b>Educational Background:</b>
+                @if (Account.Profile.Profile.Education != null)
+                {
+                    <ul>
+                        @if (!String.IsNullOrEmpty(@Account.Profile.Profile.Education.Elementary.Name))
+                        {
+                            <text>
+                                <li>
+                                    Elementary School:
+                                    <ul>
+                                        <li>@Account.Profile.Profile.Education.Elementary.Name</li>
+                                        <li>@Account.Profile.Profile.Education.Elementary.Start - @Account.Profile.Profile.Education.Elementary.End</li>
+                                    </ul>
+                                </li>
+                            </text>
+                        }
+
+                        @if (!String.IsNullOrEmpty(@Account.Profile.Profile.Education.HighSchool.Name))
+                        {
+                            <text>
+                                <li>
+                                    High School:
+                                    <ul>
+                                        <li>@Account.Profile.Profile.Education.HighSchool.Name</li>
+                                        <li>@Account.Profile.Profile.Education.HighSchool.Start - @Account.Profile.Profile.Education.HighSchool.End</li>
+                                    </ul>
+                                </li>
+                            </text>
+                        }
+
+                        @if (!String.IsNullOrEmpty(@Account.Profile.Profile.Education.College.Name))
+                        {
+                            <text>
+                                <li>
+                                    College:
+                                    <ul>
+                                        <li>@Account.Profile.Profile.Education.College.Name</li>
+                                        <li>@Account.Profile.Profile.Education.College.Start - @Account.Profile.Profile.Education.College.End</li>
+                                    </ul>
+                                </li>
+                            </text>
+                        }
+
+                        @if (!String.IsNullOrEmpty(@Account.Profile.Profile.Education.PostGraduate.Name))
+                        {
+                            <text>
+                                <li>
+                                    Post-Graduate:
+                                    <ul>
+                                        <li>@Account.Profile.Profile.Education.PostGraduate.Name</li>
+                                        <li>@Account.Profile.Profile.Education.PostGraduate.Start - @Account.Profile.Profile.Education.PostGraduate.End</li>
+                                    </ul>
+                                </li>
+                            </text>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <text>
+                        None
+                    </text>
+                }
+            </p>
+        </div>
+        
+        <div class="cluster">
+            
+            <b>Personal Details:</b>
+            <ul>
+                <li>
+                    <b>Address:</b>
+                    @Account.Profile.Profile.HouseNo, @Account.Profile.Profile.Street, @Account.Profile.Profile.City, @Account.Profile.Profile.Province
+                </li>
+                <li>
+                    <b>Contact Details:</b>
+                    <ul>
+                        <li>
+                            @Account.Profile.Profile.Contact
+                        </li>
+                        <li>
+                            @Account.Email
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
 }

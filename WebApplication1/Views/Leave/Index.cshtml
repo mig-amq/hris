@@ -48,6 +48,7 @@
 
                     <textarea name="reason" placeholder="Reason/s"></textarea>
                     <button type="submit" class="full">Apply</button>
+                    <div id="alert"></div>
                 </form>
             </div>
         </div>
@@ -109,6 +110,13 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
+
                     if (!data.error) {
                         search(curr + 1);
                         $("#modal").hide();

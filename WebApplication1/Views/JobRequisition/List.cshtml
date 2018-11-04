@@ -42,6 +42,7 @@
                         </select>
                     </div>
                     <button type="submit" class="full">Save</button>
+                    <div id="alert"></div>
                 </form>
             </div>
         </div>
@@ -106,6 +107,12 @@
                     id, v
                 },
                 success: (data) => {
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+                    
+                    $("#alert").text(data.message);
                     if (!data.error) {
                         $("#modal").hide();
                         search(curr);

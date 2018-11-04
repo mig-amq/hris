@@ -32,13 +32,29 @@
         </tr>
     </thead>
     <tbody id="data">
-        
+        @if (Account != null && Account.Type == AccountType.Applicant)
+        {
+            <tr>
+                <td>@Account.Profile.Profile.ProfileID</td>
+                <td>@Account.Profile.Profile.FirstName @Account.Profile.Profile.MiddleName @Account.Profile.Profile.LastName</td>
+                <td>@Account.Profile.Profile.Contact</td>
+                <td>@(((Applicant)Account.Profile).DesiredPosition)</td>
+                <td>@(((Applicant)Account.Profile).Skills)</td>
+                <td>@(((Applicant)Account.Profile).Status == ApplicantStatus.Undecided ? "Pending" : ((Applicant)Account.Profile).Status == ApplicantStatus.Accepted ? "Accepted" : "Rejected")</td>
+
+            </tr>
+
+        }
     </tbody>
 </table>
 
     <div id="result-summary">
         <div>
-            <button class="footer-button">Generate Report</button>
+            @if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            {
+            
+                <button class="footer-button">Generate Report</button>
+            }
             <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
         </div>
         <div id="pagination">
@@ -65,6 +81,8 @@
                     success: (data) => {
                         if (!data.error) {
                             $(elem).parent().text(data.message);
+                        } else {
+                            alert(data.message);
                         }
                     }
                 })
@@ -136,15 +154,8 @@
                         row.append(stat);
                         $("#data").append(row);
                     });
-                },
-                error: (e) => {
-                    $("body").prepend(e.responseText);
                 }
             })
         }
     </script>
-}
-else
-{
-
 }

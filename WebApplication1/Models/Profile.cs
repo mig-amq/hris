@@ -7,6 +7,7 @@ namespace WebApplication1.Models
 {
     using System.Collections;
     using System.Data;
+    using System.Diagnostics;
 
     public enum SexType
     {
@@ -65,35 +66,52 @@ namespace WebApplication1.Models
                 CRUD.READ,
                 "SELECT * FROM Profile WHERE ProfileID = " + ProfileID))
             {
-                DataRow row = dt.Rows[0];
-                
-                try
+                if (dt.Rows.Count > 0)
                 {
-                    this.Education = new Education(Int32.Parse(row["Educaton"].ToString()));
+                    DataRow row = dt.Rows[0];
+
+                    this.ProfileID = ProfileID;
+                    try
+                    {
+                        Debug.WriteLine(row["Education"].ToString());
+                        this.Education = new Education(Int32.Parse(row["Education"].ToString()));
+                    }
+                    catch (Exception e)
+                    {
+                        this.Education = null;
+                    }
+
+                    try
+                    {
+                        this.EmploymentHistories = new EmploymentHistory().FindAll(this.ProfileID);
+                    }
+                    catch (Exception e)
+                    {
+                        this.EmploymentHistories = null;
+                    }
+
+                    this.FirstName = row["FirstName"].ToString();
+                    this.MiddleName = row["MiddleName"].ToString();
+                    this.LastName = row["LastName"].ToString();
+
+                    this.HouseNo = row["HouseNo"].ToString();
+                    this.Street = row["Street"].ToString();
+                    this.City = row["City"].ToString();
+                    this.Province = row["Province"].ToString();
+
+                    this.Sex = (SexType)Enum.Parse(typeof(SexType), row["Sex"].ToString(), true);
+                    this.CivilStatus = (CivilStatusType)Enum.Parse(typeof(CivilStatusType), row["CivilStatus"].ToString(), true);
+                    this.BirthDate = DateTime.Parse(row["BirthDate"].ToString());
+
+                    this.Contact = row["Contact"].ToString();
+                    this.ContactPerson = row["ContactPerson"].ToString();
+                    this.CPersonNo = row["CPersonNo"].ToString();
+                    this.CPersonRel = row["CPersonRel"].ToString();
                 }
-                catch (Exception e)
+                else
                 {
-                    this.Education = null;
+                    throw new Exception("Cannot find profile");
                 }
-
-                this.FirstName = row["FirstName"].ToString();
-                this.MiddleName = row["MiddleName"].ToString();
-                this.LastName = row["LastName"].ToString();
-
-                this.HouseNo = row["HouseNo"].ToString();
-                this.Street = row["Street"].ToString();
-                this.City = row["City"].ToString();
-                this.Province = row["Province"].ToString();
-
-                this.Sex = (SexType)Enum.Parse(typeof(SexType), row["Sex"].ToString(), true);
-                this.CivilStatus = (CivilStatusType)Enum.Parse(typeof(CivilStatusType), row["CivilStatus"].ToString(), true);
-                this.BirthDate = DateTime.Parse(row["BirthDate"].ToString());
-
-                this.Contact = row["Contact"].ToString();
-                this.ContactPerson = row["ContactPerson"].ToString();
-                this.CPersonNo = row["CPersonNo"].ToString();
-                this.CPersonRel = row["CPersonRel"].ToString();
-                this.ProfileID = ProfileID;
             }
 
             return this;

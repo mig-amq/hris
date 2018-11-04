@@ -58,7 +58,8 @@
                 <textarea placeholder="Brief Description of Works" name="description" class="full"></textarea>
             </div>
         </div>
-        <button type="submit" class="full">Submit</button>
+         <button type="submit" class="full">Submit</button>
+         <div id="alert"></div>
     </form>
     <script>
         $(document).ready(() => {
@@ -92,7 +93,12 @@
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    console.log(data);
+                    if (data.error)
+                        $("#alert").addClass('error');
+                    else
+                        $("#alert").addClass('success');
+
+                    $("#alert").text(data.message);
                 }
             })
         })
