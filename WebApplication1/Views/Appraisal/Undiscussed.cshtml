@@ -1,0 +1,137 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = " Undiscussed Evaluations";
+    ViewBag.Active = "UNAPR";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && Account.Type != AccountType.Applicant)
+{
+    <div id="section-heading">
+        <div>
+            <h1 id="section-title">Undiscussed Evaluations</h1>
+            <span>
+                Show
+                <select id="show-entries" onchange="search(curr)">
+                    <!-- JAVASCRIPT GENERATED -->
+                </select>
+                Entries
+            </span>
+        </div>
+        <input type="text" placeholder="Search Undiscussed Evaluations List..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)" />
+    </div>
+    <br />
+    <table>
+        <thead>
+            <tr id="heading-row">
+                <th>No.</th>
+                <th>Employee Name</th>
+                <th>Covered Period</th>
+                <th>Criteria</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+    <div id="result-summary">
+        <div>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
+    </div>
+
+    <script>
+        var curr = 1;
+        $(document).ready(() => {
+            search(1);
+        })
+
+        function update(n, elem) {
+            $.ajax({
+                url: "/Appraisal/Discuss",
+                method: "POST",
+                data: {
+                    id: n
+                },
+                success: (data) => {
+                    if (!data.error) {
+                        $(elem).remove();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+        }
+
+        function search(n) {
+            curr = n;
+            $.ajax({
+                url: "/Appraisal/GetUndiscussed",
+                data: {
+                    'entries': $("#show-entries").val() || 5,
+                    'page': n || 1,
+                    'query': $("#search").val().trim().replace(/\s+/, " "),
+                },
+                method: "GET",
+                success: (data) => {
+                    console.log(data);
+                    $("#data").empty();
+                    $("#pagination").empty();
+                    if (data.pages > 0) {
+                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                            " - " +
+                            (((n - 1) * ($("#show-entries").val() || 5)) + data.appraisals.length));
+                    } else {
+                        $("#result-count b").text("0 - 0");
+                    }
+                    $("#result-count span").text(data.total);
+
+                    if (data.pages < curr && curr > 1) {
+                        curr--;
+                        search(curr);
+                    }
+
+                    for (var i = 1; i <= data.pages; i++) {
+                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                    }
+
+                    $("#pagination span[data-page=" + n + "]").addClass("active");
+
+                    data.appraisals.forEach((o, i, a) => {
+                        let d = new Date(o.CoveredPeriod);
+
+                        let schedule = (d.getMonth() + 1) + "/" + (d.getDate()) + "/" + d.getFullYear();
+                        let row = $("<tr></tr>");
+                        let id = $("<td></td>");
+                        let emp = $("<td></td>");
+                        let cov = $("<td></td>");
+                        let cri = $("<td></td>");
+
+                        let disc = $("<td></td>");
+                        let btn = $("<button class='hallow'>Discuss</button>");
+                        btn.on("click", () => {
+                            update(o.AppraisalID, row);
+                        });
+
+                        id.text(o.AppraisalID);
+                        emp.text(o.DiscussedWith.Profile.FirstName + " " + o.DiscussedWith.Profile.MiddleName + " " + o.DiscussedWith.Profile.LastName)
+                        cov.text(schedule);
+                        cri.text(o.Criteria);
+
+                        disc.append(btn);
+                        row.append(id)
+                            .append(emp)
+                            .append(cov)
+                            .append(cri)
+                            .append(disc);
+                        $("#data").append(row);
+                    })
+                }
+            })
+        }
+    </script>
+}

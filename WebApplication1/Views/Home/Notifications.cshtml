@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = " Notifications";
+    ViewBag.Active = "NOTIF";
+}
+<div>
+    <span>
+        Show
+        <select id="show-entries" onchange="search(curr)">
+            <!-- JAVASCRIPT GENERATED -->
+        </select>
+        Notifications
+    </span>
+</div>
+<br/>
+<table>
+    <thead>
+    <tr id="heading-row">
+        <th>Message</th>
+        <th>Timestamp</th>
+    </tr>
+    </thead>
+    <tbody id="data"></tbody>
+</table>
+<div id="result-summary">
+    <div>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+
+<script>
+    var curr = 1;
+    $(document).ready(() => {
+        search(1);
+    })
+
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Home/GetNotifications",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                if (data.pages > 0) {
+                    $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                        " - " +
+                        (((n - 1) * ($("#show-entries").val() || 5)) + data.notifications.length));
+                } else {
+                    $("#result-count b").text("0 - 0");
+                }
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr && curr > 1) {
+                    curr--;
+                    search(curr);
+                }
+
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+                data.notifications.forEach((o, i, a) => {
+                    let options = { weekday: 'short', month: 'short', day: 'numeric', hour: "2-digit", minute: "2-digit" };
+                    let row = $("<tr></tr>");
+                    let msg = $("<td></td>");
+                    let stamp = $("<td></td>");
+
+                    msg.html(o.Message);
+                    stamp.text(new Date(o.TimeStamp).toLocaleDateString('en-EN', options));
+
+                    row.append(msg)
+                        .append(stamp);
+
+                    $("#data").append(row);
+                })
+            }
+        })
+    }
+</script>

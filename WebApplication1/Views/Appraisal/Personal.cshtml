@@ -1,0 +1,119 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "My Evaluations";
+    ViewBag.Active = "MYAPR";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+@if (Account != null && Account.Type != AccountType.Applicant)
+{
+    <div class="two-column-content">
+        <div class="cluster">
+            <p class="sub-title">Covered Period</p>
+            <select name="covered" class="full">
+                <option value="-1" disabled selected>-- Select Evaluation by Date --</option>
+            </select>
+        </div>
+    </div>
+    <table>
+        <thead>
+        <tr id="heading-row">
+            <th>Technical Competency</th>
+            <th>Interpersonal Skills</th>
+            <th>Commitment & Compliance</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date Disccussed</th>
+        </tr>
+        </thead>
+        <tbody id="data">
+        <td id="tech"></td>
+        <td id="inter"></td>
+        <td id="comm"></td>
+        <td id="tot"></td>
+        <td id="sta"></td>
+        <td id="dd"></td>
+        </tbody>
+    </table>
+    <br/>
+    <div class="two-column-content">
+        <div class="cluster">
+            <p class="sub-title" style="margin-bottom: 0">Comments:</p>
+            <p id="comment"></p>
+
+
+            <p class="sub-title" style="margin-bottom: 0;">Noted By:</p>
+            <p>
+                <span id="noted-by"></span><br/>
+                <b id="noted-pos"></b>
+            </p>
+        </div>
+        <div class="cluster">
+            <p class="sub-title" style="margin-bottom: 0">Criteria:</p>
+            <p id="criteria"></p>
+        </div>
+    </div>
+    <br />
+    
+    <script>
+        $(document).ready(() => {
+            getEvaluations();
+
+            $("select[name=covered]").on("change", () => {
+                load(parseInt($("select[name=covered]").val(), 10));
+            })
+        });
+
+        const objects = [];
+
+        function load(o) {
+            if (o < objects.length && o >= 0) {
+                let data = objects[o];
+                $("#comment").text(data.Comments);
+                $("#criteria").text(data.Criteria);
+                $("#noted-by").text(data.NotedBy.Profile.FirstName +
+                    " " +
+                    data.NotedBy.Profile.MiddleName +
+                    " " +
+                    data.NotedBy.Profile.LastName);
+                $("#noted-pos").text(data.NotedBy.Position);
+
+                $("#tech").text(data.TechComp + "%");
+                $("#inter").text(data.InterSkills + "%");
+                $("#comm").text(data.CommComp + "%");
+                $("#tot").text(data.Total + "%");
+                $("#sta").text((data.Status) == 1 ? " Undiscussed " : " Discussed ");
+
+                if (data.Status == 2 && data.DateDiscussed) {
+                    let d = new Date(data.DateDiscussed);
+
+                    let schedule = (d.getMonth() + 1) + "/" + (d.getDate()) + "/" + d.getFullYear();
+                    $("#dd").text(schedule);
+                } else {
+                    $("#dd").text("---");
+                }
+            }
+        }
+
+        function getEvaluations() {
+            $.ajax({
+                url: "/Appraisal/GetPersonal",
+                method: "GET",
+                success: (data) => {
+                    $("select[name=covered] option:not(:first-child)").remove();
+
+                    data.appraisals.forEach((o, i, a) => {
+                        let d = new Date(o.CoveredPeriod);
+
+                        let schedule = (d.getMonth() + 1) + "/" + (d.getDate()) + "/" + d.getFullYear();
+                        let opt = $("<option value='" + i + "'>" + schedule + "</option>");
+                        $("select[name=covered]").append(opt);
+                        objects.push(o);
+                    });
+                }
+            })
+        }
+    </script>
+}
