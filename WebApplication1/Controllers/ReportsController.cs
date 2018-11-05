@@ -152,7 +152,7 @@ namespace WebApplication1.Controllers
             List<Employee> Employees = new List<Employee>();
 
             DBHandler db = new DBHandler();
-            using (DataTable dt = db.Execute<DataTable>(CRUD.READ, "SELECT * FROM Employee"))
+            using (DataTable dt = db.Execute<DataTable>(CRUD.READ, "SELECT * FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile AND A.Type <> " + ((int) AccountType.CEO)))
             {
                 foreach (DataRow row in dt.Rows)
                 {
