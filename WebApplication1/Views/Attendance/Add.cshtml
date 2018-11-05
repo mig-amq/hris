@@ -1,0 +1,173 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "Add";
+    ViewBag.Active = "ADAT";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+<h2>Add Monthly Records</h2>
+<form>
+    <div class="two-column-content">
+        <div class="cluster">
+            <p class="sub-title">Employee:</p>
+            <div style="text-align: center">
+                <select class="full" name="id">
+                    <option value="-1" disabled selected> -- Select An Employee -- </option>
+                </select>
+                <label><input type="checkbox" name="all" style="display: inline" /> Add for All Employees</label>
+            </div>
+        </div>
+
+        <div class="cluster">
+            <p class="sub-title">Total Working Days:</p>
+            <input type="number" name="v" min="0" max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)" class="full" placeholder="Number of working days for this month" />
+            <button class="full">Create</button>
+        </div>
+    </div>
+</form>
+<div id="alert"></div>
+<br /><hr /><br />
+<div id="section-heading">
+    <div>
+        <span>
+            Show
+            <select id="show-entries" onchange="search(curr)">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
+    </div>
+    <input type="text" placeholder="Search Employee List..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)" />
+</div>
+<br />
+<table>
+    <thead>
+        <tr id="heading-row">
+            <th>No.</th>
+            <th>Code</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Position</th>
+        </tr>
+    </thead>
+    <tbody id="data"></tbody>
+</table>
+<div id="result-summary">
+    <div>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+<script>var curr = 1;
+    $(document).ready(() => {
+        $("input[name='all']").on("change", (e) => checked($(e.target).is(":checked")));
+        populateSelect();
+        search(1);
+    });
+
+    $("form").on("submit", (e) => {
+        e.preventDefault();
+        $("#alert").removeAttr("class");
+        var form = new FormData($("form")[0]);
+
+        $.ajax({
+            url: ($("input[name='all']").is(":checked")) ? "/Attendance/AddAll" : "/Attendance/AddAttendance",
+            method: "POST",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (data.error)
+                    $("#alert").addClass('error');
+                else
+                    $("#alert").addClass('success');
+
+                populateSelect();
+                search(curr);
+                $("#alert").html(data.message);
+            },
+            error: (data) => {
+                $("#alert").addClass('error');
+                $("#alert").text(data.responseText);
+            }
+        })
+    })
+
+    function checked(v) {
+        if (v)
+            $("select").attr('disabled', 'disabled');
+        else
+            $("select").removeAttr('disabled');
+    }
+
+    function populateSelect() {
+        $("select option:not(:first-child)").remove()
+        $.ajax({
+            url: "/Attendance/GetAllNoAttenance",
+            method: "GET",
+            success: (data) => {
+                console.log(data);
+                data.employees.forEach((o, i, a) => {
+                    $("select").append("<option value='" + o.EmployeeID + "'>" + o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName + "</option>");
+                })
+            }
+        })
+    }
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Attendance/GetNoAttendance",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1,
+                'query': $("#search").val().trim().replace(/\s+/, " "),
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                if (data.pages > 0) {
+                    $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                        " - " +
+                        (((n - 1) * ($("#show-entries").val() || 5)) + data.employees.length));
+                } else {
+                    $("#result-count b").text("0 - 0");
+                }
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr && curr > 1) {
+                    curr--;
+                    search(curr);
+                }
+
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+                
+                data.employees.forEach((o, i, a) => {
+                    let row = $("<tr></tr>");
+                    let id = $("<td></td>").text(o.EmployeeID);
+                    let code = $("<td></td>").text(o.Code);
+                    let name = $("<td></td>").text(o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName);
+                    let dep = $("<td></td>").text(o.Department.DepartmentName != "None" ? o.Department.DepartmentName : o.Department.Branch.BranchName);
+                    let pos = $("<td></td>").text(o.Position);
+
+                    row.append(id);
+                    row.append(code);
+                    row.append(name);
+                    row.append(dep);
+                    row.append(pos);
+
+                    $("#data").append(row);
+                });
+            }
+        })
+    }
+</script>

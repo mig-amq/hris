@@ -1,0 +1,170 @@
+﻿@using WebApplication1.Models
+
+@{
+    ViewBag.Title = "List";
+    ViewBag.Active = "LIAT";
+
+    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+}
+
+
+<div id="modal">
+    <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+    <div id="modal-form-table">
+        <h2>Attendance Details of <span class="spot" id="details-name"></span></h2>
+        <table>
+            <thead>
+                <tr class="heading-row">
+                    <th>Date</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                </tr>
+            </thead>
+            <tbody id="details"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="section-heading">
+    <div>
+        <h1 id="section-title">Employee Attendance List</h1>
+        <span>
+            Show
+            <select id="show-entries" onchange="search(curr)">
+                <!-- JAVASCRIPT GENERATED -->
+            </select>
+            Entries
+        </span>
+    </div>
+    <input type="text" placeholder="Search Application Status..." class="search" id="search" onkeypress="if(event.keyCode == 13) search(curr)" />
+</div>
+<br />
+<table>
+    <thead>
+        <tr class="heading-row">
+            <th>Code</th>
+            <th>Employee Name</th>
+            <th>Total Working Days</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Overtime</th>
+            <th>Late</th>
+            <th>Leave</th>
+            <th>Undertime</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="data">
+    </tbody>
+</table>
+<div id="result-summary">
+    <div>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+
+<script>
+    var curr = 1, curr2 = 1;
+    $(document).ready(() => {
+        search(1);
+    })
+
+    function load(o, name) {
+        $("#details-name").text(name);
+
+        $.ajax({
+            url: "/Attendance/GetAllAttendanceTimes",
+            data: {
+                id: o,
+            },
+            method: "GET",
+            success: (data) => {
+                $("#details").empty();
+                if (data.attendancetimes) {
+                    data.attendancetimes.forEach((o, i, a) => {
+                        let option = { hour: "2-digit", minute: "2-digit" };
+
+                        let s = new Date(o.Date);
+                        let ti = new Date(o.TimeIn).toLocaleTimeString("en-EN", option);
+                        let to = (o.TimeOut) ? new Date(o.TimeOut).toLocaleTimeString("en-EN", option) : "---";
+
+                        let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear()
+                        let row = $("<tr></tr>");
+                        let date = $("<td></td>").text(schedule);
+                        let timein = $("<td></td>").text(ti);
+                        let timeout = $("<td></td>").text(to);
+
+                        row.append(date);
+                        row.append(timein);
+                        row.append(timeout);
+                        $("#details").append(row);
+                    });
+                } else {
+                    $("#details").append("<tr><td>---</td><td>---</td><td>---</td></tr>");
+                }
+            }
+        })
+    }
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Attendance/GetAttendances",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1,
+                'query': $("#search").val().trim().replace(/\s+/, " "),
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                if (data.pages > 0) {
+                    $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                        " - " +
+                        (((n - 1) * ($("#show-entries").val() || 5)) + data.attendances.length));
+                } else {
+                    $("#result-count b").text("0 - 0");
+                }
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr && curr > 1) {
+                    curr--;
+                    search(curr);
+                }
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+                data.attendances.forEach((o, i, a) => {
+                    console.log(o);
+                    let row = $("<tr></tr>");
+                    let code = $("<td></td>").text(o.Employee.Code);
+                    let name = $("<td></td>").text(o.Employee.Profile.FirstName + " " + o.Employee.Profile.MiddleName + " " + o.Employee.Profile.LastName);
+                    let total = $("<td></td>").text(o.TotalWorkingDays);
+                    let pres = $("<td></td>").text(o.Present);
+                    let abs = $("<td></td>").text(o.Absent);
+                    let over = $("<td></td>").text(o.Overtime);
+                    let late = $("<td></td>").text(o.Late);
+                    let leave = $("<td></td>").text(o.Leave);
+                    let under = $("<td></td>").text(o.Undertime);
+                    let btn = $("<button class='hallow modal-trigger'>View Details</button>");
+
+                    btn.click((e) => {
+                        load(o.Employee.EmployeeID, o.Employee.Profile.FirstName + " " + o.Employee.Profile.MiddleName + " " + o.Employee.Profile.LastName);
+                    })
+
+                    let view = $("<td></td>").append(btn);
+                    row.append(code).append(name).append(total).append(pres).append(abs).append(over).append(late)
+                        .append(leave).append(under).append(view);
+
+                    $("#data").append(row);
+                });
+            }
+        })
+    }
+</script>
