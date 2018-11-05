@@ -240,7 +240,8 @@ namespace WebApplication1.Controllers
                          + "SELECT CONCAT(P2.FirstName, ' ', P2.MiddleName, ' ', P2.LastName) AS FullName, A.AppraisalID, A.CoveredPeriod"
                          + " FROM Appraisal A INNER JOIN Employee E ON A.Evaluator = E.EmployeeID"
                          + " INNER JOIN Employee E2 ON A.DiscussedWith = E2.EmployeeID"
-                         + " INNER JOIN Profile P2 ON E2.Profile = P2.ProfileID WHERE A.Status = 1) T2 " + constraints + " ORDER BY CoveredPeriod DESC";
+                         + " INNER JOIN Profile P2 ON E2.Profile = P2.ProfileID WHERE A.Status = 1 AND A.Evaluator = " + ((Employee) this.GetAccount().Profile).EmployeeID
+                         + ") T2 " + constraints + " ORDER BY CoveredPeriod DESC";
 
             foreach (DataRow row in pt.Get(sql))
             {

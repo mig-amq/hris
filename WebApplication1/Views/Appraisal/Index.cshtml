@@ -5,11 +5,6 @@
     ViewBag.Active = "APR";
 
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
-
-    if (Account == null || (Account.Type != AccountType.VP && Account.Type != AccountType.CEO && Account.Type != AccountType.DepartmentHead))
-    {
-        Response.Redirect("/Home/Dashboard");
-    }
 }
 <div id="section-heading">
     <div>

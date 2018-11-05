@@ -83,7 +83,7 @@ header {
     border-bottom: thin solid var(--border-color);
     padding: 1em 5%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 #account-wrapper {

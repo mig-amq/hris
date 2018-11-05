@@ -123,7 +123,6 @@
                     $("#pagination span[data-page=" + n + "]").addClass("active");
                     console.log(data);
                     data.applicants.forEach((o, i, a) => {
-                        console.log(o);
                         let row = $("<tr></tr>");
                         let id = $("<td></td>").text(o.ApplicantID);
                         let name = $("<td></td>").text(o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName);

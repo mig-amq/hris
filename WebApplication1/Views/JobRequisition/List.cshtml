@@ -175,21 +175,25 @@
                         let dep = $("<td></td>");
                         let date = $("<td></td>");
                         let exp = $("<td></td>");
-
+                        var sta;
                         @if (((Employee)Account.Profile).Department.Type != DepartmentType.HumanResources)
                         {
                             <text>
-                                let sta = $("<td>" + (o.Status == 1 ? "Pending" : "Finished") + "</td>");
+                                sta = $("<td>" + (o.Status == 1 ? "Pending" : "Finished") + "</td>");
                             </text>
                         }
                         else
                         {
                             <text>
-                                let sta = $("<td><button class='hallow modal-trigger'>Review</button></td>");
-                                sta.find("button").on("click", (e) => {
-                                    load(o);
-                                });
-
+                                if (o.Status == 1) {
+                                    sta = $("<td><button class='hallow modal-trigger'>Review</button></td>");
+                                    sta.find("button").on("click",
+                                        (e) => {
+                                            load(o);
+                                        });
+                                } else {
+                                    sta = $("<td>Filled</td>");
+                                }
                             </text>
                         }
 

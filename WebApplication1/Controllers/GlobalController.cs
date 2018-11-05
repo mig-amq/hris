@@ -16,12 +16,19 @@ namespace WebApplication1.Controllers
         {
             if (Session["user"] != null)
             {
-                if (AccountType != AccountType.Any && ((Account)Session["user"]).Type != AccountType)
+                try
+                {
+                    if (AccountType != AccountType.Any && ((Account)Session["user"]).Type != AccountType)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                catch (Exception e)
                 {
                     return false;
                 }
-
-                return true;
             }
 
             return false;
@@ -66,7 +73,7 @@ namespace WebApplication1.Controllers
         public Boolean HasValues(FormCollection form, string[] keys)
         {
             foreach(string key in keys)
-                if (!form.AllKeys.Contains(key) && !String.IsNullOrEmpty(form.GetValue(key).AttemptedValue))
+                if (!form.AllKeys.Contains(key) && form.GetValue(key) == null || (form.GetValue(key) != null && String.IsNullOrEmpty(form.GetValue(key).AttemptedValue)))
                     return false;
 
             return true;

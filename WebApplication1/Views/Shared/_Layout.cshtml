@@ -31,6 +31,7 @@
     <script src="@Url.Content("~/Content/js/modal.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Content/js/date.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Content/js/dashboard.js")" type="text/javascript"></script>
+    <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
 </head>
 <body onload="ready_application_status()">
 <nav id="main-sidebar">
@@ -100,7 +101,7 @@
                 </div>
             }
 
-            if (Account.Type == AccountType.DepartmentHead || Account.Type == AccountType.Employee && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            if ((Account.Type == AccountType.DepartmentHead || Account.Type == AccountType.Employee) && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
             {
                 <hr />
                 <div class="cluster">
@@ -135,7 +136,13 @@
                 <div class="cluster">
                     <h6 class="cluster-label">Attendance</h6>
                     <ul>
-                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance Details</li></a>
+                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">My Attendance</li></a>
+
+                        @if (((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                        {
+                            <a href="/Attendance/List"><li class="@(ViewBag.Active == "LIAT" ? "active" : "")">Attendance List</li></a>
+                            <a href="/Attendance/Add"><li class="@(ViewBag.Active == "ADAT" ? "active" : "")">Add Monthly Attendance Records</li></a>
+                        }
                     </ul>
                 </div>
             }
@@ -145,7 +152,7 @@
                 <div class="cluster">
                     <h6 class="cluster-label">Leave</h6>
                     <ul>
-                        @if (Account.Type == AccountType.DepartmentHead || Account.Type == AccountType.Employee && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                        @if (Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                         {
                             <a href="/Leave/Approval"><li class="@(ViewBag.Active == "LEA" ? "active" : "")">Leave Approval</li></a>
                         }
@@ -212,6 +219,18 @@
 @if (Account != null)
 {
     <header>
+        <div>
+            <b>Date/Time: </b> <span id="time">----</span>
+        </div>
+        <script>
+            $("#time").html(moment().format('MMM DD, YYYY, h:mm:ss a'));
+
+            var timer = setInterval(() => {
+                    $("#time").html(moment().format('MMM DD, YYYY, h:mm:ss a'));
+                },
+                1000);
+            
+        </script>
         <div id="account-wrapper">
             <div id="profile-picture"></div>
             <div>
@@ -226,7 +245,7 @@
                 </span>
                 <span id="profile-email">@Account.Email</span>
             </div>
-            <img src="@Url.Content("~/Content/assets/icons/arrow-down-2.svg")" id="profile-dropdown" />
+            <img src="@Url.Content("~/Content/assets/icons/arrow-down-2.svg")" id="profile-dropdown"/>
         </div>
         <div id="account-dropdown">
             <ul>

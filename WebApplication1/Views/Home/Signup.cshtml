@@ -2,13 +2,6 @@
 @using WebApplication1.Models.Supers
 
 @{
-    Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
-
-    if (Session["user"] != null)
-    {
-        Response.Redirect("/Home/Dashboard");
-    }
-
     ViewBag.Active = "SIGN";
     ViewBag.Title = " Applicant Sign Up";
 }

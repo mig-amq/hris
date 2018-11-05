@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace WebApplication1.Models
 {
     using System.Data;
+    using System.Diagnostics;
+    using System.Web.UI.WebControls;
 
     using WebApplication1.Models.Supers;
 
@@ -149,6 +151,24 @@ namespace WebApplication1.Models
             if (recursive)
                 this.Profile.Delete();
             return this;
+        }
+
+        public Boolean OnLeave(DateTime Date)
+        {
+            int m = Date.Month;
+            int d = Date.Day;
+            int y = Date.Year;
+
+            string sql = "SELECT COUNT(E.EmployeeID) AS Count " + "FROM Employee E INNER JOIN Leave L ON L.Employee = E.EmployeeID "
+                                     + " WHERE L.Status = " + ((int)LeaveStatus.Approved) + " AND EmployeeID = "
+                                     + this.EmployeeID + " AND MONTH(L.StartDate) >= " + m
+                                     + " AND YEAR(L.StartDate) >= " + y + " AND DAY(L.StartDate) >= " + d + " AND " + m
+                                     + " <= MONTH(L.EndDate) AND " + y + " <= Year(L.EndDate) AND " + d
+                                     + " <= DAY(L.EndDate)";
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, sql))
+            {
+                return dt.Rows[0]["Count"].ToString().ToLower() != "0";
+            }
         }
     }
 }

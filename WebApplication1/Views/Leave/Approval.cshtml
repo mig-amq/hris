@@ -105,6 +105,7 @@
                 }
             })
         })
+
         function load(o) {
             $("form").attr('data-id', o.LeaveID);
             var opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -160,7 +161,10 @@
                         let pos = $("<td></td>");
                         let sel = $("<td><button class='hallow modal-trigger'>View Request</button></td>");
 
-                        sel.find("button").on("click", (e) => load(o));
+                        if (o.Status == 1)
+                            sel.find("button").on("click", (e) => load(o));
+                        else
+                            sel.text("Approved")
 
                         id.text(o.LeaveID);
                         code.text(o.Employee.Code);

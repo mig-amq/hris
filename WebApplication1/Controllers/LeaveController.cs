@@ -213,6 +213,9 @@ namespace WebApplication1.Controllers
                         notif.TimeStamp = DateTime.Now;
                         notif.Status = NotificationStatus.Unread;
                         notif.Create();
+
+                        if (Leave.Status == LeaveStatus.Denied)
+                            Leave.Delete();
                     }
                     catch (Exception e)
                     {

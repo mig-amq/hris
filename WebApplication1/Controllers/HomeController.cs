@@ -14,14 +14,17 @@ namespace WebApplication1.Controllers
     public class HomeController : GlobalController
     {
         public ActionResult Index()
-        {            
+        {
+            if (this.IsLoggedIn())
+                return this.RedirectToAction("Dashboard", "Home");
+
             return View();
         }
 
         public ActionResult Signup()
         {
             if (this.IsLoggedIn())
-                this.RedirectToAction("Dashboard", "Home");
+                return this.RedirectToAction("Dashboard", "Home");
 
             return View();
         }
@@ -29,7 +32,7 @@ namespace WebApplication1.Controllers
         public ActionResult Dashboard()
         {
             if (!this.IsLoggedIn())
-                this.RedirectToAction("Index", "Home");
+                return this.RedirectToAction("Index", "Home");
 
             return View();
         }
