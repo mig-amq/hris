@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = " Employee Evaluation Report";
+    ViewBag.Active = "REPEE";
+}
+
+<h2>Evaluation Report</h2>
+
+<div class="cluster" style="margin-bottom: 0;">
+    <p class="sub-title">Employee:</p>
+    <div class="two-column-content">
+        <div class="cluster">
+            <select id="employee" name="id" class="full">
+                <option value="-1">-- Select Employee --</option>
+                <!-- JS generated -->
+            </select>
+        </div>
+        <div class="cluster">
+            <button class="full" onclick="print()" disabled id="print">Print Report</button>
+        </div>
+    </div>
+</div>
+
+<div id="alert" style="margin-top: 0; "></div>
+
+<br />
+
+<div class="iframe-container" id="iframe" style="display: none">
+    <iframe src="/Reports/Printable/"></iframe>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $.ajax({
+            url: "/Reports/AllEmployee",
+            method: "GET",
+            success: (data) => {
+                if (data.content) {
+                    data.content.forEach((o, i, a) => {
+                        let opt = $("<option value='" +
+                            o.Profile.ProfileID +
+                            "'>" +
+                            o.Profile.FirstName +
+                            " " +
+                            o.Profile.MiddleName +
+                            " " +
+                            o.Profile.LastName +
+                            "</option>")
+                        $("select").append(opt);
+                    });
+                } else {
+                    $("#alert").addClass("error").text("Cannot retrieve employee list. Please refresh the page");
+                }
+            }
+        });
+        $("select").on("change", () => {
+            $("#iframe").hide();
+            $("#print").attr("disabled", "disabled");
+
+            $("#alert").removeClass("error");
+
+            let y = parseInt($("select").val());
+
+            if (parseInt(y) != -1) {
+                $.ajax({
+                    url: "/Reports/AllEvaluation",
+                    method: "GET",
+                    data: {
+                        id: y
+                    },
+                    success: (data) => {
+                        if (data.content) {
+                            let o = data.content[0];
+
+                            $("#print").removeAttr("disabled");
+
+                            $("#iframe").show();
+                            var json = {
+                                headers: [
+                                    "Technical Competence", "Interpersonal Skills", "Commitment & Competence to company Missions, Policies, and Rules & Regulations", "Total"
+                                ],
+                                data: [],
+                                details: [],
+                                title: "Employee Evaluation",
+                                footers: [],
+                            };
+
+                            var ar = [];
+                            let s = new Date(o.DatePrepared);
+                            let e = new Date(o.DateNoted);
+
+                            let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear();
+                            let schedule2 = (e.getMonth() + 1) + "/" + (e.getDate()) + "/" + e.getFullYear();
+
+                            ar.push(o.TechComp);
+                            ar.push(o.InterSkills);
+                            ar.push(o.CommComp);
+                            ar.push(o.Total);
+
+                            json.data.push(ar);
+
+                            let name = $("<p><b>Employee Name: </b>" +
+                                o.DiscussedWith.Profile.FirstName +
+                                " " +
+                                o.DiscussedWith.Profile.MiddleName +
+                                " " +
+                                o.DiscussedWith.Profile.LastName + "</p>");
+
+                            console.log(o);
+
+                            let deet = $("<p><b>Employee Code: </b> " + o.DiscussedWith.Code + "</p>");
+
+                            json.details.push(deet);
+                            json.details.push(name);
+
+                            json.footers.push('<div class="two-column-content"><div class="cluster" id="evaluator"><p class="sub-title">Evaluated By:</p><p><b>Name: </b>' +
+                                o.Evaluator.Profile.FirstName + ' ' + o.Evaluator.Profile.LastName
+                                + '</p> <p><b>Position: </b>' + o.Evaluator.Position + '</p><p> <b>Date Evaluated: </b>' + schedule
+                                + '</p></div><div class="cluster" id="noted"><p class="sub-title">Noted By:</p><p><b>Name:</b> ' + o.NotedBy.Profile.FirstName + ' '
+                                + o.NotedBy.Profile.LastName + '</p><p><b>Position: </b>' + o.Evaluator.Position + '</p><p> <b>Date Noted: </b>'
+                                + schedule2 + '</p></div> </div>')
+
+                            $("#iframe iframe")[0].contentWindow.load(json);
+                        } else {
+                            $("#alert").addClass("error").text("There are no evaluation report for that employee");
+                        }
+                    }
+                });
+            }
+        })
+    })
+
+    function print() {
+        $("#iframe iframe")[0].contentWindow.print();
+    }
+</script>

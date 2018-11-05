@@ -19,7 +19,7 @@ namespace WebApplication1.Models
     {
         public int EmployeeID { get; set; }
         public DateTime EmploymentDate { get; set; }
-        public DateTime DateInactive { get; set; }
+        public DateTime? DateInactive { get; set; }
         public StatusType Status { get; set; }
         public Department Department { get; set; }
         public string Code { get; set; }
@@ -50,7 +50,7 @@ namespace WebApplication1.Models
                     if (this.Status == StatusType.Inactive)
                         this.DateInactive = DateTime.Parse(row["DateInactive"].ToString());
                     else
-                        this.DateInactive = DateTime.MaxValue;
+                        this.DateInactive = null;
 
                     if (recursive)
                     {
@@ -100,7 +100,11 @@ namespace WebApplication1.Models
                 param.Add("@Profile", this.Profile.ProfileID);
 
             param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
-            param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
+            if (this.DateInactive.HasValue)
+                param.Add("@DateInactive", this.DateInactive.Value.ToString("yyyy-MM-dd"));
+            else
+                param.Add("@DateInactive", DBNull.Value);
+
             param.Add("@Department", this.Department.DepartmentID);
             param.Add("@Status", (int)this.Status);
             param.Add("@Code", Code);
@@ -130,7 +134,10 @@ namespace WebApplication1.Models
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@EmploymentDate", this.EmploymentDate.ToString("yyyy-MM-dd"));
-            param.Add("@DateInactive", this.DateInactive.ToString("yyyy-MM-dd"));
+            if (this.DateInactive.HasValue)
+                param.Add("@DateInactive", this.DateInactive.Value.ToString("yyyy-MM-dd"));
+            else
+                param.Add("@DateInactive", DBNull.Value);
             param.Add("@Status", (int)this.Status);
             param.Add("@Code", Code);
             param.Add("@Position", Position);

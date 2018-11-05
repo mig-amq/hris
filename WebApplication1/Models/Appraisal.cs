@@ -70,13 +70,13 @@ namespace WebApplication1.Models
                     this.Total = Double.Parse(row["Total"].ToString());
                     this.Comments = row["Comments"].ToString();
 
-                    if (row["DatePrepared"] != DBNull.Value)
+                    if (!row.IsNull("DatePrepared"))
                         this.DatePrepared = DateTime.Parse(row["DatePrepared"].ToString());
 
-                    if (row["DateNoted"] != DBNull.Value)
+                    if (!row.IsNull("DateNoted"))
                         this.DateNoted = DateTime.Parse(row["DateNoted"].ToString());
 
-                    if (row["DateDiscussed"] != DBNull.Value)
+                    if (!row.IsNull("DateDiscussed"))
                         this.DateDiscussed = DateTime.Parse(row["DateDiscussed"].ToString());
 
                     this.Type = (AppraisalType)Int32.Parse(row["Type"].ToString());
@@ -84,13 +84,13 @@ namespace WebApplication1.Models
 
                     if (recursive)
                     {
-                        if (row["Evaluator"] != DBNull.Value)
+                        if (!row.IsNull("Evaluator"))
                             this.Evaluator = (Employee)new Employee().FindProfile(Int32.Parse(row["Evaluator"].ToString()), byPrimary: true);
 
-                        if (row["NotedBy"] != DBNull.Value)
+                        if (!row.IsNull("NotedBy"))
                             this.NotedBy = (Employee)new Employee().FindProfile(Int32.Parse(row["NotedBy"].ToString()), byPrimary: true);
 
-                        if (row["DiscussedWith"] != DBNull.Value)
+                        if (!row.IsNull("DiscussedWith"))
                             this.DiscussedWith = (Employee)new Employee().FindProfile(Int32.Parse(row["DiscussedWith"].ToString()), byPrimary: true);
                     }
                 }
@@ -122,13 +122,13 @@ namespace WebApplication1.Models
                     ap.Total = Double.Parse(row["Total"].ToString());
                     ap.Comments = row["Comments"].ToString();
 
-                    if (row["DatePrepared"] != DBNull.Value)
+                    if (!row.IsNull("DatePrepared"))
                         ap.DatePrepared = DateTime.Parse(row["DatePrepared"].ToString());
 
-                    if (row["DateNoted"] != DBNull.Value)
+                    if (!row.IsNull("DateNoted"))
                         ap.DateNoted = DateTime.Parse(row["DateNoted"].ToString());
 
-                    if (row["DateDiscussed"] != DBNull.Value)
+                    if (!row.IsNull("DateDiscussed"))
                         ap.DateDiscussed = DateTime.Parse(row["DateDiscussed"].ToString());
 
                     ap.Type = (AppraisalType)Int32.Parse(row["Type"].ToString());
@@ -136,13 +136,13 @@ namespace WebApplication1.Models
 
                     if (recursive)
                     {
-                        if (row["Evaluator"] != DBNull.Value)
+                        if (!row.IsNull("Evaluator"))
                             ap.Evaluator = (Employee)new Employee().FindProfile(Int32.Parse(row["Evaluator"].ToString()), byPrimary: true);
 
-                        if (row["NotedBy"] != DBNull.Value)
+                        if (!row.IsNull("NotedBy"))
                             ap.NotedBy = (Employee)new Employee().FindProfile(Int32.Parse(row["NotedBy"].ToString()), byPrimary: true);
 
-                        if (row["DiscussedWith"] != DBNull.Value)
+                        if (!row.IsNull("DiscussedWith"))
                             ap.DiscussedWith = (Employee)new Employee().FindProfile(Int32.Parse(row["DiscussedWith"].ToString()), byPrimary: true);
                     }
 

@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = " Employee Training Report";
+    ViewBag.Active = "REPET";
+}
+
+<h2>Employee Trainings</h2>
+
+<div class="two-column-content">
+    <div class="cluster" style="margin-bottom: 0;">
+        <button class="full" onclick="print()" disabled id="print">Print Report</button>
+    </div>
+</div>
+<br />
+
+<div class="iframe-container" id="iframe" style="display: none">
+    <iframe src="/Reports/Printable/"></iframe>
+</div>
+
+<script>
+
+    $(document).ready(() => {
+        $("#iframe iframe").on("load", () => {
+            $("#iframe").hide();
+
+            $("#alert").removeClass("error");
+
+            $.ajax({
+                url: "/Reports/AllTraining",
+                method: "GET",
+                success: (data) => {
+                    if (data.content) {
+                        $("#print").removeAttr("disabled");
+
+                        $("#iframe").show();
+                        var json = {
+                            headers: [
+                                "Employee Name", "Title", "Description", "Facilitator", "Schedule", "Location"
+                            ],
+                            data: [],
+                            details: [],
+                            title: "Employee Trainings"
+                        };
+
+                        data.content.forEach((o, i, a) => {
+                            console.log(o);
+                            var ar = [];
+                            let s = new Date(o.Training.StartDate);
+                            let e = new Date(o.Training.EndDate);
+
+                            let schedule = (s.getMonth() + 1) + "/" + (s.getDate()) + "/" + s.getFullYear() + " - "
+                                + (e.getMonth() + 1) + "/" + (e.getDate()) + "/" + e.getFullYear();
+
+                            ar.push(o.Profile.FirstName +
+                                " " +
+                                o.Profile.MiddleName +
+                                " " +
+                                o.Profile.LastName);
+
+                            ar.push(o.Training.Title);
+                            ar.push(o.Training.Description);
+                            ar.push(o.Training.Facilitator);
+                            ar.push(schedule);
+                            ar.push(o.Training.Location);
+
+                            json.data.push(ar);
+                        });
+
+                        $("#iframe iframe")[0].contentWindow.load(json);
+                    } else {
+                        $("#alert").addClass("error").text("There are no attendance records at that date");
+                    }
+                }
+            });
+        })
+    })
+
+    function print() {
+        $("#iframe iframe")[0].contentWindow.print();
+    }
+</script>

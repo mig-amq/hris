@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Printable";
+    ViewBag.Active = "PRINTABLE";
+}
+
+<div id="company">
+    <div id="company-logo">
+        <img src="@Url.Content("~/Content/assets/images/calfurn-logo.png")" id="logo" />
+    </div>
+    <div id="company-info">
+        <h3 style="margin-bottom: 0">Calfurn Mfg. Philippines, Inc.</h3>
+        <address>Manga Road, Pulungbulo, Angeles City 2009 Philippines</address>
+        <a href="tel:+63453228186">+6345-322-8186</a>
+    </div>
+</div>
+<br />
+<br />
+<hr />
+<h3 id="printable-header"></h3>
+<div id="details">
+
+</div>
+
+<table>
+    <thead id="headers">
+    <tr></tr>
+    </thead>
+    <tbody id="data"></tbody>
+</table>
+<br/>
+<div id="footer">
+
+</div>
+<script>
+    function load(obj) {
+        $("#printable-header").text(obj.title);
+        $("#header").empty();
+        $("#data").empty();
+        $("#details").empty();
+        $("#footer").empty();
+
+        obj.headers.forEach((o, i, a) => {
+            let th = $("<th>" + o + "</th>");
+
+            $("#headers").append(th);
+        });
+
+        obj.data.forEach((o, i, a) => {
+            let tr = $("<tr></tr>");
+            o.forEach((o1, i1, a1) => {
+                let td = $("<td>" + o1 + "</td>");
+                tr.append(td);
+            })
+
+            $("#data").append(tr);
+        });
+
+        obj.details.forEach((o, i, a) => $("#details").append(o));
+
+        obj.footers.forEach((o, i, a) => $("#footer").append(o));
+        $("title").text(obj.title);
+    }
+</script>

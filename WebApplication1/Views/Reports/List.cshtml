@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = " Employee List Report";
+    ViewBag.Active = "REPEL";
+}
+
+<h2>Employee List</h2>
+
+<div class="two-column-content">
+    <div class="cluster" style="margin-bottom: 0;">
+        <button class="full" onclick="print()" disabled id="print">Print Report</button>
+    </div>
+</div>
+<br />
+
+<div class="iframe-container" id="iframe" style="display: none">
+    <iframe src="/Reports/Printable/"></iframe>
+</div>
+
+<script>
+
+    $(document).ready(() => {
+        $("#iframe").hide();
+
+        $("#alert").removeClass("error");
+        
+        $.ajax({
+            url: "/Reports/AllEmployee",
+            method: "GET",
+            success: (data) => {
+                if (data.content) {
+                    $("#print").removeAttr("disabled");
+
+                    $("#iframe").show();
+                    var json = {
+                        headers: [
+                            "Employee Code", "Employee Name", "Department", "Position"
+                        ],
+                        data: [],
+                        details: [],
+                        title: "Employee List"
+                    };
+
+                    data.content.forEach((o, i, a) => {
+                        var ar = [];
+                        ar.push(o.Code);
+                        ar.push(o.Profile.FirstName +
+                            " " +
+                            o.Profile.MiddleName +
+                            " " +
+                            o.Profile.LastName);
+                        ar.push(o.Department.DepartmentName);
+                        ar.push(o.Position);
+
+                        json.data.push(ar);
+                    });
+
+                    $("#iframe iframe")[0].contentWindow.load(json);
+                } else {
+                    $("#alert").addClass("error").text("There are no attendance records at that date");
+                }
+            }
+        });
+    })
+
+    function print() {
+        $("#iframe iframe")[0].contentWindow.print();
+    }
+</script>

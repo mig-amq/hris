@@ -13,9 +13,10 @@ input, textarea{
 #alert {
     display: none;
     color: #fff;
-    padding: 10px;
     margin-top: 10px;
     border-radius: var(--border-radius);
+    font-size: 0.8em;
+    padding: 0.8em 1.5em;
 }
 
 #alert.error, #alert.success, #alert.info {

@@ -1,6 +1,6 @@
 /* dashboard overall stylesheet */
 
-body {
+body:not(#printable) {
     margin-left: 17em;
 }
 
@@ -266,10 +266,10 @@ select#show-entries {
     flex-wrap: wrap;
 }
 
-    .two-column-content div.cluster {
-        width: 40%;
-        margin-right: 5em;
-    }
+.two-column-content div.cluster {
+    width: 40%;
+    margin-right: 5em;
+}
 
 form div.info {
     margin: 1.5em 10%;
@@ -283,4 +283,51 @@ form div.info {
     border-radius: 2px;
     margin-left: 10px;
     font-weight: bold;
+}
+
+.iframe-container {
+    min-height: 80vh;
+    min-width: 100%;
+}
+
+.iframe-container iframe {
+    display: block;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 100%;
+    height: 80vh;
+}
+
+#printable {
+    display: block;
+    text-align: center;
+}
+
+#printable {
+    margin: 0;
+}
+
+#printable #company {
+    display: inline-block;
+}
+
+#printable #company #company-logo #logo {
+    height: 50pt;
+    width: auto;
+    margin-bottom: 0;
+}
+
+#printable section {
+    padding: 25px 10px;
+}
+
+#printable #details {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+#printable #footer .cluster p {
+    text-align: left;
+    margin: 0;
 }

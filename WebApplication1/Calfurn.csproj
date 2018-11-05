@@ -246,14 +246,15 @@
     <Content Include="Views\Appraisal\Undiscussed.cshtml" />
     <Content Include="Views\Attendance\Add.cshtml" />
     <Content Include="Views\Attendance\List.cshtml" />
+    <Content Include="Views\Reports\Attendance.cshtml" />
+    <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\Evaluation.cshtml" />
+    <Content Include="Views\Reports\Training.cshtml" />
+    <Content Include="Views\Reports\Printable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\" />
-    <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Applicant\" />
-    <Folder Include="Views\DepartmentHead\" />
-    <Folder Include="Views\Reports\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

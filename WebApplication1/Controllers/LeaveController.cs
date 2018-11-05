@@ -202,7 +202,25 @@ namespace WebApplication1.Controllers
                     try
                     {
                         Leave Leave = new Leave(Int32.Parse(form.GetValue("id").AttemptedValue));
-                        Leave.Status = (LeaveStatus)Int32.Parse(form.GetValue("V").AttemptedValue);
+                        Leave.Status = (LeaveStatus)Int32.Parse(form.GetValue("v").AttemptedValue);
+
+                        if (Leave.Status == LeaveStatus.Approved)
+                        {
+                            try
+                            {
+                                Attendance at = new Attendance().Find(
+                                    Leave.Employee.EmployeeID,
+                                    Leave.StartDate,
+                                    recursive: false,
+                                    byPrimary: false);
+
+                                at.Leave += 1;
+                                at.Update(false);
+                            }
+                            catch (Exception e)
+                            { }
+                        }
+
                         Leave.Update(recursive:false);
 
                         Notification notif = new Notification();
