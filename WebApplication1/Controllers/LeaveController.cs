@@ -209,9 +209,9 @@ namespace WebApplication1.Controllers
                             try
                             {
                                 Attendance at = new Attendance().Find(
-                                    Leave.Employee.EmployeeID,
+                                    Leave.Employee.Profile.ProfileID,
                                     Leave.StartDate,
-                                    recursive: false,
+                                    recursive: true,
                                     byPrimary: false);
 
                                 at.Leave += 1;

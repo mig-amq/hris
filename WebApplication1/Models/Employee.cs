@@ -177,5 +177,20 @@ namespace WebApplication1.Models
                 return dt.Rows[0]["Count"].ToString().ToLower() != "0";
             }
         }
+
+        public int GetNumLeaves(DateTime Date)
+        {
+            string sql = "SELECT COUNT(*) AS Count FROM Leave WHERE Employee = " + this.EmployeeID
+                         + " AND MONTH(StartDate) = "
+                         + Date.Month
+                         + " AND YEAR(StartDate) = "
+                         + Date.Year;
+
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, sql))
+            {
+                return Int32.Parse(dt.Rows[0]["Count"].ToString());
+            }
+
+        } 
     }
 }

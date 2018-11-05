@@ -16,6 +16,8 @@ namespace WebApplication1.Models
 
     public class Leave
     {
+        public static int MAX = 5;
+
         private DBHandler DBHandler;
 
         public int LeaveID { get; set; }

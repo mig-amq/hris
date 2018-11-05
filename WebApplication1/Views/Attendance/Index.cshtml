@@ -158,6 +158,8 @@
                     row.append(tot).append(pre).append(abs).append(ove).append(lat).append(lea).append(und);
                     $("#details").append(row);
                 } else {
+                    $("#time-in").attr("disabled", "disabled");
+                    $("#time-out").attr("disabled", "disabled");
                     $("#alert").addClass("info");
                     $("#alert").html(
                         "<b>Info: </b> You do not have an attendance sheet for this month yet, please contact the HR department.");

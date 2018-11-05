@@ -348,6 +348,7 @@ namespace WebApplication1.Controllers
                             at.Undertime = 0;
                             at.Date = DateTime.Now;
                             at.Employee = emp;
+                            at.Leave = emp.GetNumLeaves(DateTime.Now);
 
                             if (String.IsNullOrEmpty(form.GetValue("v").AttemptedValue))
                                 throw new Exception("Form is incomplete");
@@ -419,6 +420,7 @@ namespace WebApplication1.Controllers
                                 {
                                     at.Absent = 0;
                                     at.Late = 0;
+                                    at.Leave = emp.GetNumLeaves(DateTime.Now);
                                     at.Overtime = 0;
                                     at.Present = 0;
                                     at.Undertime = 0;

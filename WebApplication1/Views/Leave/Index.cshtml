@@ -5,6 +5,8 @@
     ViewBag.Active = "LAP";
 
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
+
+    int numLeaves = ((Employee)Account.Profile).GetNumLeaves(DateTime.Now);
 }
 
 @if (Account != null)
@@ -54,13 +56,22 @@
         </div>
     </div>
 
+    if (numLeaves >= Leave.MAX)
+     {
+         <div id="alert" class="info"><b>Info:</b> You have reached the maximum allowable leaves for this month.</div>
+         <br/>
+     }
+
     <div id="section-heading">
         <div>
             <h1 id="section-title">Leave Application</h1>
-            <button class="hallow modal-trigger" data-id="0">
-                <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
-                Apply for Leave
-            </button>
+            @if (numLeaves < Leave.MAX)
+            {
+                <button class="hallow modal-trigger" data-id="0">
+                    <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
+                    Apply for Leave
+                </button>
+            }
             &nbsp; &nbsp; &nbsp;
             <span>
                 Show
