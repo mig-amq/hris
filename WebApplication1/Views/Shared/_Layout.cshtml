@@ -63,6 +63,13 @@
                         <a href="/Home/Signup"><li class="@(ViewBag.Active == "SIGN" ? "active" : "")">Sign Up</li></a>
                     </ul>
                 </div>
+                <hr/>
+                <div class="cluster">
+                    <h6 class="cluster-label">Attendance</h6>
+                    <ul>
+                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">My Attendance</li></a>
+                    </ul>
+                </div>
             }
 
             @if (Account != null)
@@ -103,7 +110,7 @@
                     </div>
                 }
                 <hr/>
-                if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP)
+                if (Account.Type == AccountType.Applicant || ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                 {
                     <div class="cluster">
                         <h6 class="cluster-label">Recruitment</h6>
@@ -148,7 +155,7 @@
                     </div>
                 }
 
-                if (Account.Type == AccountType.Employee || Account.Type == AccountType.DepartmentHead)
+                if ((Account != null && Account.Type == AccountType.Employee || Account.Type == AccountType.DepartmentHead))
                 {
                     <hr/>
                     <div class="cluster">
@@ -156,7 +163,7 @@
                         <ul>
                             <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">My Attendance</li></a>
 
-                            @if (((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                            @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                             {
                                 <a href="/Attendance/List"><li class="@(ViewBag.Active == "LIAT" ? "active" : "")">Attendance List</li></a>
                                 <a href="/Attendance/Add"><li class="@(ViewBag.Active == "ADAT" ? "active" : "")">Add Monthly Attendance Records</li></a>
@@ -191,12 +198,12 @@
                         <ul>
                             @if (Account.Type != AccountType.Employee && Account.Type != AccountType.Applicant)
                             {
+                                <a href="/Appraisal/Undiscussed"><li class="@(ViewBag.Active == "UNAPR" ? "active" : "")">Undiscussed Evaluations</li></a>
                                 <a href="/Appraisal/">
                                     <li class="@(ViewBag.Active == "APR" ? "active" : "")">
                                         @(Account.Type == AccountType.DepartmentHead ? "Non-Supervisory" : "Supervisory")
                                     </li>
                                 </a>
-                                <a href="/Appraisal/Undiscussed"><li class="@(ViewBag.Active == "UNAPR" ? "active" : "")">Undiscussed Evaluations</li></a>
                             }
 
                             @if (Account.Type != AccountType.CEO)
@@ -234,22 +241,24 @@
             }
         </ul>
     </nav>
-    if (Account != null)
-    {
-        <header>
-            <div>
-                <b>Date/Time: </b> <span id="time">----</span>
-            </div>
-            <script>
+   
+    <header>
+        <div>
+            <b>Date/Time: </b> <span id="time">----</span>
+        </div>
+        <script>
+            $("#time").html(moment().format('MMM DD, YYYY, h:mm:ss a'));
+
+            var timer = setInterval(() => {
                 $("#time").html(moment().format('MMM DD, YYYY, h:mm:ss a'));
+            },
+                1000);
 
-                var timer = setInterval(() => {
-                        $("#time").html(moment().format('MMM DD, YYYY, h:mm:ss a'));
-                    },
-                    1000);
-
-            </script>
+        </script>
+        @if (Account != null)
+        {
             <div id="account-wrapper">
+
                 <div id="profile-picture"></div>
                 <div>
                     <span id="profile-name">
@@ -258,7 +267,8 @@
                         }
                         @if (profile != null)
                         {
-                            @(profile.Profile.FirstName + " " + profile.Profile.LastName);
+                            @(profile.Profile.FirstName + " " + profile.Profile.LastName)
+                            ;
                         }
                     </span>
                     <span id="profile-email">@Account.Email</span>
@@ -270,8 +280,8 @@
                     <a href="/UserAccount/LogOut"><li>Logout</li></a>
                 </ul>
             </div>
+        }
         </header>
-    }
 }
 <section>
     @RenderBody()

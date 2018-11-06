@@ -12,11 +12,31 @@
         <h1 id="section-title">My Attendance</h1>
     </div>
 </div>
-<br />
-<div id="alert"></div>
-<br/>
 
-@if (Account != null && !((Employee)Account.Profile).OnLeave(DateTime.Now))
+@if (Account == null)
+{
+    <br/>
+    <div class="two-column-content">
+        <div class="cluster">
+            <form onsubmit="event.preventDefault(); loadButtons()">
+                <input type="text" name="employee-code" placeholder="Employee Code" class="full" />
+                <button class="full" id="check">Check Employee</button>
+            </form>
+        </div>
+        <div class="cluster">
+            <p style="margin-top: 0"><b>Employee Name: </b> <span id="name">----</span></p>
+            <div id="alert" style="margin-top: 0"></div>
+        </div>
+    </div>
+}
+else
+{
+    <br />
+    <div id="alert"></div>
+    <br/>
+}
+
+@if (Account == null || (Account != null && !((Employee)Account.Profile).OnLeave(DateTime.Now)))
 {
     <div class="two-column-content">
         <div class="cluster"><button class="full" id="time-in" disabled>Time In</button></div>
@@ -24,8 +44,11 @@
     </div>
 }
 
-<table>
-    <thead>
+@if (Account != null)
+{
+    
+    <table>
+        <thead>
         <tr class="heading-row">
             <th>Total Working Days</th>
             <th>Present</th>
@@ -35,40 +58,48 @@
             <th>Leave</th>
             <th>Undertime</th>
         </tr>
-    </thead>
-    <tbody id="details">
-    </tbody>
-</table>
+        </thead>
+        <tbody id="details">
+        </tbody>
+    </table>
 
-<br/>
-<table>
-    <thead>
-    <tr class="heading-row">
-        <th>Date</th>
-        <th>Time In</th>
-        <th>Time Out</th>
-    </tr>
-    </thead>
-    <tbody id="data">
-    </tbody>
-</table>
+    <br/>
+    <table>
+        <thead>
+        <tr class="heading-row">
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+        </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
+    </table>
 
-<div id="result-summary">
-    <div>
-        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    <div id="result-summary">
+        <div>
+            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+        </div>
+        <div id="pagination">
+            <span class="active">1</span>
+        </div>
     </div>
-    <div id="pagination">
-        <span class="active">1</span>
-    </div>
-</div>
+}
 
 <script>
     var curr = 1;
-    $(document).ready(() => {
-        search(1);
-        loadAttendance();
-        loadButtons();
-    })
+
+    @if (Account != null)
+    {
+        <text>
+            $(document).ready(() => {
+                search(1);
+
+                loadButtons();
+                loadAttendance();
+            })
+        </text>
+    }
 
     $("#time-in").on("click", (e) => {
         $("#alert").removeAttr("class");
@@ -76,6 +107,9 @@
         e.preventDefault();
         $.ajax({
             url: '/Attendance/TimeIn',
+            data: {
+                code: $("input[name=employee-code]").val(),
+            },
             method: "POST",
             success: (data) => {
                 if (data.error)
@@ -86,8 +120,14 @@
                     $("#time-out").attr('data-id', data.attendance);
 
                     $("#alert").addClass("success");
-                    search(curr);
-                    loadAttendance();
+
+                    @if (Account != null)
+                    {
+                        <text>
+                            search(curr);
+                            loadAttendance();
+                        </text>
+                    }
                 }
 
                 $("#alert").html(data.message);
@@ -101,6 +141,9 @@
         e.preventDefault();
         $.ajax({
             url: '/Attendance/TimeOut',
+            data: {
+                code: $("input[name=employee-code]").val(),
+            },
             method: "POST",
             success: (data) => {
                 if (data.error)
@@ -110,8 +153,14 @@
                     $("#time-out").attr("disabled", "disabled");
 
                     $("#alert").addClass("success");
-                    search(curr);
-                    loadAttendance();
+
+                    @if (Account != null)
+                    {
+                        <text>
+                            search(curr);
+                            loadAttendance();
+                        </text>
+                    }
                 }
 
                 $("#alert").html(data.message);
@@ -122,21 +171,69 @@
     function loadButtons() {
         $.ajax({
             url: '/Attendance/GetAttendanceToday',
+            data: {
+                code: $("input[name=employee-code]").val(),
+            },
             method: "GET",
             success: (data) => {
-                if (data.attendance && !data.attendance.TimeOut && !data.attendance.TimeIn) {
-                    $("#time-out").attr('data-id', data.attendance.Attendance.AttendanceID);
+                @if (Account == null)
+                    {
+                        <text>
+                            $("#alert").removeAttr("class");
 
-                    $("#time-out").removeAttr("disabled");
-                    $("#time-in").attr("disabled", "disabled");
-                } else if (!data.attendance) {
-                    $("#time-in").removeAttr("disabled");
-                    $("#time-out").attr("disabled", "disabled");
+                            if (data.error){
+                                $("#alert").addClass("error");
+                                
+                                $("#time-in").attr("disabled", "disabled");
+                                $("#time-out").attr("disabled", "disabled");
+                            } else {
+                                $("#alert").addClass("success");
+                                $("input[name=employee-code]").attr("disabled", "disabled");
+                                $("#check").attr("disabled", "disabled");
+                                $("#time-in").removeAttr("disabled");
+                                $("#time-out").attr("disabled", "disabled");
+
+                                $("#name").text(data.employee.Profile.FirstName +
+                                    " " +
+                                    data.employee.Profile.MiddleName +
+                                    " " +
+                                    data.employee.Profile.LastName);
+                                
+                                if (data.attendance && !data.attendance.TimeOut && data.attendance.TimeIn) {
+                                    $("#time-out").attr('data-id', data.attendance.Attendance.AttendanceID);
+
+                                    $("#time-out").removeAttr("disabled");
+                                    $("#time-in").attr("disabled", "disabled");
+                                } else if (!data.attendance) {
+                                    $("#time-in").removeAttr("disabled");
+                                    $("#time-out").attr("disabled", "disabled");
+                                }
+                            }
+
+                            $("#alert").html(data.message);
+                        </text>
+                }
+                else
+                {
+                    <text>
+                        if (data.attendance && !data.attendance.TimeOut && data.attendance.TimeIn) {
+                            $("#time-out").attr('data-id', data.attendance.Attendance.AttendanceID);
+
+                            $("#time-out").removeAttr("disabled");
+                            $("#time-in").attr("disabled", "disabled");
+                        } else if (!data.attendance) {
+                            $("#time-in").removeAttr("disabled");
+                            $("#time-out").attr("disabled", "disabled");
+                        }
+                    </text>
                 }
             }
         })
     }
 
+    @if (Account != null)
+    {
+        <text>
     function loadAttendance() {
         $.ajax({
             url: "/Attendance/GetMyAttendance",
@@ -232,5 +329,7 @@
                 }
             }
         })
+    }
+        </text>
     }
 </script>

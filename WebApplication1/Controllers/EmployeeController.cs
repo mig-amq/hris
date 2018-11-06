@@ -192,10 +192,10 @@ namespace WebApplication1.Controllers
                     "username", "password", "email", "type", "question", "answer", "code", "position",
                     "hyear", "hmonth", "hday", "firstname", "middlename", "lastname", "status", "bmonth", "bday", "byear",
                     "contact", "emergency-name", "emergency-number", "emergency-name", "emergency-rel", "house", "city",
-                    "province", "street", "education", "history", "department", "sex"
+                    "province", "street", "department", "sex", "education", "history"
                 };
 
-            if (!this.HasValues(form, keys))
+            if (this.HasValues(form, keys))
             {
                 Account ac = new Account().FindByUsername(form.GetValue("username").AttemptedValue, false);
                 ac.Profile = new Employee();
@@ -319,10 +319,13 @@ namespace WebApplication1.Controllers
                             ((Employee)ac.Profile).Profile.Education = null;
 
                         ac.Create(Int32.Parse(form.GetValue("department").AttemptedValue));
+                       
                         foreach (EmploymentHistory o in hist)
                         {
                             o.Create(((Employee)ac.Profile).Profile.ProfileID);
                         }
+
+                        json["message"] = "Succesfully created an account for <b>" + ac.Profile.Profile.FirstName + " " + ac.Profile.Profile.LastName + "</b>";
                     }
                     catch (Exception e)
                     {

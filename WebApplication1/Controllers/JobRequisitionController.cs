@@ -215,6 +215,17 @@ namespace WebApplication1.Controllers
                             new RequisitionForm(Int32.Parse(form.GetValue("id").AttemptedValue));
                         RequisitionForm.Status = (RequisitionStatus)Int32.Parse(form.GetValue("v").AttemptedValue);
                         RequisitionForm.Update(false);
+
+                        if (RequisitionForm.Status == RequisitionStatus.Requisitioned)
+                        {
+                            Notification notif = new Notification();
+                            notif.Message = "Your requisition request # " + RequisitionForm.RequisitionID
+                                                                          + " has been filled";
+                            notif.TimeStamp = DateTime.Now;
+                            notif.Status = NotificationStatus.Unread;
+                            notif.Account = new Account().FindByProfile(((Employee) RequisitionForm.RequestedBy).Profile.ProfileID);
+                            notif.Create();
+                        }
                     }
                     catch (Exception e)
                     {

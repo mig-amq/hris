@@ -16,7 +16,8 @@ namespace WebApplication1.Models
 
     public class Leave
     {
-        public static int MAX = 5;
+        public static int MAX = 10;
+        public static int MAX_PAYED = 5;
 
         private DBHandler DBHandler;
 

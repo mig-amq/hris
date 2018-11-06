@@ -21,10 +21,7 @@ namespace WebApplication1.Controllers
         // GET: Attendance
         public ActionResult Index()
         {
-            if (!this.IsLoggedIn())
-                return this.RedirectToAction("Index", "Home");
-
-            if (!this.CheckLogin(AccountType.Employee) && !this.CheckLogin(AccountType.DepartmentHead))
+            if (this.IsLoggedIn() && !this.CheckLogin(AccountType.Employee) && !this.CheckLogin(AccountType.DepartmentHead))
                 return this.RedirectToAction("Dashboard", "Home");
 
             return View();
@@ -110,27 +107,93 @@ namespace WebApplication1.Controllers
             json["attendances"] = JArray.FromObject(Attendances);
             return Content(json.ToString(), "application/json");
         }
+
         [HttpGet]
         public ContentResult GetAttendanceToday()
         {
             JObject json = new JObject();
             json["attendance"] = null;
-            if (!this.CheckLogin(AccountType.Applicant))
-            {
-                try
-                {
-                    Attendance at = new Attendance().Find(
-                        ((Employee)this.GetAccount().Profile).EmployeeID,
-                        DateTime.Now,
-                        recursive: false,
-                        byPrimary: false);
 
-                    AttendanceTime aTime = new AttendanceTime(at.AttendanceID, recursive:true, byPrimary:false);
-                    json["attendance"] = JObject.FromObject(aTime);
-                }
-                catch (Exception e)
+            if (this.GetAccount() != null)
+            {
+                if (!this.CheckLogin(AccountType.Applicant))
                 {
-                    json["attendance"] = null;
+                    try
+                    {
+                        Attendance at = new Attendance().Find(
+                            ((Employee)this.GetAccount().Profile).EmployeeID,
+                            DateTime.Now,
+                            recursive: false,
+                            byPrimary: false);
+
+                        AttendanceTime aTime = new AttendanceTime(at.AttendanceID, recursive: true, byPrimary: false);
+                        json["attendance"] = JObject.FromObject(aTime);
+                    }
+                    catch (Exception e)
+                    {
+                        json["attendance"] = null;
+                    }
+                }
+            }
+            else
+            {
+                json["error"] = false;
+                json["message"] = "";
+
+                if (Request.QueryString["code"] != null)
+                {
+                    string code = Request.QueryString["code"].ToString();
+                    DBHandler db = new DBHandler();
+
+                    Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+                    param.Add("@Code", code);
+                    using (DataTable dt = db.Execute<DataTable>(
+                        CRUD.READ,
+                        "SELECT EmployeeID FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile WHERE E.Code = @Code AND (A.Type =" 
+                        + ((int)AccountType.Employee) + " OR A.Type = " + ((int)AccountType.DepartmentHead) + ")", param))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            json["error"] = false;
+                            json["message"] = "Succesfully found your employee data";
+
+                            try
+                            {
+                                Attendance at = new Attendance().Find(
+                                    Int32.Parse(dt.Rows[0]["EmployeeID"].ToString()),
+                                    DateTime.Now,
+                                    recursive: true,
+                                    byPrimary: false);
+
+                                json["employee"] = JObject.FromObject(at.Employee);
+                                try
+                                {
+                                    AttendanceTime aTime = new AttendanceTime(
+                                        at.AttendanceID,
+                                        recursive: true,
+                                        byPrimary: false);
+                                    json["attendance"] = JObject.FromObject(aTime);
+                                }
+                                catch (Exception e){}
+                            }
+                            catch (Exception e)
+                            {
+                                json["error"] = true;
+                                json["message"] =
+                                    "<b>Error: </b> You do not have an attendance sheet for this month yet, please contact the HR department.";
+                            }
+                        }
+                        else
+                        {
+                            json["error"] = true;
+                            json["message"] = "That is not a valid employee code";
+                        }
+                    }
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
                 }
             }
 
@@ -467,13 +530,50 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
             
-            if (this.CheckLogin(AccountType.Employee) || this.CheckLogin(AccountType.DepartmentHead))
+            Employee emp = null;
+
+            DBHandler db = new DBHandler();
+
+            if (this.GetAccount() != null && this.GetAccount().Type != AccountType.Applicant)
+            {
+                emp = ((Employee)this.GetAccount().Profile);
+            }
+            else
+            {
+                if (form.GetValue("code") != null)
+                {
+                    string code = form.GetValue("code").AttemptedValue;
+                    Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+                    param.Add("@Code", code);
+
+                    using (DataTable dt = db.Execute<DataTable>(
+                            CRUD.READ,
+                            "SELECT EmployeeID FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile WHERE E.Code = @Code AND (A.Type ="
+                            + ((int)AccountType.Employee) + " OR A.Type = " + ((int)AccountType.DepartmentHead) + ")", param))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            try
+                            {
+                                emp = new Employee(Int32.Parse(dt.Rows[0]["EmployeeID"].ToString()), byPrimary: true);
+                            }
+                            catch (Exception e)
+                            {
+                                emp = null;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (emp != null || (this.GetAccount() != null && 
+                (this.CheckLogin(AccountType.Employee) || this.CheckLogin(AccountType.DepartmentHead))))
             {
                 Attendance at = new Attendance();
                 try
                 {
                     at = at.Find(
-                        ((Employee)this.GetAccount().Profile).EmployeeID,
+                        emp.EmployeeID,
                         DateTime.Now,
                         recursive: true,
                         byPrimary: false);
@@ -540,7 +640,43 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            if (this.CheckLogin(AccountType.Employee) || this.CheckLogin(AccountType.DepartmentHead))
+            Employee emp = null;
+
+            DBHandler db = new DBHandler();
+
+            if (this.GetAccount() != null && this.GetAccount().Type != AccountType.Applicant)
+            {
+                emp = ((Employee)this.GetAccount().Profile);
+            }
+            else
+            {
+                if (form.GetValue("code") != null)
+                {
+                    string code = form.GetValue("code").AttemptedValue;
+                    Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
+                    param.Add("@Code", code);
+                    using (DataTable dt = db.Execute<DataTable>(
+                        CRUD.READ,
+                        "SELECT EmployeeID FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile WHERE E.Code = @Code AND (A.Type ="
+                        + ((int)AccountType.Employee) + " OR A.Type = " + ((int)AccountType.DepartmentHead) + ")", param))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            try
+                            {
+                                emp = new Employee(Int32.Parse(dt.Rows[0]["EmployeeID"].ToString()), byPrimary: true);
+                            }
+                            catch (Exception e)
+                            {
+                                emp = null;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (emp != null && this.GetAccount() == null || (this.GetAccount() != null &&
+                (this.CheckLogin(AccountType.Employee) || this.CheckLogin(AccountType.DepartmentHead))))
             {
                 try
                 {
