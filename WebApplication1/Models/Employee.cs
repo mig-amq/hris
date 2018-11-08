@@ -206,7 +206,7 @@ namespace WebApplication1.Models
 
         public int GetNumLeaves(DateTime Date)
         {
-            string sql = "SELECT COUNT(*) AS Count FROM Leave WHERE Employee = " + this.EmployeeID
+            string sql = "SELECT COUNT(*) AS Count FROM Leave WHERE Status = " + ((int)LeaveType.Paid) + " AND Employee = " + this.EmployeeID
                          + " AND MONTH(StartDate) = "
                          + Date.Month
                          + " AND YEAR(StartDate) = "

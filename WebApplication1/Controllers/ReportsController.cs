@@ -246,7 +246,6 @@ namespace WebApplication1.Controllers
 
                         ap.AppraisalID = Int32.Parse(row["AppraisalID"].ToString());
                         ap.CoveredPeriod = DateTime.Parse(row["CoveredPeriod"].ToString());
-                        ap.Criteria = row["Criteria"].ToString();
                         ap.Rating = Double.Parse(row["Rating"].ToString());
                         ap.TechComp = Double.Parse(row["TechComp"].ToString());
                         ap.InterSkills = Double.Parse(row["InterSkills"].ToString());

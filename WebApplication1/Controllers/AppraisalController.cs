@@ -111,12 +111,11 @@ namespace WebApplication1.Controllers
                         ap.DiscussedWith = new Employee(Int32.Parse(form.GetValue("employee").AttemptedValue), byPrimary: true);
                         ap.NotedBy = new Employee(Int32.Parse(form.GetValue("noted-by").AttemptedValue), byPrimary: true);
                         ap.Comments = form.GetValue("comment").AttemptedValue;
-                        ap.Criteria = form.GetValue("criteria").AttemptedValue;
                         ap.Status = AppraisalStatus.Pending;
                         ap.CoveredPeriod = DateTime.ParseExact(
                             form.GetValue("year").AttemptedValue + "-"
                              + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
-                             + Int32.Parse(form.GetValue("day").AttemptedValue).ToString("00"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                             + "01", "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                         ap.Create();
 

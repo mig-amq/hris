@@ -149,13 +149,14 @@ namespace WebApplication1.Controllers
                     param.Add("@Code", code);
                     using (DataTable dt = db.Execute<DataTable>(
                         CRUD.READ,
-                        "SELECT EmployeeID FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile WHERE E.Code = @Code AND (A.Type =" 
+                        "SELECT EmployeeID, A.Image FROM Employee E INNER JOIN Account A ON E.Profile = A.Profile WHERE E.Code = @Code AND (A.Type =" 
                         + ((int)AccountType.Employee) + " OR A.Type = " + ((int)AccountType.DepartmentHead) + ")", param))
                     {
                         if (dt.Rows.Count > 0)
                         {
                             json["error"] = false;
                             json["message"] = "Succesfully found your employee data";
+                            json["image"] = dt.Rows[0]["Image"].ToString();
 
                             try
                             {
@@ -175,6 +176,8 @@ namespace WebApplication1.Controllers
                                     json["attendance"] = JObject.FromObject(aTime);
                                 }
                                 catch (Exception e){}
+
+                                json["onleave"] = at.Employee.OnLeave(DateTime.Now);
                             }
                             catch (Exception e)
                             {

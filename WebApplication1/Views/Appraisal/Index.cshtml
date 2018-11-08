@@ -26,19 +26,14 @@
             <select name="employee" class="full">
                 <option value="-1" disabled selected>-- Select Employee to Evaluate --</option>
             </select>
-            <textarea class="full" placeholder="Criteria" name="criteria"></textarea>
         </div>
         <div class="cluster">
             <p class="sub-title">Covered Period</p>
-            <select id="month" name="month" class="full">
+            <select id="month" name="month" class="full" data-max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)">
                 <option value="-1">-- Select month --</option>
                 <!-- JS generated -->
             </select>
-            <select id="day" name="day" class="full">
-                <option value="-1">-- Select day --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="year" name="year" class="full">
+            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year">
                 <option value="-1">-- Select year --</option>
                 <!-- JS generated -->
             </select>

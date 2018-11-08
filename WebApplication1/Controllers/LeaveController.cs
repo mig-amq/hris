@@ -118,7 +118,7 @@ namespace WebApplication1.Controllers
 
             string[] keys = new string[]
                             {
-                                "start-month", "start-day", "start-year", "end-month", "end-day", "end-year", "reason"
+                                "start-month", "start-day", "start-year", "end-month", "end-day", "end-year", "reason", "type"
                             };
 
             if (!this.CheckLogin(AccountType.Applicant))
@@ -140,6 +140,7 @@ namespace WebApplication1.Controllers
                         l.EndDate = DateTime.ParseExact(end, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                         l.Status = LeaveStatus.Pending;
                         l.Reason = form.GetValue("reason").AttemptedValue;
+                        l.Type = (LeaveType)Int32.Parse(form.GetValue("type").AttemptedValue);
 
                         l.Create();
 

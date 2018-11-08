@@ -47,8 +47,21 @@
                             <!-- JS generated -->
                         </select>
                     </div>
+                    
+                    <select name="type">
+                        @if (numLeaves < Leave.MAX_PAID)
+                        {
+                            <option value="1" disabled selected>-- Select Leave Type --</option>
+                            <option value="1">Unpaid</option>
+                            <option value="2">Paid</option>
+                        }
+                        else
+                        {
+                            <option value="1">Unpaid</option>
+                        }
+                    </select>
 
-                    <textarea name="reason" placeholder="Reason/s"></textarea>
+                    <textarea name="reason" placeholder="Reason/s" style="display: none;"></textarea>
                     <button type="submit" class="full">Apply</button>
                     <div id="alert"></div>
                 </form>
@@ -56,22 +69,13 @@
         </div>
     </div>
 
-    if (numLeaves >= Leave.MAX)
-     {
-         <div id="alert" class="info"><b>Info:</b> You have reached the maximum allowable leaves for this month.</div>
-         <br/>
-     }
-
     <div id="section-heading">
         <div>
             <h1 id="section-title">Leave Application</h1>
-            @if (numLeaves < Leave.MAX)
-            {
-                <button class="hallow modal-trigger" data-id="0">
-                    <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
-                    Apply for Leave
-                </button>
-            }
+            <button class="hallow modal-trigger" data-id="0">
+                <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
+                Apply for Leave
+            </button>
             &nbsp; &nbsp; &nbsp;
             <span>
                 Show

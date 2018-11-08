@@ -27,6 +27,10 @@
                 <p id="reason"></p>
             </div>
             <div class="cluster">
+                <p class="sub-title">Type</p>
+                <p id="type"></p>
+            </div>
+            <div class="cluster">
                 <p class="sub-title">Status</p>
                 <select name="leave-status">
                     <option value="1">Pending</option>
@@ -115,6 +119,7 @@
             $("#start-date").text(s.toLocaleDateString("en-EN", opt));
             $("#end-date").text(e.toLocaleDateString("en-EN", opt));
             $("#reason").text(o.Reason);
+            $("#type").text(o.Type);
             
             $("select[name=leave-status]").val((o.Status >= 1 && o.Status <= 3) ? o.Status : 1);
         }

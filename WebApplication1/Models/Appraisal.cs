@@ -26,7 +26,6 @@ namespace WebApplication1.Models
         private DBHandler DBHandler;
         public int AppraisalID { get; set; }
         public DateTime CoveredPeriod { get; set; }
-        public string Criteria { get; set; }
         public double Rating { get; set; }
         public double TechComp { get; set; }
         public double InterSkills { get; set; }
@@ -62,7 +61,6 @@ namespace WebApplication1.Models
                     DataRow row = dt.Rows[0];
                     this.AppraisalID = Int32.Parse(row["AppraisalID"].ToString());
                     this.CoveredPeriod = DateTime.Parse(row["CoveredPeriod"].ToString());
-                    this.Criteria = row["Criteria"].ToString();
                     this.Rating = Double.Parse(row["Rating"].ToString());
                     this.TechComp = Double.Parse(row["TechComp"].ToString());
                     this.InterSkills = Double.Parse(row["InterSkills"].ToString());
@@ -114,7 +112,6 @@ namespace WebApplication1.Models
 
                     ap.AppraisalID = Int32.Parse(row["AppraisalID"].ToString());
                     ap.CoveredPeriod = DateTime.Parse(row["CoveredPeriod"].ToString());
-                    ap.Criteria = row["Criteria"].ToString();
                     ap.Rating = Double.Parse(row["Rating"].ToString());
                     ap.TechComp = Double.Parse(row["TechComp"].ToString());
                     ap.InterSkills = Double.Parse(row["InterSkills"].ToString());
@@ -166,7 +163,6 @@ namespace WebApplication1.Models
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@CoveredPeriod", this.CoveredPeriod.ToString("yyyy-MM-dd"));
-            param.Add("@Criteria", this.Criteria);
             param.Add("@Rating", this.Rating);
             param.Add("@TechComp", this.TechComp);
             param.Add("@InterSkills", this.InterSkills);
@@ -230,7 +226,6 @@ namespace WebApplication1.Models
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@CoveredPeriod", this.CoveredPeriod.ToString("yyyy-MM-dd"));
-            param.Add("@Criteria", this.Criteria);
             param.Add("@Rating", this.Rating);
             param.Add("@TechComp", this.TechComp);
             param.Add("@InterSkills", this.InterSkills);

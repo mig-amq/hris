@@ -23,9 +23,14 @@
                 <button class="full" id="check">Check Employee</button>
             </form>
         </div>
-        <div class="cluster">
-            <p style="margin-top: 0"><b>Employee Name: </b> <span id="name">----</span></p>
-            <div id="alert" style="margin-top: 0"></div>
+        <div class="cluster" style="text-align: center">
+            <div style="display: none" id="image">
+                <img src="" alt="image" style="background-color: #000; padding: 2px; border-radius: 100%"/>
+            </div>
+            <div>
+                <p style="margin-top: 0"><b>Employee Name: </b> <span id="name">----</span></p>
+                <div id="alert" style="margin-top: 0"></div>
+            </div>
         </div>
     </div>
 }
@@ -176,6 +181,9 @@ else
             },
             method: "GET",
             success: (data) => {
+                
+                $("#image").css("display", "none");
+
                 @if (Account == null)
                     {
                         <text>
@@ -198,7 +206,10 @@ else
                                     data.employee.Profile.MiddleName +
                                     " " +
                                     data.employee.Profile.LastName);
-                                
+
+                                $("#image").css("display", "block");
+                                $("#image img").attr("src", data.image.substring(1));
+
                                 if (data.attendance && !data.attendance.TimeOut && data.attendance.TimeIn) {
                                     $("#time-out").attr('data-id', data.attendance.Attendance.AttendanceID);
 
@@ -210,7 +221,13 @@ else
                                 }
                             }
 
-                            $("#alert").html(data.message);
+                            if (data.onleave) {
+                                $("#time-in").attr("disabled", "disabled");
+                                $("#time-out").attr("disabled", "disabled");
+
+                                $("#alert").html("You are currently on leave, and cannot time in or time out");
+                            } else
+                                $("#alert").html(data.message);
                         </text>
                 }
                 else
