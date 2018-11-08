@@ -9,6 +9,7 @@ namespace WebApplication1.Controllers
     using System.Data;
     using System.Diagnostics;
     using System.Globalization;
+    using System.IO;
     using System.Text.RegularExpressions;
 
     using Newtonsoft.Json;
@@ -181,7 +182,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public ContentResult Create(FormCollection form)
+        public ContentResult Create(FormCollection form, HttpPostedFileBase  file)
         {
             JObject json = new JObject();
             json["error"] = false;
@@ -211,9 +212,26 @@ namespace WebApplication1.Controllers
                         ac.Security = form.GetValue("question").AttemptedValue;
                         ac.Answer = form.GetValue("answer").AttemptedValue;
 
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var filename = Path.GetFileName(file.FileName);
+                            var name = filename.Substring(0, filename.LastIndexOf('.'));
+                            var ext = filename.Substring(filename.LastIndexOf('.'));
+                            name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
+                            filename = name + ext;
+
+                            var path = Path.Combine("~/Content/img/uploads", filename);
+                            file.SaveAs(path);
+                            ac.Image = Path.Combine("~/Content/img/uploads", filename); ;
+                        }
+                        else
+                        {
+                            ac.Image = Path.Combine("~/Content/img/uploads/", "default.png");
+                        }
                         ((Employee)ac.Profile).Code = form.GetValue("code").AttemptedValue;
                         ((Employee)ac.Profile).Position = form.GetValue("position").AttemptedValue;
-                        ((Employee)ac.Profile).EmploymentDate = DateTime.ParseExact(
+                        ((Employee)
+                                ac.Profile).EmploymentDate = DateTime.ParseExact(
                             form.GetValue("hyear").AttemptedValue + "-"
                                                                   + (Int32.Parse(
                                                                          form.GetValue("hmonth").AttemptedValue) + 1)

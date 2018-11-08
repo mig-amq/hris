@@ -56,9 +56,9 @@ namespace WebApplication1.Models
             return this;
         }
 
-        public Applicant Create()
+        public Applicant Create(bool recursive = false)
         {
-            if (this.Profile != null)
+            if (this.Profile != null && recursive)
             {
                 this.Profile.Create();
             }

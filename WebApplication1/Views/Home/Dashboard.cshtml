@@ -27,7 +27,7 @@
             <p>
                 <b>Employment History:</b>
                 @{
-                    foreach (EmploymentHistory empH in ((Employee)Account.Profile).Profile.EmploymentHistories)
+                    foreach (EmploymentHistory empH in (Account.Profile).Profile.EmploymentHistories)
                     {
                         <text>
                             <ul>
@@ -43,7 +43,7 @@
                         </text>
                     }
 
-                    if (((Employee)Account.Profile).Profile.EmploymentHistories.Count == 0)
+                    if ((Account.Profile).Profile.EmploymentHistories.Count == 0)
                     {
                         <text>None</text>
                     }

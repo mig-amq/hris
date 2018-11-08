@@ -33,6 +33,7 @@ namespace WebApplication1.Models
         public string Security { get; set; }
         public string Answer { get; set; }
         public ProfiledObject Profile { get; set; }
+        public string Image { get; set; }
 
         public Account()
         {
@@ -54,6 +55,7 @@ namespace WebApplication1.Models
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
                     this.Security = row["Security"].ToString();
                     this.Answer = row["Answer"].ToString();
+                    this.Image = row["Image"].ToString();
 
                     if (recursive)
                     {
@@ -93,6 +95,7 @@ namespace WebApplication1.Models
                     this.Locked = Int32.Parse(row["Locked"].ToString()) == 1;
                     this.Security = row["Security"].ToString();
                     this.Answer = row["Answer"].ToString();
+                    this.Image = row["Image"].ToString();
 
                     if (recursive)
                     {
@@ -131,8 +134,8 @@ namespace WebApplication1.Models
 
         public Account Create(int DepartmentID = -1, bool recursive = true)
         {
-            string columns = "INSERT INTO Account(Username, Email, Password, Profile, Type, Security, Answer) OUTPUT INSERTED.AccountID ";
-            string values = "VALUES(@Username, @Email, @Password, @Profile, @Type, @Security, @Answer)";
+            string columns = "INSERT INTO Account(Username, Email, Password, Profile, Type, Security, Answer, Image) OUTPUT INSERTED.AccountID ";
+            string values = "VALUES(@Username, @Email, @Password, @Profile, @Type, @Security, @Answer, @Image)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
 
@@ -140,7 +143,7 @@ namespace WebApplication1.Models
             {
                 if (this.Type == AccountType.Applicant)
                 {
-                    ((Applicant)this.Profile).Create();
+                    ((Applicant)this.Profile).Create(recursive);
                 }
                 else if (DepartmentID != -1)
                 {
@@ -159,6 +162,7 @@ namespace WebApplication1.Models
             param.Add("@Type", (int)this.Type);
             param.Add("@Security", this.Security);
             param.Add("@Answer", this.Answer);
+            param.Add("@Image", this.Image);
 
             this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
             return this;
@@ -186,7 +190,7 @@ namespace WebApplication1.Models
                     }
                 }
             }
-            string set = "UPDATE Account SET Username = @Username, Password = @Password, "
+            string set = "UPDATE Account SET Username = @Username, Password = @Password, Image = @Image, "
                          + "Email = @Email, Locked = @Locked, Type = @Type, Security = @Security, Answer = @Answer"
                          + " OUTPUT INSERTED.AccountID WHERE AccountID = " + AccountID;
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
@@ -201,7 +205,7 @@ namespace WebApplication1.Models
             param.Add("@Type", (int)this.Type);
             param.Add("@Security", this.Security);
             param.Add("@Answer", this.Answer);
-
+            param.Add("@Image", this.Image);
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;
         }

@@ -22,9 +22,11 @@
         </div>
         
         <div class="cluster">
+            <p class="sub-title">Profile Picture:</p>
+            <input type="file" name="image" placeholder="Upload a file here" class="full" />
             <p class="sub-title">Security:</p>
-            <input type="text" name="question" class="full" placeholder="Security Question" />
-            <input type="password" name="answer" class="full" placeholder="Security Answer" />
+            <input type="text" name="question" class="full" placeholder="Security Question"/>
+            <input type="password" name="answer" class="full" placeholder="Security Answer"/>
         </div>
     </div>
     <hr />
@@ -158,6 +160,7 @@
             form.append("history", getEmploymentHistory());
             form.append("education", getEducation());
 
+            form.append("file", $("input[type=file]")[0].files[0]);
             form.append("username", $("input[name=username]").val());
             form.append("password", $("input[name=password]").val());
             form.append("email", $("input[name=email]").val());

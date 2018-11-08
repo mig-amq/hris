@@ -110,7 +110,20 @@ namespace WebApplication1.Models
             param.Add("@Code", Code);
             param.Add("@Position", Position);
 
-            this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT * FROM Employee WHERE Code = @Code",
+                param))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    throw new Exception("That emplpoyee code is already taken");
+                }
+                else
+                {
+                    this.EmployeeID = this.DBHandler.Execute<Int32>(CRUD.CREATE, columns + values, param);
+                }
+            }
 
             return this;
         }
@@ -146,8 +159,21 @@ namespace WebApplication1.Models
             // yet the Employee can CHANGE Departments, unlike other Foreign Keys, the relationship
             // of Employee and Department is Many-to-One
             param.Add("@Department", this.Department.DepartmentID);
-            
-            this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
+
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT * FROM Employee WHERE Code = @Code",
+                param))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    throw new Exception("That emplpoyee code is already taken");
+                }
+                else
+                {
+                    this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
+                }
+            }
             return this;
         }
 

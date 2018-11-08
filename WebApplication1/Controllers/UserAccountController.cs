@@ -6,6 +6,7 @@ namespace WebApplication1.Controllers
 {
     using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
     using Newtonsoft.Json.Linq;
 
     using WebApplication1.Models;
@@ -170,7 +171,7 @@ namespace WebApplication1.Controllers
 
         // POST: UserAccount/Create
         [HttpPost]
-        public ActionResult ApplicantCreate(FormCollection form)
+        public ActionResult ApplicantCreate(FormCollection form, HttpPostedFileBase file)
         {
             JObject json = new JObject();
             json["error"] = false;
@@ -179,7 +180,7 @@ namespace WebApplication1.Controllers
             string[] keys = new string[]
                                 {
                                     "username", "password", "email", "question", "answer", "skills", "desired",
-                                    "frstname", "lastname", "middlename", " sex", "status", "byear", "bmonth", "bday",
+                                    "firstname", "lastname", "middlename", "sex", "status", "byear", "bmonth", "bday",
                                     "contact", "emergency-name", "emergency-number", "emergency-rel", "house", "city", "province",
                                     "street", "education", "history"
                                 };
@@ -198,6 +199,23 @@ namespace WebApplication1.Controllers
                         ac.Type = AccountType.Applicant;
                         ac.Security = form.GetValue("question").AttemptedValue;
                         ac.Answer = form.GetValue("answer").AttemptedValue;
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var filename = Path.GetFileName(file.FileName);
+                            var name = filename.Substring(0, filename.LastIndexOf('.'));
+                            var ext = filename.Substring(filename.LastIndexOf('.'));
+                            name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
+                            filename = name + ext;
+
+                            var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
+                            file.SaveAs(path);
+                            ac.Image = Path.Combine("~/Content/img/uploads", filename);
+                        }
+                        else
+                        {
+                            ac.Image = Path.Combine("~/Content/img/uploads/", "default.png");
+                        }
 
                         ((Applicant)ac.Profile).Skills = form.GetValue("skills").AttemptedValue;
                         ((Applicant)ac.Profile).DesiredPosition = form.GetValue("desired").AttemptedValue;

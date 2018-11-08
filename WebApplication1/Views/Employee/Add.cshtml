@@ -54,6 +54,7 @@
                 </select>
                 <input type="text" name="employee-position" placeholder="Position" class="full" />
             </div>
+
             <div class="cluster">
                 <p class="sub-title">Date of Hire</p>
                 <select id="month" name="month" class="full">
@@ -70,6 +71,8 @@
                 </select>
             </div>
             <div class="cluster">
+                <p class="sub-title">Profile Picture:</p>
+                <input type="file" name="image" placeholder="Upload a file here" class="full" />
                 <p class="sub-title">Security:</p>
                 <input type="text" name="question" class="full" placeholder="Security Question" />
                 <input type="password" name="answer" class="full" placeholder="Security Answer" />
@@ -206,6 +209,7 @@
             form.append("history", getEmploymentHistory());
             form.append("education", getEducation());
 
+            form.append("file", $("#input[type=file]")[0].files[0]);
             form.append("username", $("input[name=username]").val());
             form.append("password", $("input[name=password]").val());
             form.append("type", $("select[name=account-type]").val());
@@ -251,7 +255,7 @@
                     else
                         $("#alert").addClass('success');
 
-                    $("#alert").text(data.message);
+                    $("#alert").html(data.message);
                 }
             })
         });
