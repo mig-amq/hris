@@ -43,6 +43,7 @@ namespace WebApplication1.Models
                 using (SqlConnection connection = new SqlConnection(this.SqlConnectionBuilder.ConnectionString))
                 {
                     connection.Open();
+
                     SqlCommand command = new SqlCommand(sql, connection);
                     Console.WriteLine(connection);
                     if (param != null)
@@ -87,7 +88,7 @@ namespace WebApplication1.Models
                             }
                             else
                             {
-                                command.ExecuteNonQueryAsync();
+                                command.ExecuteNonQuery();
                                 connection.Close();
                                 return default(T);
                             }

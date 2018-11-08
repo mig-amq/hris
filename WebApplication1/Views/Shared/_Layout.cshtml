@@ -49,13 +49,16 @@
 
             @if (Account == null)
             {
-                <div class="cluster">
-                    <h6 class="cluster-label">Recruitment</h6>
-                    <ul>
-                        <a href="/Recruitment"><li class="@(ViewBag.Active == "JP" ? "active" : "")">Job Posting</li></a>
-                    </ul>
-                </div>
-                <hr/>
+                if (ViewBag.Active != "ATE")
+                 {
+                     <div class="cluster">
+                         <h6 class="cluster-label">Recruitment</h6>
+                         <ul>
+                             <a href="/Recruitment"><li class="@(ViewBag.Active == "JP" ? "active" : "")">Job Posting</li></a>
+                         </ul>
+                     </div>
+                     <hr />
+                 }
                 <div class="cluster">
                     <h6 class="cluster-label">Account</h6>
                     <ul>
@@ -63,11 +66,11 @@
                         <a href="/Home/Signup"><li class="@(ViewBag.Active == "SIGN" ? "active" : "")">Sign Up</li></a>
                     </ul>
                 </div>
-                <hr/>
+                <hr />
                 <div class="cluster">
                     <h6 class="cluster-label">Attendance</h6>
                     <ul>
-                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">My Attendance</li></a>
+                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance</li></a>
                     </ul>
                 </div>
             }
@@ -95,21 +98,7 @@
                         </a>
                     </ul>
                 </div>
-
-                if (Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
-                {
-                    <hr/>
-                    <div class="cluster">
-                        <h6 class="cluster-label">Reports</h6>
-                        <ul>
-                            <a href="/Reports/Attendance"><li class="@(ViewBag.Active == "REPEA" ? "active" : "")">Attendance</li></a>
-                            <a href="/Reports/List"><li class="@(ViewBag.Active == "REPEL" ? "active" : "")">Employee List</li></a>
-                            <a href="/Reports/Evaluation"><li class="@(ViewBag.Active == "REPEE" ? "active" : "")">Employee Evaluation</li></a>
-                            <a href="/Reports/Training"><li class="@(ViewBag.Active == "REPET" ? "active" : "")">Employee Training</li></a>
-                        </ul>
-                    </div>
-                }
-                <hr/>
+                <hr />
                 if (Account.Type == AccountType.Applicant || ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                 {
                     <div class="cluster">
@@ -127,7 +116,7 @@
 
                 if (Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">Employment</h6>
                         <ul>
@@ -157,11 +146,11 @@
 
                 if ((Account != null && Account.Type == AccountType.Employee || Account.Type == AccountType.DepartmentHead))
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">Attendance</h6>
                         <ul>
-                            <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">My Attendance</li></a>
+                            <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance</li></a>
 
                             @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                             {
@@ -173,7 +162,7 @@
                 }
                 if (Account.Type != AccountType.VP && Account.Type != AccountType.CEO && Account.Type != AccountType.Applicant)
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">Leave</h6>
                         <ul>
@@ -192,7 +181,7 @@
 
                 if (Account.Type != AccountType.Applicant)
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">Evaluation</h6>
                         <ul>
@@ -216,7 +205,7 @@
 
                 if (Account.Type != AccountType.CEO && Account.Type != AccountType.VP && Account.Type != AccountType.Applicant)
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">Training</h6>
                         <ul>
@@ -229,12 +218,26 @@
 
                 if (Account.Type == AccountType.DepartmentHead)
                 {
-                    <hr/>
+                    <hr />
                     <div class="cluster">
                         <h6 class="cluster-label">More</h6>
                         <ul>
                             <a href="/JobRequisition/List"><li class="@(ViewBag.Active == "REQLI" ? "active" : "")">View Requisitions</li></a>
                             <a href="/JobRequisition"><li class="@(ViewBag.Active == "REQ" ? "active" : "")">Requisition Form</li></a>
+                        </ul>
+                    </div>
+                }
+
+                if (Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                {
+                    <hr />
+                    <div class="cluster">
+                        <h6 class="cluster-label">Reports</h6>
+                        <ul>
+                            <a href="/Reports/Attendance"><li class="@(ViewBag.Active == "REPEA" ? "active" : "")">Attendance</li></a>
+                            <a href="/Reports/List"><li class="@(ViewBag.Active == "REPEL" ? "active" : "")">Employee List</li></a>
+                            <a href="/Reports/Evaluation"><li class="@(ViewBag.Active == "REPEE" ? "active" : "")">Employee Evaluation</li></a>
+                            <a href="/Reports/Training"><li class="@(ViewBag.Active == "REPET" ? "active" : "")">Employee Training</li></a>
                         </ul>
                     </div>
                 }

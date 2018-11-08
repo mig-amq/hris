@@ -24,7 +24,6 @@ namespace WebApplication1.Models
         public string Position { get; set; }
         public Employee RequestedBy { get; set; }
         public string ReasonforVacancy { get; set; }
-        public string Type { get; set; }
         public string Qualification { get; set; }
         public string ExperienceRequired { get; set; }
         public DateTime ExpectedJoiningDate { get; set; }
@@ -55,7 +54,6 @@ namespace WebApplication1.Models
                 this.Date = DateTime.Parse(row["Date"].ToString());
                 this.Position = row["Position"].ToString();
                 this.ReasonforVacancy = row["ReasonforVacancy"].ToString();
-                this.Type = row["Type"].ToString();
                 this.Qualification = row["Qualification"].ToString();
                 this.ExperienceRequired = row["ExperienceRequired"].ToString();
                 this.SkillsRequired = row["SkillsRequired"].ToString();
@@ -78,11 +76,11 @@ namespace WebApplication1.Models
         public RequisitionForm Create()
         {
             string columns = "INSERT INTO RequisitionForm(Date, Department, Position, "
-                             + "RequestedBy, ReasonforVacancy, Type, Qualification,"
+                             + "RequestedBy, ReasonforVacancy, Qualification,"
                              + " ExperienceRequired, SkillsRequired, ExpectedJoiningDate, "
                              + "UnderSupervision, BriefDescriptionofWorks, Status) OUTPUT INSERTED.RequisitionID ";
             string values = " Values(@Date, @Department, @Position, @RequestedBy, @ReasonforVacancy, "
-                            + "@Type, @Qualification, @ExperienceRequired, @SkillsRequired, "
+                            + "@Qualification, @ExperienceRequired, @SkillsRequired, "
                             + "@ExpectedJoiningDate, @UnderSupervision, @BriefDescriptionofWorks, @Status)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
@@ -91,7 +89,6 @@ namespace WebApplication1.Models
             param.Add("@Position", this.Position);
             param.Add("@RequestedBy", this.RequestedBy.EmployeeID);
             param.Add("@ReasonforVacancy", this.ReasonforVacancy);
-            param.Add("@Type", this.Type);
             param.Add("@Qualification", this.Qualification);
             param.Add("@ExperienceRequired", this.ExperienceRequired);
             param.Add("@SkillsRequired", this.SkillsRequired);
@@ -118,7 +115,7 @@ namespace WebApplication1.Models
 
             string set = "UPDATE RequisitionForm SET Date = @Date, Position = @Position, "
                          + "RequestedBy = @RequestedBy, ReasonforVacancy = @ReasonforVacancy"
-                         + ", Type = @Type, Qualification = @Qualification, "
+                         + ", Qualification = @Qualification, "
                          + "ExperienceRequired = @ExperienceRequired, "
                          + "SkillsRequired = @SkillsRequired, Department = @Department,"
                          + "ExpectedJoiningDate = @ExpectedJoiningDate, "
@@ -132,7 +129,6 @@ namespace WebApplication1.Models
             param.Add("@Position", this.Position);
             param.Add("@RequestedBy", this.RequestedBy.EmployeeID);
             param.Add("@ReasonforVacancy", this.ReasonforVacancy);
-            param.Add("@Type", this.Type);
             param.Add("@Qualification", this.Qualification);
             param.Add("@ExperienceRequired", this.ExperienceRequired);
             param.Add("@SkillsRequired", this.SkillsRequired);

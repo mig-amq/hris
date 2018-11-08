@@ -37,7 +37,7 @@
     <div id="section-heading">
         <div>
             <h1 id="section-title">Assigned Trainings</h1>
-            @if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+            @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
             {
                 <button class="hallow modal-trigger" onclick="load()">
                     <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
@@ -206,7 +206,7 @@
                         @if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
                     {
                             <text>
-                                status.append("<select onchange='update(" + o.AssignedTrainingID + ", this)'><option value=1 selected>Pending</option><option value=2>Attended</option></select>");
+                                status.append("<select onchange='update(" + o.AssignedTrainingID + ", this)'><option value=1 selected>Pending</option><option value=2>Attended</option><option value=3 disabled>Suggested</option></select>");
                                 status.find("select").val(o.Status);
                             </text>
                     }

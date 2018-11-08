@@ -48,21 +48,159 @@
     </tbody>
 </table>
 
-    <div id="result-summary">
-        <div>
-            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
-        </div>
-        <div id="pagination">
-            <span class="active">1</span>
+<div id="result-summary">
+    <div>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
+
+@if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+{
+
+    <div id="modal">
+        <img src="@Url.Content("~/Content/assets/icons/close.svg")" id="modal-close" />
+        <div id="modal-form">
+            <h2 class="title">Edit Employee Status</h2>
+            <form>
+                <div class="cluster">
+                    <div class="date">
+                        <p class="sub-title">Interview Date</p>
+                        <select id="month" name="month" required>
+                            <option value="">-- Select month --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="day" name="day" required>
+                            <option value="">-- Select day --</option>
+                            <!-- JS generated -->
+                        </select>
+                        <select id="year" name="year" required data-min="@DateTime.Now.Year">
+                            <option value="">-- Select year --</option>
+                            <!-- JS generated -->
+                        </select>
+                    </div>
+                    
+                    <div class="cluster">
+                        <p class="sub-title">Start Time:</p>
+                        <div class="two-column-content">
+                            <select name="start" required="">
+                                <option value="">-- Select Starting Time --</option>
+                                <option value="800">08:00 AM</option>
+                                <option value="830">08:30 AM</option>
+                                <option value="900">09:00 AM</option>
+                                <option value="930">09:30 AM</option>
+                                <option value="1000">10:00 AM</option>
+                                <option value="1030">10:30 AM</option>
+                                <option value="1100">11:00 AM</option>
+                                <option value="1130">11:30 AM</option>
+                                <option value="1200">12:00 NN</option>
+                                <option value="1230">12:30 PM</option>
+                                <option value="1300">01:00 PM</option>
+                                <option value="1330">01:30 PM</option>
+                                <option value="1400">02:00 PM</option>
+                                <option value="1430">02:30 PM</option>
+                                <option value="1500">03:00 PM</option>
+                                <option value="1530">03:30 PM</option>
+                                <option value="1600">04:00 PM</option>
+                                <option value="1630">04:30 PM</option>
+                                <option value="1700">05:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit">Save</button>
+                <div id="alert" class="full"></div>
+            </form>
         </div>
     </div>
-
-@if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources) {
-<script>
+    <script>
         var curr = 1;
         $(document).ready(() => {
             search(1);
         });
+
+        function load(n) {
+            $("#alert").removeAttr("class");
+            $.ajax({
+                url: "/Recruitment/GetSchedule",
+                method: "GET",
+                data: {
+                    id: n
+                },
+                success: (data) => {
+                    if (data.schedule == null) {
+                        $("form").on("submit", (e) => {
+                            $("#alert").removeAttr("class");
+                            e.preventDefault(); // add schedule
+                            var hour = parseInt($("select[name=start]").val() / 100);
+                            var minute = parseInt($("select[name=start]").val() % 100);
+
+                            var date = new Date($("#year").val(), $("#month").val(), $("#day").val(), hour, minute);
+                            var iso = date.toISOString();
+
+                            $.ajax({
+                                url: "/Recruitment/CreateSchedule",
+                                method: "POST",
+                                data: {
+                                    id: n,
+                                    start: iso
+                                },
+                                success: (data2) => {
+                                    if (data2.error) {
+                                        $("#alert").addClass("error");
+                                    } else {
+                                        $("#alert").addClass("success");
+                                    }
+
+
+                                    $("#alert").text(data2.message);
+                                }
+                            })
+                        });
+                        $("#alert").addClass("info").text("There are no schedules appointed to this applicant yet");
+                    } else {
+                        var date = new Date(data.schedule.TimeStart);
+
+                        $("#year").val(date.getFullYear());
+                        $("#month").val(date.getMonth());
+                        $("#day").val(date.getDate());
+
+                        $("select[name=start]").val(date.getHours() * 100 + date.getMinutes());
+                        $("form").on("submit", (e) => {
+                            $("#alert").removeAttr("class");
+                            e.preventDefault(); // update schedule
+                            var hour = parseInt($("select[name=start]").val() / 100);
+                            var minute = parseInt($("select[name=start]").val() % 100);
+
+                            var date = new Date($("#year").val(), $("#month").val(), $("#day").val(), hour, minute);
+                            var iso = date.toISOString();
+
+                            $.ajax({
+                                url: "/Recruitment/UpdateSchedule",
+                                method: "POST",
+                                data: {
+                                    id: n,
+                                    start: iso
+                                },
+                                success: (data2) => {
+                                    if (data2.error) {
+                                        $("#alert").addClass("error");
+                                    } else {
+                                        $("#alert").addClass("success");
+                                    }
+
+                                    
+                                    $("#alert").text(data2.message);
+                                }
+                            })
+
+                        });
+                    }
+                }
+            })
+        }
 
         function update(n, elem) {
             if ($(elem).val() != 1) {
@@ -75,7 +213,10 @@
                     method: "POST",
                     success: (data) => {
                         if (!data.error) {
-                            $(elem).parent().text(data.message);
+                            let btn = $("<button class='hallow modal-trigger'>Schedule</button>");
+                            btn.click(() => load(n));
+
+                            $(elem).parent().html(btn);
                         } else {
                             alert(data.message);
                         }
@@ -120,7 +261,7 @@
                     data.applicants.forEach((o, i, a) => {
                         let row = $("<tr></tr>");
                         let id = $("<td></td>").text(o.ApplicantID);
-                        let name = $("<td></td>").text(o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName);
+                        let name = $("<td></td>").html("<a title='Click here to view applicant profile...' href='/Home/Dashboard?id=" + o.Profile.ProfileID + "' style='color: #2B7F74; font-weight: bold;'>" + o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName + "</a>");
                         let contact = $("<td></td>").text(o.Profile.Contact);
                         let pos = $("<td></td>").text(o.DesiredPosition);
                         let skills = $("<td></td>").text(o.Skills);
@@ -134,7 +275,10 @@
                             stat.append(sel);
                         } else {
                             if (o.Status == 2) {
-                                stat.text("Approved");
+                                let btn = $("<button class='hallow modal-trigger'>Schedule</button>");
+                                btn.click(() => load(o.ApplicantID));
+
+                                stat.html(btn);
                             } else {
                                 stat.text("Rejected");
                             }

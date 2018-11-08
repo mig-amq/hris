@@ -14,9 +14,9 @@ body:not(#printable) {
     overflow-y: scroll;
 }
 
-    #main-sidebar::-webkit-scrollbar {
-        display: none;
-    }
+#main-sidebar::-webkit-scrollbar {
+    display: none;
+}
 
 #logo {
     width: 2.7em;
@@ -46,22 +46,22 @@ nav ul {
     padding: 0;
 }
 
-    nav ul li {
-        list-style-type: none;
-        color: white;
-        padding: 0.7em 2.7em;
-        font-size: 0.78em;
-        cursor: pointer;
+nav ul li {
+    list-style-type: none;
+    color: white;
+    padding: 0.7em 2.7em;
+    font-size: 0.78em;
+    cursor: pointer;
+}
+
+    nav ul li:hover {
+        background-color: #0D332E;
     }
 
-        nav ul li:hover {
-            background-color: #0D332E;
-        }
-
-        nav ul li.active {
-            background-color: #0D332E;
-            color: white;
-        }
+    nav ul li.active {
+        background-color: #0D332E;
+        color: white;
+    }
 
 #main-sidebar hr {
     margin: 0 2em;

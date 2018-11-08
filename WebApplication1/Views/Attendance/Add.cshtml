@@ -13,8 +13,8 @@
         <div class="cluster">
             <p class="sub-title">Employee:</p>
             <div style="text-align: center">
-                <select class="full" name="id">
-                    <option value="-1" disabled selected> -- Select An Employee -- </option>
+                <select class="full" name="id" required>
+                    <option value="" disabled selected> -- Select An Employee -- </option>
                 </select>
                 <label><input type="checkbox" name="all" style="display: inline" /> Add for All Employees</label>
             </div>
@@ -22,7 +22,7 @@
 
         <div class="cluster">
             <p class="sub-title">Total Working Days:</p>
-            <input type="number" name="v" min="0" max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)" class="full" placeholder="Number of working days for this month" />
+            <input type="number" name="v" min="0" max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)" class="full" placeholder="Number of working days for this month" required/>
             <button class="full">Create</button>
         </div>
     </div>

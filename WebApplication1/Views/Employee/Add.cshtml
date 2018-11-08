@@ -17,10 +17,10 @@
         <div class="two-column-content">
             <div class="cluster">
                 <p class="sub-title">Account</p>
-                <input type="text" name="username" placeholder="Employee Username" class="full" />
-                <input type="password" name="password" placeholder="Employee Password" class="full" />
-                <input type="email" name="email" placeholder="Employee Email" class="full" />
-                <select name="account-type" class="full">
+                <input type="text" name="username" placeholder="Employee Username" class="full" required/>
+                <input type="password" name="password" placeholder="Employee Password" class="full" required/>
+                <input type="email" name="email" placeholder="Employee Email" class="full" required/>
+                <select name="account-type" class="full" required>
                     <option value="6" disabled="disabled" selected="selected">-- Select an Account Type --</option>
                     <option value="1">CEO</option>
                     <option value="2">Vice President</option>
@@ -30,8 +30,8 @@
             </div>
             <div class="cluster">
                 <p class="sub-title">Department</p>
-                <input type="text" name="employee-code" placeholder="Employee Code" class="full" />
-                <select id="department" name="department" class="full">
+                <input type="text" name="employee-code" placeholder="Employee Code" class="full" required/>
+                <select id="department" name="department" class="full" required>
                     <option value="18">None</option>
                     <option value="0">Special Projects</option>
                     <option value="1">Internal Auditing</option>
@@ -52,21 +52,21 @@
                     <option value="16">Accounting</option>
                     <option value="17">Finance</option>
                 </select>
-                <input type="text" name="employee-position" placeholder="Position" class="full" />
+                <input type="text" name="employee-position" placeholder="Position" class="full" required/>
             </div>
 
-            <div class="cluster">
+            <div class="cluster date">
                 <p class="sub-title">Date of Hire</p>
-                <select id="month" name="month" class="full">
-                    <option value="-1" disabled="">-- Select month --</option>
+                <select id="month" name="month" class="full" data-max="@DateTime.Now.Month" required>
+                    <option value="" disabled="">-- Select month --</option>
                     <!-- JS generated -->
                 </select>
-                <select id="day" name="day" class="full">
-                    <option value="-1">-- Select day --</option>
+                <select id="day" name="day" class="full" required>
+                    <option value="">-- Select day --</option>
                     <!-- JS generated -->
                 </select>
-                <select id="year" name="year" class="full">
-                    <option value="-1">-- Select year --</option>
+                <select id="year" name="year" class="full" data-max="@DateTime.Now.Year" required>
+                    <option value="">-- Select year --</option>
                     <!-- JS generated -->
                 </select>
             </div>
@@ -74,59 +74,61 @@
                 <p class="sub-title">Profile Picture:</p>
                 <input type="file" name="image" placeholder="Upload a file here" class="full" />
                 <p class="sub-title">Security:</p>
-                <input type="text" name="question" class="full" placeholder="Security Question" />
-                <input type="password" name="answer" class="full" placeholder="Security Answer" />
+                <input type="text" name="question" class="full" placeholder="Security Question" required/>
+                <input type="password" name="answer" class="full" placeholder="Security Answer" required/>
             </div>
         </div>
         <hr />
         <p class="sub-title">Personal Details</p>
         <div class="two-column-content">
             <div class="cluster">
-                <input type="text" name="firstname" placeholder="First Name" class="full" />
-                <input type="text" name="lastname" placeholder="Last Name" class="full" />
+                <input type="text" name="firstname" placeholder="First Name" class="full" required/>
+                <input type="text" name="lastname" placeholder="Last Name" class="full" required/>
                 <input type="text" name="middlename" placeholder="Middle Name" class="full" />
-                <select name="sex" class="full">
-                    <option value="-1">-- Select Sex --</option>
+                <select name="sex" class="full" required>
+                    <option value="">-- Select Sex --</option>
                     <option value="1">Male</option>
                     <option value="2">Female</option>
                 </select>
-                <select name="civil-status" class="full">
-                    <option value="2">-- Select Civil Status --</option>
+                <select name="civil-status" class="full" required>
+                    <option value="">-- Select Civil Status --</option>
                     <option value="2">Single</option>
                     <option value="1">Married</option>
                     <option value="5">Widowed</option>
                     <option value="4">Separated</option>
                     <option value="4">Divorced</option>
                 </select>
-                <p class="sub-title">Birthdate</p>
-                <select id="month" name="birth-month" class="full">
-                    <option value="-1" disabled="">-- Select month --</option>
-                    <!-- JS generated -->
-                </select>
-                <select id="day" name="birth-day" class="full">
-                    <option value="-1" disabled="">-- Select day --</option>
-                    <!-- JS generated -->
-                </select>
-                <select id="year" name="birth-year" class="full">
-                    <option value="-1" disabled="">-- Select year --</option>
-                    <!-- JS generated -->
-                </select>
+                <p class="sub-title date">Birthdate</p>
+                <div class="date">
+                    <select id="month" name="birth-month" class="full" required>
+                        <option value="" disabled="">-- Select month --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="day" name="birth-day" class="full" required>
+                        <option value="" disabled="">-- Select day --</option>
+                        <!-- JS generated -->
+                    </select>
+                    <select id="year" name="birth-year" class="full" data-max="@DateTime.Now.Year" required>
+                        <option value="" disabled="">-- Select year --</option>
+                        <!-- JS generated -->
+                    </select>
+                </div>
 
                 <p class="sub-title">Address</p>
 
-                <input type="text" name="house" placeholder="House Number" class="full" />
-                <input type="text" name="street" placeholder="Street" class="full" />
-                <input type="text" name="city" placeholder="City" class="full" />
-                <input type="text" name="province" placeholder="Province" class="full" />
+                <input type="text" name="house" placeholder="House Number" class="full" required/>
+                <input type="text" name="street" placeholder="Street" class="full" required/>
+                <input type="text" name="city" placeholder="City" class="full" required/>
+                <input type="text" name="province" placeholder="Province" class="full" required/>
             </div>
             <div class="cluster">
 
-                <input type="text" name="contact-number" placeholder="Contact Number" class="full" />
+                <input type="text" name="contact-number" placeholder="Contact Number" class="full" required/>
 
                 <p class="sub-title">In case of emergency</p>
-                <input type="text" name="contact-person" placeholder="Contact Person" class="full" />
-                <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" />
-                <input type="text" name="relationship" placeholder="Relationship" class="full" />
+                <input type="text" name="contact-person" placeholder="Contact Person" class="full"required />
+                <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" required/>
+                <input type="text" name="relationship" placeholder="Relationship" class="full"required/>
             </div>
         </div>
         <hr />
@@ -143,7 +145,7 @@
                 <p class="sub-title">Elementary</p>
                 <input type="text" name="elementary-name" placeholder="School Name" class="full" />
                 <input type="text" name="elementary-address" placeholder="Address" class="full" />
-                <div>
+                <div class="date">
                     <select id="year" name="elementary-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
                         <!-- JS generated -->
@@ -157,7 +159,7 @@
                 <p class="sub-title">High School</p>
                 <input type="text" name="hs-name" placeholder="School Name" class="full" />
                 <input type="text" name="hs-address" placeholder="Address" class="full" />
-                <div>
+                <div class="date">
                     <select id="year" name="hs-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
                         <!-- JS generated -->
@@ -172,7 +174,7 @@
                 <p class="sub-title">College</p>
                 <input type="text" name="college-name" placeholder="School Name" class="full" />
                 <input type="text" name="college-address" placeholder="Address" class="full" />
-                <div>
+                <div class="date">
                     <select id="year" name="college-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
                         <!-- JS generated -->
@@ -186,7 +188,7 @@
                 <p class="sub-title">Post Graduate</p>
                 <input type="text" name="post-name" placeholder="School Name" class="full" />
                 <input type="text" name="post-address" placeholder="Address" class="full" />
-                <div>
+                <div class="date">
                     <select id="year" name="post-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
                         <!-- JS generated -->
@@ -209,7 +211,7 @@
             form.append("history", getEmploymentHistory());
             form.append("education", getEducation());
 
-            form.append("file", $("#input[type=file]")[0].files[0]);
+            form.append("file", $("input[type=file]")[0].files[0]);
             form.append("username", $("input[name=username]").val());
             form.append("password", $("input[name=password]").val());
             form.append("type", $("select[name=account-type]").val());
@@ -263,7 +265,7 @@
         function addEH() {
             var container = $("<div class='two-column-content' data-container='employee-history'></div>");
             var left = $("<div class='cluster'></div>");
-            var right = $("<div class='cluster'></div>");
+            var right = $("<div class='cluster date'></div>");
 
             var company = $("<input type='text' name='company' placeholder='Company' class='full'/>");
             var address = $("<input type='text' name='address' placeholder='Address' class='full'/>");
@@ -278,8 +280,8 @@
             left.append(cperson);
             left.append(number);
 
-            var start = $("<select name='start' class='full'></select>");
-            var end = $("<select name='end' class='full'></select>");
+            var start = $("<select name='start-year' class='full'></select>");
+            var end = $("<select name='end-year' class='full'></select>");
 
             start.append("<option selected disabled> -- Start Year -- </option>");
             end.append("<option selected disabled> -- End Year -- </option>");

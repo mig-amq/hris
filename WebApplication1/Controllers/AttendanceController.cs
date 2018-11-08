@@ -21,9 +21,6 @@ namespace WebApplication1.Controllers
         // GET: Attendance
         public ActionResult Index()
         {
-            if (this.IsLoggedIn() && !this.CheckLogin(AccountType.Employee) && !this.CheckLogin(AccountType.DepartmentHead))
-                return this.RedirectToAction("Dashboard", "Home");
-
             return View();
         }
 
@@ -234,6 +231,7 @@ namespace WebApplication1.Controllers
             json["pages"] = 1;
             int page = Int32.Parse(Request.QueryString["page"]);
             int entries = 5;
+            int id = Int32.Parse(Request.QueryString["id"]);
 
             Paginator pt = new Paginator(entries, page);
 
@@ -241,12 +239,22 @@ namespace WebApplication1.Controllers
             {
                 string sql = "SELECT AT.AttendanceTimeID "
                              + "FROM Attendance A INNER JOIN AttendanceTime AT ON A.AttendanceID = AT.Attendance "
-                             + "WHERE Employee = " + ((Employee)this.GetAccount().Profile).EmployeeID + " AND MONTH(AT.Date) = " 
+                             + "WHERE Employee = " + id + " AND MONTH(AT.Date) = " 
                              + DateTime.Now.Month + " AND YEAR(AT.Date) = " + DateTime.Now.Year;
 
                 foreach (DataRow row in pt.Get(sql))
                 {
-                    AttendanceTime.Add(new AttendanceTime(Int32.Parse(row["AttendanceTimeID"].ToString()), recursive:true, byPrimary:true));
+                    try
+                    {
+                        AttendanceTime.Add(
+                            new AttendanceTime(
+                                Int32.Parse(row["AttendanceTimeID"].ToString()),
+                                recursive: true,
+                                byPrimary: true));
+                    }
+                    catch (Exception e)
+                    {
+                    }
                 }
             }
             

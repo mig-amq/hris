@@ -22,7 +22,7 @@
     <p class="sub-title">Human Resource Information System</p>
     <hr/>
     <form method="post" id="forgot-form">
-        <input type="text" placeholder="Username" name="username" autofocus />
+        <input type="text" placeholder="Username" name="username" autofocus/>
         <br />
         <p id="security" style="display: none">
             <b class="sub-title">Security Question:</b>
@@ -65,7 +65,7 @@
                 processData: false,
                 contentType: false,
                 success: (response) => {
-                    $("button#request").text((security) ? "Request Password" : "Show Password");
+                    $("button#request").text((security) ? "Request Password" : "Reset Password");
                     $("button#request").removeAttr("disabled");
 
                     if (security) {
@@ -76,7 +76,7 @@
                         if (!response.error) {
                             $("#security").css('display', 'block');
                             $("#question").text(response.message);
-                            $("button#request").text("Show Password");
+                            $("button#request").text("Reset Password");
                             security = false;
                             div.attr("class", "");
                         } else {
@@ -96,7 +96,7 @@
                         if (response.error)
                             div.text(response.message);
                         else
-                            div.text("Your Password: " + response.message);
+                            div.text("Your Password has been reset to: 123456");
                     }
                 },
                 error: (response) => {

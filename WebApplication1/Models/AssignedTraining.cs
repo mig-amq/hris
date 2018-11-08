@@ -10,7 +10,8 @@ namespace WebApplication1.Models
     public enum TrainingStatus
     {
         Pending = 1,
-        Attended = 2
+        Attended = 2,
+        Suggested = 3
     }
 
     public class AssignedTraining

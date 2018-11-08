@@ -13,71 +13,76 @@
     <div class="two-column-content">
         <div class="cluster">
             <p class="sub-title">Account</p>
-            <input type="text" name="username" placeholder="Applicant Username" class="full" />
-            <input type="password" name="password" placeholder="Applicant Password" class="full" />
-            <input type="email" name="email" placeholder="Applicant Email" class="full" />
-            
-            <input type="text" name="desired" placeholder="Desired Position" class="full" />
-            <textarea name="skills" placeholder="Applicant Skills" class="full"></textarea>
+            <input type="text" name="username" placeholder="Applicant Username" class="full" required />
+            <input type="password" name="password" placeholder="Applicant Password" class="full" required />
+            <input type="email" name="email" placeholder="Applicant Email" class="full" required />
+
+            <input type="text" name="desired" placeholder="Desired Position" class="full" required />
+            <textarea name="skills" placeholder="Applicant Skills" class="full" required></textarea>
+
+            <p class="sub-title">Supporting Files:</p>
+            <input type="file" name="supporting" placeholder="Upload a resume/cv here" multiple class="full" />
         </div>
         
         <div class="cluster">
             <p class="sub-title">Profile Picture:</p>
-            <input type="file" name="image" placeholder="Upload a file here" class="full" />
+            <input type="file" name="image" placeholder="Upload a file here" class="full" accept="image/*"/>
             <p class="sub-title">Security:</p>
-            <input type="text" name="question" class="full" placeholder="Security Question"/>
-            <input type="password" name="answer" class="full" placeholder="Security Answer"/>
+            <input type="text" name="question" class="full" placeholder="Security Question" required/>
+            <input type="password" name="answer" class="full" placeholder="Security Answer" required/>
         </div>
     </div>
     <hr />
     <p class="sub-title">Personal Details</p>
     <div class="two-column-content">
-        <div class="cluster">
-            <input type="text" name="firstname" placeholder="First Name" class="full" />
-            <input type="text" name="lastname" placeholder="Last Name" class="full" />
+        <div class="cluster date">
+            <input type="text" name="firstname" placeholder="First Name" class="full" required/>
+            <input type="text" name="lastname" placeholder="Last Name" class="full" required/>
             <input type="text" name="middlename" placeholder="Middle Name" class="full" />
-            <select name="sex" class="full">
-                <option value="-1">-- Select Sex --</option>
+            <select name="sex" class="full" required>
+                <option value="">-- Select Sex --</option>
                 <option value="1">Male</option>
                 <option value="2">Female</option>
             </select>
-            <select name="civil-status" class="full">
-                <option value="2">-- Select Civil Status --</option>
+            <select name="civil-status" class="full" required>
+                <option value="">-- Select Civil Status --</option>
                 <option value="2">Single</option>
                 <option value="1">Married</option>
                 <option value="5">Widowed</option>
                 <option value="4">Separated</option>
                 <option value="4">Divorced</option>
             </select>
-            <p class="sub-title">Birthdate</p>
-            <select id="month" name="birth-month" class="full">
-                <option value="-1" disabled="">-- Select month --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="day" name="birth-day" class="full">
-                <option value="-1" disabled="">-- Select day --</option>
-                <!-- JS generated -->
-            </select>
-            <select id="year" name="birth-year" class="full">
-                <option value="-1" disabled="">-- Select year --</option>
-                <!-- JS generated -->
-            </select>
+            <div class="date">
+                <p class="sub-title">Birthdate</p>
+                <select id="month" name="birth-month" class="full" required>
+                    <option value="" disabled="">-- Select month --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="day" name="birth-day" class="full" required>
+                    <option value="" disabled="">-- Select day --</option>
+                    <!-- JS generated -->
+                </select>
+                <select id="year" name="birth-year" class="full" data-max="@DateTime.Now.Year" required>
+                    <option value="" disabled="">-- Select year --</option>
+                    <!-- JS generated -->
+                </select>
+            </div>
 
             <p class="sub-title">Address</p>
 
-            <input type="text" name="house" placeholder="House Number" class="full" />
-            <input type="text" name="street" placeholder="Street" class="full" />
-            <input type="text" name="city" placeholder="City" class="full" />
-            <input type="text" name="province" placeholder="Province" class="full" />
+            <input type="text" name="house" placeholder="House Number" class="full" required/>
+            <input type="text" name="street" placeholder="Street" class="full" required/>
+            <input type="text" name="city" placeholder="City" class="full" required/>
+            <input type="text" name="province" placeholder="Province" class="full"required />
         </div>
         <div class="cluster">
 
-            <input type="text" name="contact-number" placeholder="Contact Number" class="full" />
+            <input type="text" name="contact-number" placeholder="Contact Number" class="full" required/>
 
             <p class="sub-title">In case of emergency</p>
-            <input type="text" name="contact-person" placeholder="Contact Person" class="full" />
-            <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" />
-            <input type="text" name="relationship" placeholder="Relationship" class="full" />
+            <input type="text" name="contact-person" placeholder="Contact Person" class="full" required/>
+            <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" required/>
+            <input type="text" name="relationship" placeholder="Relationship" class="full" required/>
         </div>
     </div>
     <hr />
@@ -160,7 +165,15 @@
             form.append("history", getEmploymentHistory());
             form.append("education", getEducation());
 
-            form.append("file", $("input[type=file]")[0].files[0]);
+            var filenums = 0;
+
+            $("input[type=file]").each((i, o) => {
+                for (var i = 0; i < o.files.length; i++) {
+                    form.append("files[" + (filenums++) + "]", o.files[i]);
+                    console.log(filenums);
+                }
+            })
+
             form.append("username", $("input[name=username]").val());
             form.append("password", $("input[name=password]").val());
             form.append("email", $("input[name=email]").val());

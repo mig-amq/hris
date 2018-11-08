@@ -48,7 +48,7 @@ namespace WebApplication1.Controllers
             string[] keys = new string[]
                             {
                                 "month", "day", "year", "description", "position", "reason", "skills", "qualification",
-                                "experience", "supervision", "requisition-type", "description"
+                                "experience", "supervision", "description"
                             };
 
             if (this.HasValues(form, keys))
@@ -73,7 +73,6 @@ namespace WebApplication1.Controllers
                         rf.Qualification = form.GetValue("qualification").AttemptedValue;
                         rf.ExperienceRequired = form.GetValue("experience").AttemptedValue;
                         rf.UnderSupervision = new Employee(Int32.Parse(form.GetValue("supervision").AttemptedValue));
-                        rf.Type = form.GetValue("requisition-type").AttemptedValue;
                         rf.ExpectedJoiningDate = DateTime.ParseExact(sched, "MM/dd/yyyy", CultureInfo.InvariantCulture);
                         rf.Description = form.GetValue("description").AttemptedValue;
                         rf.Status = RequisitionStatus.Pending;

@@ -10,15 +10,15 @@
     <div class="two-column-content">
         <div class="cluster">
             <p class="sub-title">Year</p>
-            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year">
-                <option value="-1">-- Select year --</option>
+            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year" required>
+                <option value="">-- Select year --</option>
                 <!-- JS generated -->
             </select>
         </div>
         <div class="cluster">
             <p class="sub-title">Month</p>
-            <select id="month" name="month" class="full">
-                <option value="-1">-- Select month --</option>
+            <select id="month" name="month" class="full" required>
+                <option value="">-- Select month --</option>
                 <!-- JS generated -->
             </select>
         </div>

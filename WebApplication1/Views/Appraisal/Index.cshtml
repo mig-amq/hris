@@ -23,18 +23,18 @@
     <div class="two-column-content">
         <div class="cluster">
             <p class="sub-title">Details</p>
-            <select name="employee" class="full">
-                <option value="-1" disabled selected>-- Select Employee to Evaluate --</option>
+            <select name="employee" class="full" required>
+                <option value="" disabled selected>-- Select Employee to Evaluate --</option>
             </select>
         </div>
-        <div class="cluster">
+        <div class="cluster date">
             <p class="sub-title">Covered Period</p>
-            <select id="month" name="month" class="full" data-max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)">
-                <option value="-1">-- Select month --</option>
+            <select id="month" name="month" class="full" data-max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)" required>
+                <option value="">-- Select month --</option>
                 <!-- JS generated -->
             </select>
-            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year">
-                <option value="-1">-- Select year --</option>
+            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year" required>
+                <option value="">-- Select year --</option>
                 <!-- JS generated -->
             </select>
         </div>
@@ -76,8 +76,8 @@
                     Dami ng trabahong inatas.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -91,8 +91,8 @@
                     Kaldidad ng gawain.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -106,8 +106,8 @@
                     Kakayahang matapos ng tama ang gawain sa pinakamabilis na oras.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -122,8 +122,8 @@
                     na nagangailangan ng kompromiso o pag-aalangan.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -138,8 +138,8 @@
                     at tumatanggap ng pagpuna/suhestyon ng positibo at bukas sa kalooban.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -154,8 +154,8 @@
                     partikular sa kagawaran kung saan siya kabilang.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -169,8 +169,8 @@
                     Atentibo at marunong makinig.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -184,8 +184,8 @@
                     Tumatanggap ng responsibilidad.
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -199,8 +199,8 @@
                     Delikado at may commitment; mataman at maingat sa paggawa
                 </td>
                 <td>
-                    <select name="criteria-1">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-1" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -225,8 +225,8 @@
                     Pagpapaunlak na ibahagi ang propesyonal na talino at kakayahan sa mga kasama.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -240,8 +240,8 @@
                     Magandang pakikisama at pagiging kawili-wili, sibil at totoo sa mga kasama.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -255,8 +255,8 @@
                     Kakayahang maki adapt sa mga iba't ibang social o grupo na sitwasyon.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -270,8 +270,8 @@
                     Marespeto, meron konsiderasyon at pang unawa sa nararamdaman ng iba.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -285,8 +285,8 @@
                     Nalulungod sa mga magagandang Gawain at tagumpay ng mga katrabaho.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -300,8 +300,8 @@
                     Kakayahang magtago ng sikreto o kompidensyal na mga bagay tungkol sa mga katrabho.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -315,8 +315,8 @@
                     Nangunguna/manamamatnubay sa mga katrabaho sa pagtatagumpay ng isang katrabahong nakataas o para sa pagtataguyod ng kapakanan ng grup.
                 </td>
                 <td>
-                    <select name="criteria-2">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-2" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -341,8 +341,8 @@
                     Hindi pa lumalabag sa mga probisyon na nakatala sa CRR and Policies
                 </td>
                 <td>
-                    <select name="criteria-3">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-3" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -356,8 +356,8 @@
                     Lawak ng partisipasyon sa mga aktibidad, pagdiriwang at ibang mga pagtitipon ng kumpanya.
                 </td>
                 <td>
-                    <select name="criteria-3">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-3" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -371,8 +371,8 @@
                     Hindi kailanman ginagamit ang kumpanya para sa pansariling kapakanan
                 </td>
                 <td>
-                    <select name="criteria-3">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-3" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -392,8 +392,8 @@
                     </ul>
                 </td>
                 <td>
-                    <select name="criteria-3">
-                        <option value="1" disabled selected>--SELECT RATING--</option>
+                    <select name="criteria-3" required>
+                        <option value="" disabled selected>--SELECT RATING--</option>
                         <option value="1">POOR</option>
                         <option value="2">NEEDS IMPROVEMENT</option>
                         <option value="3">FAIR</option>
@@ -408,12 +408,12 @@
     <div class="two-column-content">
         <div class="cluster">
             <p class="sub-title">Comments:</p>
-            <textarea placeholder="Evaluator's Comment" name="comment" class="full"></textarea>
+            <textarea placeholder="Evaluator's Comment" name="comment" class="full" required></textarea>
         </div>
         <div class="cluster">
             <p class="sub-title">Noted By:</p>
-            <select name="noted-by" class="full">
-                <option value="-1" disabled selected>-- Select Employee --</option>
+            <select name="noted-by" class="full" required>
+                <option value="" disabled selected>-- Select Employee --</option>
             </select>
         </div>
     </div>

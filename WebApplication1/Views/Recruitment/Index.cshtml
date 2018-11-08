@@ -16,24 +16,39 @@
                 <form data-action="add">
                     <div class="cluster">
                         <p class="sub-title">Details</p>
-                        <input type="text" placeholder="Job Title" name="job-title" autofocus />
-                        <textarea placeholder="Job Description" name="job-desc"></textarea>
-                        <textarea placeholder="Requirements" name="job-req"></textarea>
+                        <input type="text" placeholder="Job Title" name="job-title" autofocus required/>
+                        <textarea placeholder="Job Description" name="job-desc" required></textarea>
+                        <textarea placeholder="Requirements" name="job-req" required></textarea>
                     </div>
-                    <div class="cluster">
+                    <div class="cluster date">
                         <p class="sub-title">Date Posted</p>
-                        <select id="month" name="month">
-                            <option value="-1">-- Select month --</option>
+                        <select id="month" name="month" required>
+                            <option value="">-- Select month --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="day" name="day">
-                            <option value="-1">-- Select day --</option>
+                        <select id="day" name="day" required>
+                            <option value="">-- Select day --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="year" name="year">
-                            <option value="-1">-- Select year --</option>
+                        <select id="year" name="year" data-min="@DateTime.Now.Year" required>
+                            <option value="">-- Select year --</option>
                             <!-- JS generated -->
                         </select>
+                        <script>
+                            $("#year").on("change", (e) => {
+                                if ($(e.target).val() == @DateTime.Now.Year) {
+                                    $("#month").attr('data-min', @DateTime.Now.Month - 1);
+                                } else {
+                                    $("#month").removeAttr('data-min');
+                                }
+
+                                $("#month option:not(:first-child)").remove();
+                                readyMonth();
+
+                                if ($(e.target).val() == @DateTime.Now.Year)
+                                    $("#month").val(@DateTime.Now.Month- 1);
+                            });
+                        </script>
                     </div>
                     <button type="submit">Save</button>
                     <div id="alert"></div>
@@ -203,31 +218,43 @@
 
                 $("#pagination span[data-page=" + n + "]").addClass("active");
                 data.jobs.forEach((o, i, a) => {
-                    console.log(o);
                     let row = $("<tr></tr>");
                     let id = $("<td></td>").text(o.PostingID);
                     let title = $("<td></td>").text(o.JobTitle);
                     let req = $("<td></td>").text(o.Requirements);
                     let date = $("<td></td>").text(new Date(o.DatePosted).toLocaleDateString());
 
-                    @if (Account != null && Account.Type == AccountType.DepartmentHead &&
-                            ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
-                    {
-                        <text>
-                            let btn = $("<td><button class='hallow modal-trigger' data-id='" + o.PostingID + "'>Edit</button></td>");
-                            btn.click(() => { $('#modal-form').attr('data-action', 'edit'); load(o.PostingID); })
-                        </text>
-                    }
-                    else
-                    {
-                        @:let btn = $("<td></td>");
-                    }
-
                     row.append(id);
                     row.append(title);
                     row.append(req);
                     row.append(date);
-                    row.append(btn);
+                    @if (Account != null && Account.Type == AccountType.DepartmentHead &&
+                            ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                    {
+                        <text>
+                            let btn = $("<button class='hallow modal-trigger' data-id='" + o.PostingID + "'>Edit</button>");
+                             btn.click(() => { $('#modal-form').attr('data-action', 'edit'); load(o.PostingID); })
+
+                            let btn2 = $(" <button class='hallow red'>Delete</button>");
+                            btn2.click(() => {
+                                $.ajax({
+                                    url: "/Recruitment/Delete",
+                                    method: "POST",
+                                    data: {
+                                        id: o.PostingID,
+                                    },
+                                    success: (data) => {
+                                        if (data.error)
+                                            alert(data.message);
+                                        else
+                                            row.remove();
+                                    }
+                                })
+                            });
+
+                        row.append($("<td class='multiple-buttons'></td>").html(btn).append(btn2));
+                        </text>
+                    }
                     $("#data").append(row);
                 });
             }

@@ -377,8 +377,7 @@ namespace WebApplication1.Controllers
             json["error"] = false;
             json["message"] = "";
 
-            if (!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type
-                == DepartmentType.HumanResources)
+            if (!this.CheckLogin(AccountType.Applicant) && this.GetAccount().Type == AccountType.DepartmentHead)
             {
                 if (form.GetValue("profile") != null && form.GetValue("training") != null)
                 {
@@ -390,18 +389,53 @@ namespace WebApplication1.Controllers
                         AssignedTraining at = new AssignedTraining();
                         at.Profile = Profile;
                         at.Training = Training;
-                        at.Status = TrainingStatus.Pending;
+
+                        if (form.GetValue("suggested") == null)
+                            at.Status = TrainingStatus.Pending;
+                        else
+                            at.Status = TrainingStatus.Suggested;
 
                         at.Create(false);
 
                         Notification notif = new Notification();
                         notif.Account = new Account().FindByProfile(at.Profile.ProfileID);
-                        notif.Message =
-                            "You've been assigned to a Training service, please check the Assigned Trainings page.";
+
+                        if (at.Status == TrainingStatus.Pending)
+                        {
+                            notif.Message =
+                                "You've been assigned to a Training service, please check the Assigned Trainings page.";
+                            json["message"] = "Succesfully assigned employee to training service...";
+                        }
+                        else
+                        {
+                            notif.Message =
+                                "You were suggested to join a Training service, please wait for further instructions.";
+                            json["message"] = "Succesfully suggested employee to training service...";
+                        }
+
                         notif.Status = NotificationStatus.Unread;
                         notif.TimeStamp = DateTime.Now;
 
                         notif.Create();
+
+                        DBHandler db = new DBHandler();
+                        using (DataTable dt = db.Execute<DataTable>(
+                            CRUD.READ,
+                            "SELECT Profile FROM Employee E INNER JOIN Department D ON E.Department = D.DepartmentID WHERE Type = "
+                            + ((int)DepartmentType.HumanResources)))
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                Account a = new Account().FindByProfile(Int32.Parse(row["Profile"].ToString()), false);
+                                Notification n = new Notification();
+                                n.Status = NotificationStatus.Unread;
+                                n.TimeStamp = DateTime.Now;
+                                n.Account = a;
+                                n.Message = "An employee was suggested for training";
+
+                                n.Create();
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -421,6 +455,61 @@ namespace WebApplication1.Controllers
                 json["message"] = "You are not authorized to continue";
             }
 
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpGet]
+        public ContentResult GetDepartmentEmployeeList()
+        {
+            JObject json = new JObject();
+            List<Employee> Employees = new List<Employee>();
+
+            DBHandler db = new DBHandler();
+            using (DataTable dt = db.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT EmployeeID FROM Employee WHERE Department = "
+                + ((Employee)this.GetAccount().Profile).Department.DepartmentID + " AND EmployeeID <> " + ((Employee)this.GetAccount().Profile).EmployeeID))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    try
+                    {
+                        Employees.Add(new Employee(Int32.Parse(row["EmployeeID"].ToString()), true));
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            }
+
+            json["employees"] = JArray.FromObject(Employees);
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpGet]
+        public ContentResult GetAllTrainings()
+        {
+            JObject json = new JObject();
+            List<Training> Trainings = new List<Training>();
+
+            DBHandler db = new DBHandler();
+            using (DataTable dt = db.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT TrainingHistoryID FROM TrainingHistory"))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    try
+                    {
+                        Trainings.Add(new Training(Int32.Parse(row["TrainingHistoryID"].ToString())));
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            }
+
+            json["trainings"] = JArray.FromObject(Trainings);
             return Content(json.ToString(), "application/json");
         }
     }

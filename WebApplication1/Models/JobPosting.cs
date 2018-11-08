@@ -6,6 +6,7 @@ using System.Web;
 namespace WebApplication1.Models
 {
     using System.Data;
+    using System.Diagnostics;
 
     public class JobPosting
     {
@@ -85,6 +86,7 @@ namespace WebApplication1.Models
 
         public JobPosting Delete()
         {
+            Debug.WriteLine("DELETE FROM JobPosting WHERE PostingID = " + this.PostingID);
             this.DBHandler.Execute<Int32>(CRUD.DELETE, "DELETE FROM JobPosting WHERE PostingID = " + this.PostingID);
             return this;
         }

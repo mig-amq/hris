@@ -34,6 +34,21 @@ namespace WebApplication1.Controllers
             if (!this.IsLoggedIn())
                 return this.RedirectToAction("Index", "Home");
 
+            ViewBag.ViewAccount = null;
+
+            if (Request.QueryString["id"] != null && this.GetAccount().Type != AccountType.Applicant && 
+                ((Employee) this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+            {
+                try
+                {
+                    ViewBag.ViewAccount = new Account().FindByProfile(Int32.Parse(Request.QueryString["id"]), true);
+                }
+                catch (Exception e)
+                {
+                    ViewBag.ViewAccount = null;
+                }
+            }
+
             return View();
         }
 

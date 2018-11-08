@@ -165,7 +165,7 @@ namespace WebApplication1.Models
                 "SELECT * FROM Employee WHERE Code = @Code",
                 param))
             {
-                if (dt.Rows.Count > 0)
+                if (dt.Rows.Count >= 2)
                 {
                     throw new Exception("That emplpoyee code is already taken");
                 }

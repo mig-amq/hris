@@ -5,6 +5,7 @@ using System.Web.Mvc;
 namespace WebApplication1.Controllers
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using Newtonsoft.Json.Linq;
@@ -17,7 +18,7 @@ namespace WebApplication1.Controllers
         // GET: UserAccount/Forgot
         public ActionResult Forgot()
         {
-            if (!this.IsLoggedIn())
+            if (this.IsLoggedIn())
                 return this.RedirectToAction("Index", "Home");
 
             return View();
@@ -148,11 +149,12 @@ namespace WebApplication1.Controllers
 
             if (form.GetValue("username") != null && form.GetValue("answer") != null)
             {
-                Account ac = new Account().FindByUsername(form.GetValue("username").AttemptedValue, false);
+                Account ac = new Account().FindByUsername(form.GetValue("username").AttemptedValue, true);
 
                 if (ac.Exists && ac.Answer == form.GetValue("answer").AttemptedValue)
                 {
-                    json["message"] = ac.Password;
+                    ac.Password = "123456";
+                    ac.Update(false);
                 }
                 else
                 {
@@ -171,7 +173,7 @@ namespace WebApplication1.Controllers
 
         // POST: UserAccount/Create
         [HttpPost]
-        public ActionResult ApplicantCreate(FormCollection form, HttpPostedFileBase file)
+        public ActionResult ApplicantCreate(FormCollection form, IEnumerable<HttpPostedFileBase> files)
         {
             JObject json = new JObject();
             json["error"] = false;
@@ -180,7 +182,7 @@ namespace WebApplication1.Controllers
             string[] keys = new string[]
                                 {
                                     "username", "password", "email", "question", "answer", "skills", "desired",
-                                    "firstname", "lastname", "middlename", "sex", "status", "byear", "bmonth", "bday",
+                                    "firstname", "lastname", "sex", "status", "byear", "bmonth", "bday",
                                     "contact", "emergency-name", "emergency-number", "emergency-rel", "house", "city", "province",
                                     "street", "education", "history"
                                 };
@@ -200,19 +202,35 @@ namespace WebApplication1.Controllers
                         ac.Security = form.GetValue("question").AttemptedValue;
                         ac.Answer = form.GetValue("answer").AttemptedValue;
 
-                        if (file != null && file.ContentLength > 0)
+                        foreach (string n in Request.Files)
                         {
+                            HttpPostedFileBase file = Request.Files[n];
+
                             var filename = Path.GetFileName(file.FileName);
                             var name = filename.Substring(0, filename.LastIndexOf('.'));
                             var ext = filename.Substring(filename.LastIndexOf('.'));
                             name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
                             filename = name + ext;
+                            
+                            if (ext.ToLower().Equals(".jpg") || ext.ToLower().Equals(".jpeg")
+                                                             || ext.ToLower().Equals(".gif")
+                                                             || ext.ToLower().Equals(".png"))
+                            {
+                                var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
+                                file.SaveAs(path);
+                                ac.Image = Path.Combine("~/Content/img/uploads", filename);
+                            }
+                            else
+                            {
+                                var path = Path.Combine(
+                                    HttpContext.Server.MapPath("~/Content/support/uploads"),
+                                    ac.Username + "-" + filename);
 
-                            var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
-                            file.SaveAs(path);
-                            ac.Image = Path.Combine("~/Content/img/uploads", filename);
+                                file.SaveAs(path);
+                            }
                         }
-                        else
+
+                        if (Request.Files.Count <= 0)
                         {
                             ac.Image = Path.Combine("~/Content/img/uploads/", "default.png");
                         }
@@ -222,7 +240,11 @@ namespace WebApplication1.Controllers
                         ((Applicant)ac.Profile).Status = ApplicantStatus.Undecided;
                         ((Applicant)ac.Profile).Profile = new Profile();
                         ((Applicant)ac.Profile).Profile.FirstName = form.GetValue("firstname").AttemptedValue;
-                        ((Applicant)ac.Profile).Profile.MiddleName = form.GetValue("middlename").AttemptedValue;
+                        if (form.GetValue("middlename") != null)
+                            ((Applicant)ac.Profile).Profile.MiddleName = form.GetValue("middlename").AttemptedValue;
+                        else
+                            ((Applicant)ac.Profile).Profile.MiddleName = "";
+
                         ((Applicant)ac.Profile).Profile.LastName = form.GetValue("lastname").AttemptedValue;
                         ((Applicant)ac.Profile).Profile.Sex = (SexType)Int32.Parse(form.GetValue("sex").AttemptedValue);
                         ((Applicant)ac.Profile).Profile.CivilStatus = (CivilStatusType)Int32.Parse(form.GetValue("status").AttemptedValue);

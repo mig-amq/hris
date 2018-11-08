@@ -10,7 +10,7 @@ input, textarea{
 	font-size: 0.8em;
 }
 
-#alert {
+#alert, #alert2 {
     display: none;
     color: #fff;
     margin-top: 10px;
@@ -19,19 +19,20 @@ input, textarea{
     padding: 0.8em 1.5em;
 }
 
-#alert.error, #alert.success, #alert.info {
+#alert.error, #alert.success, #alert.info,
+#alert2.error, #alert2.success, #alert2.info {
     display: block;
 }
 
-#alert.error {
+#alert.error, #alert2.error {
     background-color: #e02c2c;
 }
 
-#alert.success {
+#alert.success, #alert2.success {
     background-color: #5eb854;
 }
 
-#alert.info {
+#alert.info, #alert2.info {
     background-color: #408dcc;
 }
 

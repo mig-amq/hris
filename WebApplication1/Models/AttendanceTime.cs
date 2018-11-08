@@ -33,7 +33,7 @@ namespace WebApplication1.Models
 
             if (Date.HasValue)
             {
-                where = " AND MONTH(Date) = " + Date.Value.Month + " AND YEAR(Date) = " + Date.Value.Year + " AND DAY(Date) = " + Date.Value.Date;
+                where = " AND MONTH(Date) = " + Date.Value.Month + " AND YEAR(Date) = " + Date.Value.Year + " AND DAY(Date) = " + Date.Value.Day;
             }
 
             using (DataTable dt = this.DBHandler.Execute<DataTable>(

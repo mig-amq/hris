@@ -14,7 +14,7 @@ namespace WebApplication1.Controllers
     {
         public Boolean CheckLogin(AccountType AccountType = AccountType.Any)
         {
-            if (Session["user"] != null)
+            if (this.GetAccount	() != null)
             {
                 try
                 {

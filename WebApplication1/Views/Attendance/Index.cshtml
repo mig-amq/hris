@@ -9,7 +9,7 @@
 
 <div id="section-heading">
     <div>
-        <h1 id="section-title">My Attendance</h1>
+        <h1 id="section-title">Attendance</h1>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
     <div class="two-column-content">
         <div class="cluster">
             <form onsubmit="event.preventDefault(); loadButtons()">
-                <input type="text" name="employee-code" placeholder="Employee Code" class="full" />
+                <input type="text" name="employee-code" placeholder="Employee Code" class="full" required/>
                 <button class="full" id="check">Check Employee</button>
             </form>
         </div>
@@ -33,20 +33,17 @@
             </div>
         </div>
     </div>
+
+    <div class="two-column-content">
+        <div class="cluster"><button class="full" id="time-in" disabled>Time In</button></div>
+        <div class="cluster"><button class="full" id="time-out" disabled>Time Out</button></div>
+    </div>
 }
 else
 {
     <br />
     <div id="alert"></div>
     <br/>
-}
-
-@if (Account == null || (Account != null && !((Employee)Account.Profile).OnLeave(DateTime.Now)))
-{
-    <div class="two-column-content">
-        <div class="cluster"><button class="full" id="time-in" disabled>Time In</button></div>
-        <div class="cluster"><button class="full" id="time-out" disabled>Time Out</button></div>
-    </div>
 }
 
 @if (Account != null)
@@ -69,27 +66,28 @@ else
     </table>
 
     <br/>
-    <table>
-        <thead>
-        <tr class="heading-row">
-            <th>Date</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-        </tr>
-        </thead>
-        <tbody id="data">
-        </tbody>
-    </table>
-
-    <div id="result-summary">
-        <div>
-            <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
-        </div>
-        <div id="pagination">
-            <span class="active">1</span>
-        </div>
-    </div>
 }
+
+<table>
+    <thead>
+    <tr class="heading-row">
+        <th>Date</th>
+        <th>Time In</th>
+        <th>Time Out</th>
+    </tr>
+    </thead>
+    <tbody id="data">
+    </tbody>
+</table>
+
+<div id="result-summary">
+    <div>
+        <span id="result-count">Showing <b>1 - 1</b> out of <span>1</span> results</span>
+    </div>
+    <div id="pagination">
+        <span class="active">1</span>
+    </div>
+</div>
 
 <script>
     var curr = 1;
@@ -209,6 +207,8 @@ else
 
                                 $("#image").css("display", "block");
                                 $("#image img").attr("src", data.image.substring(1));
+                                
+                                search(1, data.employee.EmployeeID);
 
                                 if (data.attendance && !data.attendance.TimeOut && data.attendance.TimeIn) {
                                     $("#time-out").attr('data-id', data.attendance.Attendance.AttendanceID);
@@ -248,46 +248,20 @@ else
         })
     }
 
-    @if (Account != null)
-    {
-        <text>
-    function loadAttendance() {
-        $.ajax({
-            url: "/Attendance/GetMyAttendance",
-            method: "GET",
-            success: (data) => {
-                $("#details").empty();
-
-                if (data.attendance) {
-                    let o = data.attendance;
-                    let row = $("<tr></tr>");
-                    let tot = $("<td>" + o.TotalWorkingDays + "</td>");
-                    let pre = $("<td>" + o.Present + "</td>");
-                    let abs = $("<td>" + o.Absent + "</td>");
-                    let ove = $("<td>" + o.Overtime + "</td>");
-                    let lat = $("<td>" + o.Late + "</td>");
-                    let lea = $("<td>" + o.Leave + "</td>");
-                    let und = $("<td>" + o.Undertime + "</td>");
-
-                    row.append(tot).append(pre).append(abs).append(ove).append(lat).append(lea).append(und);
-                    $("#details").append(row);
-                } else {
-                    $("#time-in").attr("disabled", "disabled");
-                    $("#time-out").attr("disabled", "disabled");
-                    $("#alert").addClass("info");
-                    $("#alert").html(
-                        "<b>Info: </b> You do not have an attendance sheet for this month yet, please contact the HR department.");
-                }
-            }
-        });
-    }
-
-    function search(n) {
+    function search(n, id) {
         curr = n;
         $.ajax({
             url: "/Attendance/GetAttendanceTimes",
             data: {
                 'page': n || 1,
+                'id': @if (Account == null)
+                {
+                    <text>id</text>
+                }
+                else
+                {
+                    @(((Employee)Account.Profile).EmployeeID)
+                }
             },
             method: "GET",
             success: (data) => {
@@ -306,7 +280,7 @@ else
 
                     if (data.pages < curr && curr > 1) {
                         curr--;
-                        search(curr);
+                        search(curr, id);
                     }
 
                     for (var i = 1; i <= data.pages; i++) {
@@ -314,7 +288,7 @@ else
                             i +
                             "' onclick=event.preventDefault();search(" +
                             i +
-                            ");> " +
+                            ", " + id + ");> " +
                             i +
                             "</span> ");
                     }
@@ -347,6 +321,40 @@ else
             }
         })
     }
-        </text>
+
+    @if (Account != null)
+    {
+        <text>
+            function loadAttendance() {
+                $.ajax({
+                    url: "/Attendance/GetMyAttendance",
+                    method: "GET",
+                    success: (data) => {
+                        $("#details").empty();
+
+                        if (data.attendance) {
+                            let o = data.attendance;
+                            let row = $("<tr></tr>");
+                            let tot = $("<td>" + o.TotalWorkingDays + "</td>");
+                            let pre = $("<td>" + o.Present + "</td>");
+                            let abs = $("<td>" + o.Absent + "</td>");
+                            let ove = $("<td>" + o.Overtime + "</td>");
+                            let lat = $("<td>" + o.Late + "</td>");
+                            let lea = $("<td>" + o.Leave + "</td>");
+                            let und = $("<td>" + o.Undertime + "</td>");
+
+                            row.append(tot).append(pre).append(abs).append(ove).append(lat).append(lea).append(und);
+                            $("#details").append(row);
+                        } else {
+                            $("#time-in").attr("disabled", "disabled");
+                            $("#time-out").attr("disabled", "disabled");
+                            $("#alert").addClass("info");
+                            $("#alert").html(
+                                "<b>Info: </b> You do not have an attendance sheet for this month yet, please contact the HR department.");
+                        }
+                    }
+                });
+            }
+   </text>
     }
 </script>

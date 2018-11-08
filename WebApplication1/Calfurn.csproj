@@ -188,6 +188,7 @@
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RequisitionForm.cs" />
+    <Compile Include="Models\Schedule.cs" />
     <Compile Include="Models\Supers\ProfiledObject.cs" />
     <Compile Include="Models\Supers\SecureObject.cs" />
     <Compile Include="Models\Department.cs" />

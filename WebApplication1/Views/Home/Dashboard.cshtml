@@ -4,6 +4,11 @@
     ViewBag.Active = "HOME";
 
     Account Account = Session["user"] != null ? ((Account)Session["user"]) : null;
+
+    if (ViewBag.ViewAccount != null)
+    {
+        Account = ViewBag.ViewAccount;
+    }
 }
 
 @if (Account != null)

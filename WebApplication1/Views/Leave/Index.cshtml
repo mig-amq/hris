@@ -6,7 +6,7 @@
 
     Account Account = (Session["user"] == null) ? null : (Account)Session["user"];
 
-    int numLeaves = ((Employee)Account.Profile).GetNumLeaves(DateTime.Now);
+    int numLeaves = (Account != null) ? ((Employee)Account.Profile).GetNumLeaves(DateTime.Now) : 0;
 }
 
 @if (Account != null)
@@ -19,36 +19,36 @@
                 <form>
                     <div class="cluster">
                         <p class="sub-title">Start Date</p>
-                        <select id="month" name="start-month" class="full">
-                            <option value="-1">-- Select month --</option>
+                        <select id="month" name="start-month" class="full" required>
+                            <option value="">-- Select month --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="day" name="start-day" class="full">
-                            <option value="-1">-- Select day --</option>
+                        <select id="day" name="start-day" class="full" required >
+                            <option value="">-- Select day --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="year" name="start-year" class="full">
-                            <option value="-1">-- Select year --</option>
+                        <select id="year" name="start-year" class="full" required>
+                            <option value="">-- Select year --</option>
                             <!-- JS generated -->
                         </select>
                     </div>
                     <div class="cluster">
                         <p class="sub-title">End Date</p>
-                        <select id="month" name="end-month" class="full">
-                            <option value="-1">-- Select month --</option>
+                        <select id="month" name="end-month" class="full" required>
+                            <option value="">-- Select month --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="day" name="end-day" class="full">
-                            <option value="-1">-- Select day --</option>
+                        <select id="day" name="end-day" class="full" required>
+                            <option value="">-- Select day --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="year" name="end-year" class="full">
-                            <option value="-1">-- Select year --</option>
+                        <select id="year" name="end-year" class="full" required>
+                            <option value="">-- Select year --</option>
                             <!-- JS generated -->
                         </select>
                     </div>
                     
-                    <select name="type">
+                    <select name="type" required>
                         @if (numLeaves < Leave.MAX_PAID)
                         {
                             <option value="1" disabled selected>-- Select Leave Type --</option>
@@ -61,7 +61,7 @@
                         }
                     </select>
 
-                    <textarea name="reason" placeholder="Reason/s" style="display: none;"></textarea>
+                    <textarea name="reason" placeholder="Reason/s" style="display: none;" required></textarea>
                     <button type="submit" class="full">Apply</button>
                     <div id="alert"></div>
                 </form>

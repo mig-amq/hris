@@ -191,7 +191,7 @@ namespace WebApplication1.Controllers
             string[] keys = new string[]
                 {
                     "username", "password", "email", "type", "question", "answer", "code", "position",
-                    "hyear", "hmonth", "hday", "firstname", "middlename", "lastname", "status", "bmonth", "bday", "byear",
+                    "hyear", "hmonth", "hday", "firstname", "lastname", "status", "bmonth", "bday", "byear",
                     "contact", "emergency-name", "emergency-number", "emergency-name", "emergency-rel", "house", "city",
                     "province", "street", "department", "sex", "education", "history"
                 };
@@ -244,7 +244,11 @@ namespace WebApplication1.Controllers
 
                         ((Employee)ac.Profile).Profile = new Profile();
                         ((Employee)ac.Profile).Profile.FirstName = form.GetValue("firstname").AttemptedValue;
-                        ((Employee)ac.Profile).Profile.MiddleName = form.GetValue("middlename").AttemptedValue;
+                        if (form.GetValue("middlename") != null)
+                            ((Employee)ac.Profile).Profile.MiddleName = form.GetValue("middlename").AttemptedValue;
+                        else
+                            ((Employee)ac.Profile).Profile.MiddleName = "";
+
                         ((Employee)ac.Profile).Profile.LastName = form.GetValue("lastname").AttemptedValue;
                         ((Employee)ac.Profile).Profile.Sex = (SexType)Int32.Parse(form.GetValue("sex").AttemptedValue);
                         ((Employee)ac.Profile).Profile.CivilStatus =

@@ -17,45 +17,33 @@
         <p><span class="spot">Date:</span> @{@DateTime.Now.ToString("MMMM dd, yyyy")}</p>
         <div class="two-column-content">
             <div class="cluster">
-                <textarea placeholder="Reason for Vacancy" name="reason" class="full"></textarea>
-                <p class="sub-title">Type of Vacancy</p>
-                <div class="radio-inline">
-                    <label>
-                        <input type="radio" name="requisition-type" value="Resignation" selected> Resignation
-                    </label>
-                    <label>
-                        <input type="radio" name="requisition-type" value="Termination"> Termination
-                    </label>
-                    <label>
-                        <input type="radio" name="requisition-type" value="New Position"> New Position
-                    </label>
-                </div>
-                <textarea placeholder="Qualification Requirements or Equivalent" name="qualification" class="full"></textarea>
-                <textarea placeholder="Experience Required" name="experience" class="full"></textarea>
-                <textarea placeholder="Skills Required" name="skills" class="full"></textarea>
+                <textarea placeholder="Reason for Vacancy" name="reason" class="full" required></textarea>
+                <textarea placeholder="Qualification Requirements or Equivalent" name="qualification" class="full" required></textarea>
+                <textarea placeholder="Experience Required" name="experience" class="full" required></textarea>
+                <textarea placeholder="Skills Required" name="skills" class="full" required></textarea>
             </div>
 
             <div class="cluster">
-                <input type="text" name="position" placeholder="Position" class="full" />
+                <input type="text" name="position" placeholder="Position" class="full" required/>
 
                 <p class="sub-title">Expected Joining Date</p>
-                <select id="month" name="month" class="full">
-                    <option value="-1" disabled="">-- Select month --</option>
+                <select id="month" name="month" class="full" required>
+                    <option value="" disabled="">-- Select month --</option>
                     <!-- JS generated -->
                 </select>
-                <select id="day" name="day" class="full">
-                    <option value="-1">-- Select day --</option>
+                <select id="day" name="day" class="full" required>
+                    <option value="">-- Select day --</option>
                     <!-- JS generated -->
                 </select>
-                <select id="year" name="year" class="full">
-                    <option value="-1">-- Select year --</option>
+                <select id="year" name="year" class="full" required>
+                    <option value="">-- Select year --</option>
                     <!-- JS generated -->
                 </select>
 
-                <select name="supervision" class="full">
-                    <option value="-1" selected disabled>Select Supervisor</option>
+                <select name="supervision" class="full" required>
+                    <option value="" selected disabled>Select Supervisor</option>
                 </select>
-                <textarea placeholder="Brief Description of Works" name="description" class="full"></textarea>
+                <textarea placeholder="Brief Description of Works" name="description" class="full" required></textarea>
             </div>
         </div>
          <button type="submit" class="full">Submit</button>

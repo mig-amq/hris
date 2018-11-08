@@ -185,13 +185,38 @@
                         else
                         {
                             <text>
-                                if (o.Status == 1) {
-                                    sta = $("<td><button class='hallow modal-trigger'>Review</button></td>");
-                                    sta.find("button").on("click",
-                                        (e) => {
-                                            load(o);
-                                        });
-                                } else {
+                            if (o.Status == 1) {
+                                sta = $("<td class='multiple-buttons'></td>");
+                                let btn = $("<button class='hallow modal-trigger'>Review</button>");
+                                btn.on("click",
+                                    (e) => {
+                                        load(o);
+                                    });
+                                let btn2 = $("<button>Post</button>");
+                                btn2.on("click", (e) => {
+                                    $.ajax({
+                                        url: "/Recruitment/Create",
+                                        method: "POST",
+                                        data: {
+                                            "job-title": o.Position,
+                                            "job-desc": o.Description,
+                                            "job-req": "Experience Required: " +
+                                                o.ExperienceRequired +
+                                                "; Skills Required: " +
+                                                o.SkillsRequired +
+                                                "; Qualifications: " +
+                                                o.Qualification,
+                                            "year": d.getFullYear(),
+                                            "month": d.getMonth(),
+                                            "day": d.getDate(),
+                                        }, success: (data) => {
+                                            alert(data.message);
+                                        }
+                                    })
+                                })
+
+                                sta.append(btn).append(btn2);
+                            } else {
                                     sta = $("<td>Filled</td>");
                                 }
                             </text>

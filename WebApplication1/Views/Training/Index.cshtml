@@ -104,6 +104,76 @@
         <span class="active">1</span>
     </div>
 </div>
+
+@if (Account != null && Account.Type == AccountType.DepartmentHead && ((Employee)Account.Profile).Department.Type != DepartmentType.HumanResources)
+{
+    <form id="suggest">
+        <h2 class="sub-title">Employee Training Suggestion:</h2>
+        <div class="two-column-content">
+            <div class="cluster">
+                <select name="employee" class="full" required>
+                    <option value="">-- Select Employee --</option>
+                </select>
+                <button class="full">Suggest for Training</button>
+            </div>
+            <div class="cluster">
+                <select name="training-list" class="full" required>
+                    <option value="">-- Select Training --</option>
+                </select>
+            </div>
+        </div>
+        <div id="alert2"></div>
+    </form>
+
+    <script>
+        $.ajax({
+            url: "/Training/GetDepartmentEmployeeList/",
+            method: "GET",
+            success: (data) => {
+                $("select[name=employee] option:not(:first-child)").remove();
+
+                data.employees.forEach((o, i, a) => {
+                    $("select[name=employee]").append("<option value=" + o.Profile.ProfileID + "> "
+                        + o.Profile.FirstName + " " + o.Profile.LastName + "</option>");
+                })
+            }
+        })
+
+        $.ajax({
+            url: "/Training/GetAllTrainings/",
+            method: "GET",
+            success: (data) => {
+                $("select[name=training-list] option:not(:first-child)").remove();
+
+                data.trainings.forEach((o, i, a) => {
+                    $("select[name=training-list]").append("<option value=" + o.TrainingHistoryID + "> " + o.Title + "</option>");
+                })
+            }
+        })
+
+        $("#suggest").on("submit", (e) => {
+            e.preventDefault();
+
+            $.ajax({
+                url: "/Training/Assign",
+                method: "POST",
+                data: {
+                    "profile": $("select[name=employee]").val(),
+                    "training": $("select[name=training-list]").val(),
+                    "suggested": true
+                }, success: (data) => {
+                    if (data.error)
+                        $("#alert2").addClass('error');
+                    else
+                        $("#alert2").addClass('success');
+
+                    $("#alert2").text(data.message);
+                }
+            })  
+        })
+    </script>
+}
+
 @if (Account != null && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
 {
     <script>

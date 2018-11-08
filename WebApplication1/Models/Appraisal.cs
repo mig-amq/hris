@@ -152,11 +152,11 @@ namespace WebApplication1.Models
 
         public Appraisal Create()
         {
-            string columns = "INSERT INTO Appraisal(CoveredPeriod, Criteria, "
+            string columns = "INSERT INTO Appraisal(CoveredPeriod, "
                              + "Rating, TechComp, InterSkills, CommComp, Total, "
                              + "Comments, Evaluator, DatePrepared, NotedBy, DateNoted, "
                              + "DiscussedWith, DateDiscussed, Type, Status) OUTPUT INSERTED.AppraisalID ";
-            string values = " VALUES(@CoveredPeriod, @Criteria, @Rating, @TechComp,"
+            string values = " VALUES(@CoveredPeriod, @Rating, @TechComp,"
                             + " @InterSkills, @CommComp, @Total, @Comments, @Evaluator, "
                             + "@DatePrepared, @NotedBy, @DateNoted, @DiscussedWith, @DateDiscussed, @Type, @Status)";
 
@@ -215,7 +215,7 @@ namespace WebApplication1.Models
         public Appraisal Update(int TableID, bool recursive = true, bool byDiscussed = false)
         {
             string set = "UPDATE Appraisal SET CoveredPeriod = @CoveredPeriod, "
-                         + "Criteria = @Criteria, Rating = @Rating, "
+                         + "Rating = @Rating, "
                          + "TechComp = @TechComp, InterSkills = @InterSkills, "
                          + "CommComp = @CommComp, Total = @Total, "
                          + "Comments = @Comments, Evaluator = @Evaluator, "
