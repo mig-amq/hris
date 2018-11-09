@@ -31,7 +31,7 @@ namespace WebApplication1.Controllers
             if (!this.IsLoggedIn())
                 return this.RedirectToAction("Index", "Home");
 
-            if (!this.CheckLogin(AccountType.DepartmentHead) || 
+            if (!this.CheckLogin(AccountType.DepartmentHead) && 
                 !(!this.CheckLogin(AccountType.Applicant) && ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources))
                 return this.RedirectToAction("Dashboard", "Home");
 

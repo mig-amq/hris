@@ -117,6 +117,8 @@ namespace WebApplication1.Controllers
                              + (Int32.Parse(form.GetValue("month").AttemptedValue) + 1).ToString("00") + "-"
                              + "01", "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
+                        ap.CoveredPeriod = ap.CoveredPeriod.AddDays(
+                            DateTime.DaysInMonth(ap.CoveredPeriod.Year, ap.CoveredPeriod.Month) - 1);
                         ap.Create();
 
                         Notification notif = new Notification();
@@ -126,6 +128,7 @@ namespace WebApplication1.Controllers
                         notif.TimeStamp = DateTime.Now;
                         notif.Create();
 
+                        json["message"] = "Employee has succesfully been appraised...";
                     }
                     catch (Exception e)
                     {

@@ -50,10 +50,6 @@
                 <b id="noted-pos"></b>
             </p>
         </div>
-        <div class="cluster">
-            <p class="sub-title" style="margin-bottom: 0">Criteria:</p>
-            <p id="criteria"></p>
-        </div>
     </div>
     <br />
     
@@ -72,7 +68,6 @@
             if (o < objects.length && o >= 0) {
                 let data = objects[o];
                 $("#comment").text(data.Comments);
-                $("#criteria").text(data.Criteria);
                 $("#noted-by").text(data.NotedBy.Profile.FirstName +
                     " " +
                     data.NotedBy.Profile.MiddleName +

@@ -692,7 +692,7 @@ namespace WebApplication1.Controllers
                 try
                 {
                     Attendance at = new Attendance().Find(
-                        ((Employee)this.GetAccount().Profile).EmployeeID,
+                        emp.EmployeeID,
                         DateTime.Now,
                         recursive: true,
                         byPrimary: false);

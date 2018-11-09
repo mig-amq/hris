@@ -8,6 +8,7 @@ namespace WebApplication1.Controllers
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using Calfurn.Models;
     using Newtonsoft.Json.Linq;
 
     using WebApplication1.Models;
@@ -19,6 +20,14 @@ namespace WebApplication1.Controllers
         public ActionResult Forgot()
         {
             if (this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            return View();
+        }
+
+        public ActionResult Edit()
+        {
+            if (!this.IsLoggedIn())
                 return this.RedirectToAction("Index", "Home");
 
             return View();
@@ -55,7 +64,8 @@ namespace WebApplication1.Controllers
                     json["error"] = true;
                     json["message"] = "Looks like you're already logged in!";
                 }
-            } else if (a.Locked)
+            }
+            else if (a.Locked)
             {
                 json["error"] = true;
                 json["message"] = "Uh Oh! You entered an incorrect password three times, your account has been locked, please contact the HR...";
@@ -181,7 +191,7 @@ namespace WebApplication1.Controllers
 
             string[] keys = new string[]
                                 {
-                                    "username", "password", "email", "question", "answer", "skills", "desired",
+                                    "username", "password", "email", "question", "answer", "skills",
                                     "firstname", "lastname", "sex", "status", "byear", "bmonth", "bday",
                                     "contact", "emergency-name", "emergency-number", "emergency-rel", "house", "city", "province",
                                     "street", "education", "history"
@@ -195,6 +205,8 @@ namespace WebApplication1.Controllers
 
                     if (!ac.FindByUsername(form.GetValue("username").AttemptedValue).Exists)
                     {
+
+                        List<String> support = new List<string>();
                         ac.Username = form.GetValue("username").AttemptedValue;
                         ac.Password = form.GetValue("password").AttemptedValue;
                         ac.Email = form.GetValue("email").AttemptedValue;
@@ -211,7 +223,7 @@ namespace WebApplication1.Controllers
                             var ext = filename.Substring(filename.LastIndexOf('.'));
                             name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
                             filename = name + ext;
-                            
+
                             if (ext.ToLower().Equals(".jpg") || ext.ToLower().Equals(".jpeg")
                                                              || ext.ToLower().Equals(".gif")
                                                              || ext.ToLower().Equals(".png"))
@@ -225,10 +237,13 @@ namespace WebApplication1.Controllers
                                 var path = Path.Combine(
                                     HttpContext.Server.MapPath("~/Content/support/uploads"),
                                     ac.Username + "-" + filename);
-
                                 file.SaveAs(path);
+
+                                support.Add(path);
                             }
                         }
+
+                        ((Applicant)ac.Profile).SupportingFiles = support.ToArray();
 
                         if (Request.Files.Count <= 0)
                         {
@@ -236,8 +251,6 @@ namespace WebApplication1.Controllers
                         }
 
                         ((Applicant)ac.Profile).Skills = form.GetValue("skills").AttemptedValue;
-                        ((Applicant)ac.Profile).DesiredPosition = form.GetValue("desired").AttemptedValue;
-                        ((Applicant)ac.Profile).Status = ApplicantStatus.Undecided;
                         ((Applicant)ac.Profile).Profile = new Profile();
                         ((Applicant)ac.Profile).Profile.FirstName = form.GetValue("firstname").AttemptedValue;
                         if (form.GetValue("middlename") != null)
@@ -358,6 +371,177 @@ namespace WebApplication1.Controllers
 
             return Content(json.ToString(), "application/json");
         }
-        
+
+        [HttpPost]
+        public ContentResult AccountUpdate(FormCollection form, HttpPostedFileBase file)
+        {
+            JObject json = new JObject();
+            json["error"] = false;
+            json["message"] = "";
+
+            if (this.IsLoggedIn())
+            {
+                string[] keys = new string[]
+                            {
+                                "password", "email",
+                                "hyear", "hmonth", "hday", "firstname", "lastname", "status", "bmonth", "bday", "byear",
+                                "contact", "emergency-name", "emergency-number", "emergency-name", "emergency-rel", "house", "city",
+                                "province", "street", "department", "sex", "education", "history"
+                            };
+
+                if (this.HasValues(form, keys))
+                {
+                    try
+                    {
+                        Account ac = this.GetAccount();
+                        Profile p = new Profile();
+                        ac.Password = form.GetValue("password").AttemptedValue;
+                        ac.Email = form.GetValue("email").AttemptedValue;
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var filename = Path.GetFileName(file.FileName);
+                            var name = filename.Substring(0, filename.LastIndexOf('.'));
+                            var ext = filename.Substring(filename.LastIndexOf('.'));
+                            name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
+                            filename = name + ext;
+
+                            var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
+                            file.SaveAs(path);
+                            ac.Image = Path.Combine("~/Content/img/uploads", filename);
+                        }
+
+                        p.FirstName = form.GetValue("firstname").AttemptedValue;
+                        if (form.GetValue("middlename") != null)
+                            p.MiddleName = form.GetValue("middlename").AttemptedValue;
+                        else
+                            p.MiddleName = "";
+
+                        p.LastName = form.GetValue("lastname").AttemptedValue;
+                        p.Sex = (SexType)Int32.Parse(form.GetValue("sex").AttemptedValue);
+                        p.CivilStatus =
+                            (CivilStatusType)Int32.Parse(form.GetValue("status").AttemptedValue);
+
+                        p.BirthDate = DateTime.ParseExact(
+                            form.GetValue("byear").AttemptedValue + "-"
+                                                                  + (Int32.Parse(
+                                                                         form.GetValue("bmonth").AttemptedValue) + 1)
+                                                                  .ToString("00") + "-"
+                                                                  + Int32.Parse(form.GetValue("bday").AttemptedValue)
+                                                                      .ToString("00"),
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture);
+
+                        p.Contact = form.GetValue("contact").AttemptedValue;
+                        p.ContactPerson = form.GetValue("emergency-name").AttemptedValue;
+                        p.CPersonNo = form.GetValue("emergency-number").AttemptedValue;
+                        p.CPersonRel = form.GetValue("emergency-rel").AttemptedValue;
+                        p.HouseNo = form.GetValue("house").AttemptedValue;
+                        p.City = form.GetValue("city").AttemptedValue;
+                        p.Province = form.GetValue("province").AttemptedValue;
+                        p.Street = form.GetValue("street").AttemptedValue;
+
+                        JObject education = JObject.Parse(form.GetValue("education").AttemptedValue);
+                        JArray history = JArray.Parse(form.GetValue("history").AttemptedValue);
+
+                        Education edu = new Education(instantiate: false);
+                        bool hasProperties = false;
+
+                        foreach (JProperty property in education.Properties())
+                        {
+                            if (property.Name == "elementary")
+                            {
+                                edu.Elementary = new EducationLevel(EducationType.Elementary);
+                                edu.Elementary.Name = property.Value["name"].ToString();
+                                edu.Elementary.Address = property.Value["address"].ToString();
+                                edu.Elementary.Start = property.Value["start"].ToString();
+                                edu.Elementary.End = property.Value["end"].ToString();
+                                hasProperties = true;
+                            }
+                            else if (property.Name == "hs")
+                            {
+                                edu.HighSchool = new EducationLevel(EducationType.HighSchool);
+                                edu.HighSchool.Name = property.Value["name"].ToString();
+                                edu.HighSchool.Address = property.Value["address"].ToString();
+                                edu.HighSchool.Start = property.Value["start"].ToString();
+                                edu.HighSchool.End = property.Value["end"].ToString();
+                                hasProperties = true;
+                            }
+                            else if (property.Name == "college")
+                            {
+                                edu.College = new EducationLevel(EducationType.College);
+                                edu.College.Name = property.Value["name"].ToString();
+                                edu.College.Address = property.Value["address"].ToString();
+                                edu.College.Start = property.Value["start"].ToString();
+                                edu.College.End = property.Value["end"].ToString();
+                                hasProperties = true;
+                            }
+                            else if (property.Name == "post")
+                            {
+                                edu.PostGraduate = new EducationLevel(EducationType.PostGraduate);
+                                edu.PostGraduate.Name = property.Value["name"].ToString();
+                                edu.PostGraduate.Address = property.Value["address"].ToString();
+                                edu.PostGraduate.Start = property.Value["start"].ToString();
+                                edu.PostGraduate.End = property.Value["end"].ToString();
+                                hasProperties = true;
+                            }
+                        }
+
+                        List<EmploymentHistory> hist = new List<EmploymentHistory>();
+
+                        foreach (JObject o in history)
+                        {
+                            EmploymentHistory temp = new EmploymentHistory();
+                            temp.Address = o.GetValue("address").ToString();
+                            temp.CompanyName = o.GetValue("company").ToString();
+                            temp.Position = o.GetValue("position").ToString();
+                            temp.ContactName = o.GetValue("cperson").ToString();
+                            temp.ContactNo = o.GetValue("number").ToString();
+                            temp.StartDate = o.GetValue("start").ToString();
+                            temp.EndDate = o.GetValue("end").ToString();
+                            temp.LeavingReason = o.GetValue("leave").ToString();
+                            hist.Add(temp);
+                        }
+
+                        if (hasProperties == true)
+                            p.Education = edu;
+                        else
+                            p.Education = null;
+                        
+                        ac.Update(false);
+                        p.Create();
+
+                        foreach (EmploymentHistory o in hist)
+                        {
+                            o.Create(p.ProfileID);
+                        }
+
+                        ProfileRequest req = new ProfileRequest();
+                        req.CurrentProfile = ac.Profile.Profile;
+                        req.NewProfile = p;
+                        req.Create();
+
+                        json["message"] = "Succesfully requested for a profile update, please wait for the HR to approve of your update.";
+                    }
+                    catch (Exception e)
+                    {
+                        json["error"] = true;
+                        json["message"] = e.Message;
+                    }
+                }
+                else
+                {
+                    json["error"] = true;
+                    json["message"] = "Form is incomplete";
+                }
+            }
+            else
+            {
+                json["error"] = true;
+                json["message"] = "You are not authorized to continue";
+            }
+
+            return Content(json.ToString(), "application/json");
+        }
     }
 }

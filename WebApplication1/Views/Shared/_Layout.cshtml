@@ -66,13 +66,16 @@
                         <a href="/Home/Signup"><li class="@(ViewBag.Active == "SIGN" ? "active" : "")">Sign Up</li></a>
                     </ul>
                 </div>
-                <hr />
-                <div class="cluster">
-                    <h6 class="cluster-label">Attendance</h6>
-                    <ul>
-                        <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance</li></a>
-                    </ul>
-                </div>
+                if (ViewBag.Active != "SIGN")
+                {
+                    <hr />
+                    <div class="cluster">
+                        <h6 class="cluster-label">Attendance</h6>
+                        <ul>
+                            <a href="/Attendance/"><li class="@(ViewBag.Active == "ATE" ? "active" : "")">Attendance</li></a>
+                        </ul>
+                    </div>
+                }
             }
 
             @if (Account != null)

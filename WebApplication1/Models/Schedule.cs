@@ -18,7 +18,7 @@ namespace Calfurn.Models
         public int ScheduleID { get; set; }
         public DateTime TimeStart { get; set; }
         public DateTime TimeEnd { get; set; }
-        public Applicant Applicant { get; set; }
+        public JobApplication JobApplication { get; set; }
         public Employee HR { get; set; }
 
         public Schedule(int ScheduleID = -1, bool recursive = true)
@@ -34,7 +34,7 @@ namespace Calfurn.Models
 
         public Schedule Find(int ScheduleID, bool byPrimary = true, bool recursive = true)
         {
-            string sql = "SELECT * FROM Schedule WHERE " + (byPrimary ? " ScheduleID " : " Applicant ") + " = "
+            string sql = "SELECT * FROM Schedule WHERE " + (byPrimary ? " ScheduleID " : " JobApplication ") + " = "
                          + ScheduleID;
 
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, sql))
@@ -48,10 +48,7 @@ namespace Calfurn.Models
 
                     if (recursive)
                     {
-                        this.Applicant = (Applicant)new Applicant().FindProfile(
-                            Int32.Parse(row["Applicant"].ToString()),
-                            recursive: recursive,
-                            byPrimary: true);
+                        this.JobApplication = new JobApplication(Int32.Parse(row["JobApplication"].ToString()), true);
 
                         this.HR = new Employee(
                             Int32.Parse(row["HR"].ToString()),
@@ -71,7 +68,7 @@ namespace Calfurn.Models
         {
             using (DataTable dt = this.DBHandler.Execute<DataTable>(
                 CRUD.READ,
-                "SELECT ScheduleID FROM Schedule WHERE YEAR(TimeStart) = " + this.TimeStart.Year
+                "SELECT * FROM Schedule WHERE YEAR(TimeStart) = " + this.TimeStart.Year
                                                                            + " AND MONTH(TimeStart) = "
                                                                            + this.TimeStart.Month
                                                                            + " AND DAY(TimeStart) = "
@@ -89,13 +86,13 @@ namespace Calfurn.Models
                 }
             }
 
-            string sql = "INSERT INTO Schedule(TimeStart, TimeEnd, Applicant, HR) OUTPUT INSERTED.ScheduleID "
-                         + "VALUES(@TimeStart, @TimeEnd, @Applicant, @HR)";
+            string sql = "INSERT INTO Schedule(TimeStart, TimeEnd, JobApplication, HR) OUTPUT INSERTED.ScheduleID "
+                         + "VALUES(@TimeStart, @TimeEnd, @JobApplication, @HR)";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@TimeStart", this.TimeStart.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             param.Add("@TimeEnd", this.TimeEnd.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-            param.Add("@Applicant", this.Applicant.ApplicantID);
+            param.Add("@JobApplication", this.JobApplication.JobApplicationID);
             param.Add("@HR", this.HR.EmployeeID);
 
             this.ScheduleID = this.DBHandler.Execute<Int32>(CRUD.CREATE, sql, param);
@@ -130,12 +127,12 @@ namespace Calfurn.Models
             }
 
             string sql = "UPDATE Schedule SET TimeStart = @TimeStart, TimeEnd = @TimeEnd, "
-                         + "Applicant = @Applicant, HR = @HR OUTPUT INSERTED.ScheduleID";
+                         + "JobApplication = @JobApplication, HR = @HR OUTPUT INSERTED.ScheduleID";
             Dictionary<string, dynamic> param = new Dictionary<string, dynamic>();
 
             param.Add("@TimeStart", this.TimeStart.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             param.Add("@TimeEnd", this.TimeEnd.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-            param.Add("@Applicant", this.Applicant.ApplicantID);
+            param.Add("@JobApplication", this.JobApplication.JobApplicationID);
             param.Add("@HR", this.HR.EmployeeID);
 
             this.ScheduleID = this.DBHandler.Execute<Int32>(CRUD.UPDATE, sql, param);

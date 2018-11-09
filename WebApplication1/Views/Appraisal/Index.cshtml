@@ -29,11 +29,11 @@
         </div>
         <div class="cluster date">
             <p class="sub-title">Covered Period</p>
-            <select id="month" name="month" class="full" data-max="@DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)" required>
+            <select id="month" name="month" class="full" required>
                 <option value="">-- Select month --</option>
                 <!-- JS generated -->
             </select>
-            <select id="year" name="year" class="full" data-max="@DateTime.Now.Year" required>
+            <select id="year" name="year" class="full" data-min="@DateTime.Now.Year" required>
                 <option value="">-- Select year --</option>
                 <!-- JS generated -->
             </select>

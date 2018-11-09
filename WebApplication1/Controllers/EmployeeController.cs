@@ -220,9 +220,9 @@ namespace WebApplication1.Controllers
                             name += "-" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
                             filename = name + ext;
 
-                            var path = Path.Combine("~/Content/img/uploads", filename);
+                            var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
                             file.SaveAs(path);
-                            ac.Image = Path.Combine("~/Content/img/uploads", filename); ;
+                            ac.Image = Path.Combine("~/Content/img/uploads", filename);
                         }
                         else
                         {

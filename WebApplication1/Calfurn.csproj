@@ -166,6 +166,7 @@
     <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\Paginator.cs" />
     <Compile Include="Controllers\RecruitmentController.cs" />
+    <Compile Include="Controllers\RecruitmentController_temp.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\UserAccountController.cs" />
@@ -183,10 +184,12 @@
     <Compile Include="Models\Education.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmploymentHistory.cs" />
+    <Compile Include="Models\JobApplication.cs" />
     <Compile Include="Models\JobPosting.cs" />
     <Compile Include="Models\Leave.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\ProfileRequest.cs" />
     <Compile Include="Models\RequisitionForm.cs" />
     <Compile Include="Models\Schedule.cs" />
     <Compile Include="Models\Supers\ProfiledObject.cs" />
@@ -252,10 +255,12 @@
     <Content Include="Views\Reports\Evaluation.cshtml" />
     <Content Include="Views\Reports\Training.cshtml" />
     <Content Include="Views\Reports\Printable.cshtml" />
+    <Content Include="Views\UserAccount\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\" />
+    <Folder Include="Views\RecruitmentController_temp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

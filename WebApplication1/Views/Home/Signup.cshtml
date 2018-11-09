@@ -17,7 +17,6 @@
             <input type="password" name="password" placeholder="Applicant Password" class="full" required />
             <input type="email" name="email" placeholder="Applicant Email" class="full" required />
 
-            <input type="text" name="desired" placeholder="Desired Position" class="full" required />
             <textarea name="skills" placeholder="Applicant Skills" class="full" required></textarea>
 
             <p class="sub-title">Supporting Files:</p>
@@ -243,8 +242,8 @@
             left.append(cperson);
             left.append(number);
 
-            var start = $("<select name='start' class='full'></select>");
-            var end = $("<select name='end' class='full'></select>");
+            var start = $("<select name='start-year' class='full'></select>");
+            var end = $("<select name='end-year' class='full'></select>");
 
             start.append("<option selected disabled> -- Start Year -- </option>");
             end.append("<option selected disabled> -- End Year -- </option>");
@@ -275,8 +274,8 @@
                 var number = $(i).find("input[name='number']").val();
                 var leave = $(i).find("textarea[name='leave']").val();
 
-                var start = $(i).find("select[name='start']").val();
-                var end = $(i).find("select[name='end']").val();
+                var start = $(i).find("select[name='start-year']").val();
+                var end = $(i).find("select[name='end-year']").val();
 
                 if (company.length > 0 &&
                     address.length > 0 &&

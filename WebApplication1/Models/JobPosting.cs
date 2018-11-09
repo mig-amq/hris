@@ -5,6 +5,7 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
+    using Calfurn.Models;
     using System.Data;
     using System.Diagnostics;
 
@@ -91,5 +92,21 @@ namespace WebApplication1.Models
             return this;
         }
 
+        public List<JobApplication> GetApplications(int PostingID)
+        {
+            List<JobApplication> Applications = new List<JobApplication>();
+
+            using (DataTable dt = this.DBHandler.Execute<DataTable>(
+                CRUD.READ,
+                "SELECT JobApplicationID FROM JobApplication WHERE JobPosting = " + PostingID))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    Applications.Add(new JobApplication(Int32.Parse(row["JobApplicationID"].ToString())));
+                }
+            }
+
+            return Applications;
+        }
     }
 }

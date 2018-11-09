@@ -13,20 +13,29 @@
 
 @if (Account != null)
 {
-    <h1>Account Profile</h1>
+    <div style="display: flex; align-items: center;">
+        <h1 style="margin-right: 25px;">Account Profile</h1>
+        <a href="/UserAccount/Edit/" style="padding: 5px 20px; background-color: #00917E; color: #fff; border-radius: 0.3em;">Edit Profile</a>
+    </div>
     <hr/>
-    <h3>@Account.Profile.Profile.FirstName @Account.Profile.Profile.MiddleName @Account.Profile.Profile.LastName</h3>
-    <p>
-        <b>Position:</b>
-        @if (Account.Type == AccountType.Applicant)
-        {
-            <text>Pending Applicant</text>
-        }
-        else
-        {
-            @(((Employee)Account.Profile).Position)
-        }
-    </p>
+    <div style="display: flex; align-items: center; margin-top: 20px;">
+        <img src="@Account.Image.Substring(1)" style="margin-right: 20px; height: 82px; width: auto; background-color: #000000; border-radius: 82px; padding: 5px;"/>
+        <div>
+            <h2 style="margin: 0;">@Account.Profile.Profile.FirstName @Account.Profile.Profile.MiddleName @Account.Profile.Profile.LastName</h2>
+            <p style="margin: 0;">
+                <b>Position:</b>
+                @if (Account.Type == AccountType.Applicant)
+                {
+                    <text>Pending Applicant</text>
+                }
+                else
+                {
+                    @(((Employee)Account.Profile).Position)
+                }
+            </p>
+        </div>
+    </div>
+    <br/>
     <div class="two-column-content">
         <div class="cluster">
             <p>
@@ -121,9 +130,9 @@
                 }
             </p>
         </div>
-        
+
         <div class="cluster">
-            
+
             <b>Personal Details:</b>
             <ul>
                 <li>
@@ -144,4 +153,30 @@
             </ul>
         </div>
     </div>
+    if (Account.Type == AccountType.Applicant)
+    {
+        {
+            <ul>
+                <li>Supporting Files</li>
+                <ul>
+                    @{
+                        for (var i = 1; i < ((Applicant)Account.Profile).SupportingFiles.Length; i++)
+                        {
+                            <li>
+                                <a href="@(((Applicant)Account.Profile).SupportingFiles[i].Substring(1))">
+                                    @(((Applicant)Account.Profile).SupportingFiles[i]);
+                                </a>
+                            </li>
+                        }
+                    }
+                    
+                    @if (((Applicant)Account.Profile).SupportingFiles.Length <= 1)
+                    {
+                        <li>None</li>
+                    }
+                </ul>
+            </ul>
+        }
+
+    }
 }

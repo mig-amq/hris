@@ -140,7 +140,7 @@ namespace WebApplication1.Models
                 this.Profile.Update(recursive);
             }
 
-            string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate, "
+            string set = "UPDATE Employee SET EmploymentDate = @EmploymentDate, Code = @Code, "
                          + "DateInactive = @DateInactive, Status = @Status, Department = @Department, Position = @Position"
                          + " OUTPUT INSERTED.EmployeeID WHERE EmployeeID = " + EmployeeID;
 
@@ -204,13 +204,10 @@ namespace WebApplication1.Models
             }
         }
 
-        public int GetNumLeaves(DateTime Date)
+        public int GetNumLeaves(DateTime Date, LeaveType Type = LeaveType.Paid)
         {
             string sql = "SELECT COUNT(*) AS Count FROM Leave WHERE Status = " + ((int)LeaveType.Paid) + " AND Employee = " + this.EmployeeID
-                         + " AND MONTH(StartDate) = "
-                         + Date.Month
-                         + " AND YEAR(StartDate) = "
-                         + Date.Year;
+                         + " AND YEAR(StartDate) = " + Date.Year + " AND Type = " + ((int)Type);
 
             using (DataTable dt = this.DBHandler.Execute<DataTable>(CRUD.READ, sql))
             {

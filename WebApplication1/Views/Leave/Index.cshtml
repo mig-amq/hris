@@ -17,9 +17,9 @@
             <div class="modal-content">
                 <h2 class="title">Apply for Leave</h2>
                 <form>
-                    <div class="cluster">
+                    <div class="cluster date">
                         <p class="sub-title">Start Date</p>
-                        <select id="month" name="start-month" class="full" required>
+                        <select id="month" name="start-month" class="full" data-min="@(DateTime.Now.Month - 1)" required>
                             <option value="">-- Select month --</option>
                             <!-- JS generated -->
                         </select>
@@ -27,14 +27,12 @@
                             <option value="">-- Select day --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="year" name="start-year" class="full" required>
+                        <select id="year" name="start-year" class="full" data-min="@DateTime.Now.Year" required>
                             <option value="">-- Select year --</option>
                             <!-- JS generated -->
                         </select>
-                    </div>
-                    <div class="cluster">
                         <p class="sub-title">End Date</p>
-                        <select id="month" name="end-month" class="full" required>
+                        <select id="month" name="end-month" class="full" data-min="@(DateTime.Now.Month - 1)" required>
                             <option value="">-- Select month --</option>
                             <!-- JS generated -->
                         </select>
@@ -42,7 +40,7 @@
                             <option value="">-- Select day --</option>
                             <!-- JS generated -->
                         </select>
-                        <select id="year" name="end-year" class="full" required>
+                        <select id="year" name="end-year" class="full" data-min="@DateTime.Now.Year" required>
                             <option value="">-- Select year --</option>
                             <!-- JS generated -->
                         </select>
@@ -61,7 +59,7 @@
                         }
                     </select>
 
-                    <textarea name="reason" placeholder="Reason/s" style="display: none;" required></textarea>
+                    <textarea name="reason" placeholder="Reason/s" required></textarea>
                     <button type="submit" class="full">Apply</button>
                     <div id="alert"></div>
                 </form>

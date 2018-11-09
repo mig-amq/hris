@@ -1,4 +1,5 @@
-﻿@using WebApplication1.Models
+﻿@using Calfurn.Models
+@using WebApplication1.Models
 @{
     ViewBag.Active = "AS";
     ViewBag.Title = "Applicant Status";
@@ -32,19 +33,6 @@
         </tr>
     </thead>
     <tbody id="data">
-        @if (Account != null && Account.Type == AccountType.Applicant)
-        {
-            <tr>
-                <td>@Account.Profile.Profile.ProfileID</td>
-                <td>@Account.Profile.Profile.FirstName @Account.Profile.Profile.MiddleName @Account.Profile.Profile.LastName</td>
-                <td>@Account.Profile.Profile.Contact</td>
-                <td>@(((Applicant)Account.Profile).DesiredPosition)</td>
-                <td>@(((Applicant)Account.Profile).Skills)</td>
-                <td>@(((Applicant)Account.Profile).Status == ApplicantStatus.Undecided ? "Pending" : ((Applicant)Account.Profile).Status == ApplicantStatus.Accepted ? "Accepted" : "Rejected")</td>
-
-            </tr>
-
-        }
     </tbody>
 </table>
 
@@ -57,6 +45,148 @@
     </div>
 </div>
 
+<script>
+    var curr = 1;
+    $(document).ready(() => {
+        search(1);
+    });
+
+    function loadScheduler(n) {
+        let btn = $("<button class='hallow modal-trigger'>Ready for Interview</button>");
+
+        btn.click((e) => { load(n) });
+
+        return btn;
+    }
+
+    function search(n) {
+        curr = n;
+        $.ajax({
+            url: "/Recruitment/GetApplications",
+            data: {
+                'entries': $("#show-entries").val() || 5,
+                'page': n || 1,
+                'query': $("#search").val().trim().replace(/\s+/, " "),
+                @if (Account != null && Account.Type == AccountType.Applicant)
+                {
+                    <text>
+                        'id': @(((Applicant)Account.Profile).ApplicantID)
+                    </text>
+                }
+            },
+            method: "GET",
+            success: (data) => {
+                $("#data").empty();
+                $("#pagination").empty();
+                if (data.pages > 0) {
+                    $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
+                        " - " +
+                        (((n - 1) * ($("#show-entries").val() || 5)) + data.applications.length));
+                } else {
+                    $("#result-count b").text("0 - 0");
+                }
+                $("#result-count span").text(data.total);
+
+                if (data.pages < curr && curr > 1) {
+                    curr--;
+                    search(curr);
+                }
+
+                for (var i = 1; i <= data.pages; i++) {
+                    $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
+                }
+
+                $("#pagination span[data-page=" + n + "]").addClass("active");
+                data.applications.forEach((o, i, a) => {
+                    console.log(o);
+                    let row = $("<tr></tr>");
+                    let id = $("<td></td>").text(o.JobApplicationID);
+                    let app = $("<td></td>").html("<a href='/Home/Dashboard/?id=" + o.Applicant.ApplicantID + "'>" + o.Applicant.Profile.FirstName + " " + o.Applicant.Profile.LastName + "</a>");
+                    let cont = $("<td></td>").html("<a href='tel:" + o.Applicant.Profile.Contact + "'>" + o.Applicant.Profile.Contact + "</a>");
+                    let des = $("<td></td>").text(o.JobPosting.JobTitle);
+                    let ski = $("<td></td>").text(o.Applicant.Skills);
+                    let sta = $("<td></td>");
+                    
+                    @if (Account.Type == AccountType.Applicant)
+                    {
+                        <text>
+                    sta.text(o.Status == @((int)JobApplicationStatus.Schedule) ? ("Scheduled Interview: " + (new Date(o.Schedule.TimeStart)).toLocaleString()) : o.Status == @((int)JobApplicationStatus.Undecided) ? "Pending" : o.Status == @((int)JobApplicationStatus.Unscheduled) ? "Unscheduled" : "Rejected");                   
+                        </text>
+                    } else if (((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
+                    {
+                        <text>
+                            if (o.Status == @((int)JobApplicationStatus.Undecided)) {
+                                // approve/reject for schedule
+                                let sel = $("<select><option value=''>-- Approve/Reject --</option> <option value='@((int)JobApplicationStatus.Accepted)'>Accept</option><option value='@((int)JobApplicationStatus.Rejected)'>Reject</option></select>")
+                                sel.on("change", (e) => {
+                                    $.ajax({
+                                        url: "/Recruitment/UpdateStatus",
+                                        method: "POST",
+                                        data: {
+                                            "id": o.JobApplicationID,
+                                            "status": (sel.val() == @((int)JobApplicationStatus.Rejected) ? sel.val() : @((int)JobApplicationStatus.Unscheduled))
+                                        },
+                                        success: (data) => {
+                                            if (data.error)
+                                                alert(data.message);
+                                            else if (data.message == @((int)JobApplicationStatus.Rejected))
+                                                sta.html("Rejected");
+                                            else
+                                                sta.html(loadScheduler(o.JobApplicationID));
+                                        }
+                                    })
+                                });
+
+                                sta.append(sel);
+                            } else if (o.Status == @((int)JobApplicationStatus.Unscheduled)) {
+                                // schedule
+                                sta.append(loadScheduler(o.JobApplicationID));
+                            } else if (o.Status == @((int)JobApplicationStatus.Rejected)) {
+                                sta.text("Rejected");
+                            }  else {
+                                if (o.Schedule) {
+                                    let now = Date.now();
+                                    let sched = Date.parse(o.Schedule.TimeStart);
+
+                                    if (now > sched) {
+                                        // apprive/reject for employment
+                                        let sel = $(
+                                            "<select><option value=''>-- Approve/Reject --</option> <option value='@((int)JobApplicationStatus.Accepted)'>Accept</option><option value='@((int)JobApplicationStatus.Rejected)'>Reject</option></select>")
+
+                                        sel.on("change", (e) => {
+                                            $.ajax({
+                                                url: "/Recruitment/UpdateStatus",
+                                                method: "POST",
+                                                data: {
+                                                    "id": o.JobApplicationID,
+                                                    "status": sel.val()
+                                                },
+                                                success: (data) => {
+                                                    if (data.error)
+                                                        alert(data.message);
+                                                    else if (data.message == @((int)JobApplicationStatus.Rejected))
+                                                        sta.html("Rejected");
+                                                    else
+                                                        search(curr);
+                                                }
+                                            })
+                                        })
+
+                                        sta.append(sel);
+                                    } else {
+                                        sta.text("Scheduled Interview: " + (new Date(o.Schedule.TimeStart)).toLocaleString());
+                                    }
+                                }
+                            }
+                        </text>
+                    }
+                    row.append(id).append(app).append(cont).append(des).append(ski).append(sta);
+                    $("#data").append(row);
+                })
+            }
+        })
+    }
+</script>
 @if (Account != null && Account.Type != AccountType.Applicant && ((Employee)Account.Profile).Department.Type == DepartmentType.HumanResources)
 {
 
@@ -111,16 +241,11 @@
                     </div>
                 </div>
                 <button type="submit">Save</button>
-                <div id="alert" class="full"></div>
             </form>
+            <div id="alert" class="full"></div>
         </div>
     </div>
     <script>
-        var curr = 1;
-        $(document).ready(() => {
-            search(1);
-        });
-
         function load(n) {
             $("#alert").removeAttr("class");
             $.ajax({
@@ -190,7 +315,6 @@
                                     } else {
                                         $("#alert").addClass("success");
                                     }
-
                                     
                                     $("#alert").text(data2.message);
                                 }
@@ -198,100 +322,6 @@
 
                         });
                     }
-                }
-            })
-        }
-
-        function update(n, elem) {
-            if ($(elem).val() != 1) {
-                $.ajax({
-                    url: "/Recruitment/UpdateApplicant",
-                    data: {
-                        id: n,
-                        s: $(elem).val()
-                    },
-                    method: "POST",
-                    success: (data) => {
-                        if (!data.error) {
-                            let btn = $("<button class='hallow modal-trigger'>Schedule</button>");
-                            btn.click(() => load(n));
-
-                            $(elem).parent().html(btn);
-                        } else {
-                            alert(data.message);
-                        }
-                    }
-                })
-            }
-        }
-
-        function search(n) {
-            curr = n;
-            $.ajax({
-                url: "/Recruitment/GetApplicants",
-                data: {
-                    'entries': $("#show-entries").val() || 5,
-                    'page': n || 1,
-                    'query': $("#search").val().trim().replace(/\s+/, " "),
-                },
-                method: "GET",
-                success: (data) => {
-                    $("#data").empty();
-                    $("#pagination").empty();
-                    if (data.pages > 0) {
-                        $("#result-count b").text(((n - 1) * ($("#show-entries").val() || 5) + 1) +
-                            " - " +
-                            (((n - 1) * ($("#show-entries").val() || 5)) + data.applicants.length));
-                    } else {
-                        $("#result-count b").text("0 - 0");
-                    }
-                    $("#result-count span").text(data.total);
-
-                    if (data.pages < curr && curr > 1) {
-                        curr--;
-                        search(curr);
-                    }
-
-                    for (var i = 1; i <= data.pages; i++) {
-                        $("#pagination").append("<span href='#' data-page='" + i + "' onclick=event.preventDefault();search(" + i + ");> " + i + "</span> ");
-                    }
-
-                    $("#pagination span[data-page=" + n + "]").addClass("active");
-                    console.log(data);
-                    data.applicants.forEach((o, i, a) => {
-                        let row = $("<tr></tr>");
-                        let id = $("<td></td>").text(o.ApplicantID);
-                        let name = $("<td></td>").html("<a title='Click here to view applicant profile...' href='/Home/Dashboard?id=" + o.Profile.ProfileID + "' style='color: #2B7F74; font-weight: bold;'>" + o.Profile.FirstName + " " + o.Profile.MiddleName + " " + o.Profile.LastName + "</a>");
-                        let contact = $("<td></td>").text(o.Profile.Contact);
-                        let pos = $("<td></td>").text(o.DesiredPosition);
-                        let skills = $("<td></td>").text(o.Skills);
-                        let stat = $("<td></td>");
-
-                        if (o.Status == 1) {
-                            let sel = $("<select onchange='update(" +
-                                o.ApplicantID +
-                                ", this)'><option value=1 disabled selected>Change Status</option><option value=2>Approve</option><option value=3>Reject</option></select>");
-
-                            stat.append(sel);
-                        } else {
-                            if (o.Status == 2) {
-                                let btn = $("<button class='hallow modal-trigger'>Schedule</button>");
-                                btn.click(() => load(o.ApplicantID));
-
-                                stat.html(btn);
-                            } else {
-                                stat.text("Rejected");
-                            }
-                        }
-
-                        row.append(id);
-                        row.append(name);
-                        row.append(contact);
-                        row.append(pos);
-                        row.append(skills);
-                        row.append(stat);
-                        $("#data").append(row);
-                    });
                 }
             })
         }
