@@ -1,0 +1,322 @@
+﻿
+@{
+    ViewBag.Title = " Profile Update Requests";
+    ViewBag.Active = "PUR";
+}
+
+<div id="alert"></div>
+<br/>
+<form>
+<div class="two-column-content" >
+        <div class="cluster">
+            <select id="employees" class="full" required>
+                <option value="" disabled="" selected>-- Select Employee --</option>
+            </select>
+        </div>
+
+        <div class="cluster">
+            <button style="display: block;" class="full">Approve Changes</button>
+        </div>
+</div>
+</form>
+
+<div class="two-column-content" id ="showcase" style="display: none">
+    <div class="cluster" id="current">
+        <div style="display: flex; align-items: center; margin-top: 20px;">
+            <div>
+                <h2 style="margin: 0;" id="name"></h2>
+            </div>
+        </div>
+
+        <div>
+            <p>
+                <b>Employment History:</b>
+                <ul id="emh"></ul>
+            </p>
+
+            <p>
+                <b>Educational Background:</b>
+                <ul id="edu"></ul>
+
+            </p>
+        </div>
+
+        <div>
+
+            <b>Personal Details:</b>
+            <ul>
+                <li>
+                    <b>Address:</b>
+                    <span id="address"></span>
+                </li>
+                <li>
+                    <b>Contact Details:</b>
+                    <ul>
+                        <li id="contact">
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="cluster" id="new">
+        <div style="display: flex; align-items: center; margin-top: 20px;">
+            <div>
+                <h2 style="margin: 0;" id="name"></h2>
+            </div>
+        </div>
+
+        <div>
+            <p>
+                <b>Employment History:</b>
+                <ul id="emh"></ul>
+            </p>
+
+            <p>
+                <b>Educational Background:</b>
+                <ul id="edu"></ul>
+            </p>
+        </div>
+
+        <div>
+
+            <b>Personal Details:</b>
+            <ul>
+                <li>
+                    <b>Address:</b>
+                    <span id="address"></span>
+                </li>
+                <li>
+                    <b>Contact Details:</b>
+                    <ul>
+                        <li id="contact">
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(() => {
+        const arr = {};
+
+        $.ajax({
+            url: "/UserAccount/ProfileRequests",
+            method: "GET",
+            success: (data) => {
+                data.content.forEach((o, i, a) => {
+                    $("#employees").append("<option value='" +
+                        o.CurrentProfile.ProfileID +
+                        "'>" +
+                        o.CurrentProfile.FirstName +
+                        " " +
+                        o.CurrentProfile.MiddleName +
+                        " " +
+                        o.CurrentProfile.LastName +
+                        "</option>");
+
+                    arr[o.CurrentProfile.ProfileID] = o;
+
+                    $("form").attr("data-id", o.ProfileRequestID);
+                })
+            }
+        });
+
+        $("form").submit((e) => {
+            e.preventDefault();
+            $("#alert").removeAttr("class");
+
+            $.ajax({
+                url: "/UserAccount/UpdateProfile",
+                method: "POST",
+                data: {
+                    id: $("form").attr('data-id')
+                }, success: (data) => {
+                    if (data.error)
+                        $("#alert").addClass("error");
+                    else {
+                        $("button").attr("disabled", "disabled");
+                        $("#showcase").css("display", "none");
+                        $("#alert").addClass("success");
+                    }
+
+                    $("#alert").html(data.message);
+                }
+            })
+        })
+
+        $("#employees").on("change", (e) => {
+            let o = arr[$(e.target).val()];
+            $("#showcase").css("display", "flex");
+
+            $("#current #name").text(
+                o.CurrentProfile.FirstName +
+                " " +
+                o.CurrentProfile.MiddleName +
+                " " +
+                o.CurrentProfile.LastName
+            );
+            
+            o.CurrentProfile.EmploymentHistories.forEach((o0, i, a) => {
+                let li = $("<li><b>" + o0.CompanyName + "</b><ul><li>" + o0.Position + "</li><li> " + o0.StartDate + " to " + o0.EndDate + "</li></li>");
+
+                $("#current #emh").append(li);
+            })
+
+            $("#current #address").text(o.CurrentProfile.HouseNo +
+                ", " +
+                o.CurrentProfile.Street +
+                ", " +
+                o.CurrentProfile.City +
+                ", " +
+                o.CurrentProfile.Province);
+
+            $("#current #contact").text(o.CurrentProfile.Contact);
+
+            $("#new #name").text(
+                o.NewProfile.FirstName +
+                " " +
+                o.NewProfile.MiddleName +
+                " " +
+                o.NewProfile.LastName
+            );
+            o.NewProfile.EmploymentHistories.forEach((o0, i, a) => {
+                let li = $("<li><b>" + o0.CompanyName + "</b><ul><li>" + o0.Position + "</li><li> " + o0.StartDate + " to " + o0.EndDate + "</li></li>");
+
+                $("#new #emh").append(li);
+            })
+
+            $("#new #address").text(o.NewProfile.HouseNo +
+                ", " +
+                o.NewProfile.Street +
+                ", " +
+                o.NewProfile.City +
+                ", " +
+                o.NewProfile.Province);
+
+            $("#new #contact").text(o.NewProfile.Contact);
+
+            var chasedu = false;
+            if (o.CurrentProfile.Education != null) {
+                if (o.CurrentProfile.Education.Elementary.Name != "") {
+                    var li = $("<li>Elementary School:<ul> <li>" +
+                        o.CurrentProfile.Education.Elementary.Name +
+                        "</li><li>" +
+                        o.CurrentProfile.Education.Elementary.Start +
+                        " - " +
+                        o.CurrentProfile.Education.Elementary.End +
+                        "</li></ul></li>");
+
+                    $("#current #edu").append(li);
+                    chasedu = true;
+                }
+
+                if (o.CurrentProfile.Education.HighSchool.Name != "") {
+                    var li = $("<li>High School:<ul> <li>" +
+                        o.CurrentProfile.Education.HighSchool.Name +
+                        "</li><li>" +
+                        o.CurrentProfile.Education.HighSchool.Start +
+                        " - " +
+                        o.CurrentProfile.Education.HighSchool.End +
+                        "</li></ul></li>");
+
+                    $("#current #edu").append(li);
+                    chasedu = true;
+                }
+
+                if (o.CurrentProfile.Education.College.Name != "") {
+                    var li = $("<li>College:<ul> <li>" +
+                        o.CurrentProfile.Education.College.Name +
+                        "</li><li>" +
+                        o.CurrentProfile.Education.College.Start +
+                        " - " +
+                        o.CurrentProfile.Education.College.End +
+                        "</li></ul></li>");
+
+                    $("#current #edu").append(li);
+                    chasedu = true;
+                }
+
+                if (o.CurrentProfile.Education.PostGraduate.Name != "") {
+                    var li = $("<li>Post Graduate:<ul> <li>" +
+                        o.CurrentProfile.PostGraduate.Elementary.Name +
+                        "</li><li>" +
+                        o.CurrentProfile.PostGraduate.Elementary.Start +
+                        " - " +
+                        o.CurrentProfile.PostGraduate.Elementary.End +
+                        "</li></ul></li>");
+
+                    $("#current #edu").append(li);
+                    chasedu = true;
+                }
+            }
+
+            if (!chasedu) {
+                $("#current #edu").append("<li>None</li>");
+            }
+
+            var nhasedu = false;
+            if (o.NewProfile.Education != null) {
+                if (o.NewProfile.Education.Elementary.Name != "") {
+                    var li = $("<li>Elementary School:<ul> <li>" +
+                        o.NewProfile.Education.Elementary.Name +
+                        "</li><li>" +
+                        o.NewProfile.Education.Elementary.Start +
+                        " - " +
+                        o.NewProfile.Education.Elementary.End +
+                        "</li></ul></li>");
+
+                    $("#new #edu").append(li);
+                    nhasedu = true;
+                }
+
+                if (o.NewProfile.Education.HighSchool.Name != "") {
+                    var li = $("<li>High School:<ul> <li>" +
+                        o.NewProfile.Education.HighSchool.Name +
+                        "</li><li>" +
+                        o.NewProfile.Education.HighSchool.Start +
+                        " - " +
+                        o.NewProfile.Education.HighSchool.End +
+                        "</li></ul></li>");
+
+                    $("#new #edu").append(li);
+                    nhasedu = true;
+                }
+
+                if (o.NewProfile.Education.College.Name != "") {
+                    var li = $("<li>College:<ul> <li>" +
+                        o.NewProfile.Education.College.Name +
+                        "</li><li>" +
+                        o.NewProfile.Education.College.Start +
+                        " - " +
+                        o.NewProfile.Education.College.End +
+                        "</li></ul></li>");
+
+                    $("#new #edu").append(li);
+                    nhasedu = true;
+                }
+
+                if (o.NewProfile.PostGraduate.Name != "") {
+                    var li = $("<li>Post Graduate:<ul> <li>" +
+                        o.NewProfile.PostGraduate.Elementary.Name +
+                        "</li><li>" +
+                        o.NewProfile.PostGraduate.Elementary.Start +
+                        " - " +
+                        o.NewProfile.PostGraduate.Elementary.End +
+                        "</li></ul></li>");
+
+                    $("#new #edu").append(li);
+                    nhasedu = true;
+                }
+            }
+
+            if (!nhasedu) {
+                $("#new #edu").append("<li>None</li>");
+            }
+        });
+    })
+</script>

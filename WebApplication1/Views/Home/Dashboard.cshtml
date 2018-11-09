@@ -15,7 +15,10 @@
 {
     <div style="display: flex; align-items: center;">
         <h1 style="margin-right: 25px;">Account Profile</h1>
-        <a href="/UserAccount/Edit/" style="padding: 5px 20px; background-color: #00917E; color: #fff; border-radius: 0.3em;">Edit Profile</a>
+        @if (Account.Type != AccountType.Applicant)
+        {
+            <a href="/UserAccount/Edit/" style="padding: 5px 20px; background-color: #00917E; color: #fff; border-radius: 0.3em;">Edit Profile</a>
+        }
     </div>
     <hr/>
     <div style="display: flex; align-items: center; margin-top: 20px;">
@@ -144,9 +147,6 @@
                     <ul>
                         <li>
                             @Account.Profile.Profile.Contact
-                        </li>
-                        <li>
-                            @Account.Email
                         </li>
                     </ul>
                 </li>

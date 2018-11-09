@@ -48,7 +48,15 @@ namespace WebApplication1.Controllers
 
         public Account GetAccount()
         {
-            return Session["user"] != null ? (Account)Session["user"] : null;
+            try
+            {
+                Account ac = new Account().FindById(((Account)Session["user"]).AccountID, true);
+                return ac;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public int GetNotificationNum()

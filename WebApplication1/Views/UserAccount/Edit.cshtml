@@ -1,14 +1,16 @@
 ﻿@using WebApplication1.Models
 @{
-    ViewBag.Title = " Edit Profile";
-    ViewBag.Active = "HOME";
+                /**/
 
-    Account Account = Session["user"] != null ? ((Account)Session["user"]) : null;
+                ViewBag.Title = " Edit Profile";
+                ViewBag.Active = "HOME";
 
-    if (ViewBag.ViewAccount != null)
-    {
-        Account = ViewBag.ViewAccount;
-    }
+                Account Account = Session["user"] != null ? ((Account)Session["user"]) : null;
+
+                if (ViewBag.ViewAccount != null)
+                {
+                    Account = ViewBag.ViewAccount;
+                }
 }
 
 @if (Account != null)
@@ -21,8 +23,8 @@
         <div class="two-column-content">
             <div class="cluster">
                 <p class="sub-title">Account</p>
-                <input type="password" name="password" placeholder="Employee Password" class="full" required value="@Account.Password"/>
-                <input type="email" name="email" placeholder="Employee Email" class="full" required value="@Account.Email"/>
+                <input type="password" name="password" placeholder="Employee Password" class="full" required value="@Account.Password" />
+                <input type="email" name="email" placeholder="Employee Email" class="full" required value="@Account.Email" />
             </div>
             <div class="cluster">
                 <p class="sub-title">Profile Picture:</p>
@@ -33,9 +35,9 @@
         <p class="sub-title">Personal Details</p>
         <div class="two-column-content">
             <div class="cluster">
-                <input type="text" name="firstname" placeholder="First Name" class="full" required value="@Account.Profile.Profile.FirstName"/>
-                <input type="text" name="lastname" placeholder="Last Name" class="full" required value="@Account.Profile.Profile.LastName"/>
-                <input type="text" name="middlename" placeholder="Middle Name" class="full" @Account.Profile.Profile.MiddleName/>
+                <input type="text" name="firstname" placeholder="First Name" class="full" required value="@Account.Profile.Profile.FirstName" />
+                <input type="text" name="lastname" placeholder="Last Name" class="full" required value="@Account.Profile.Profile.LastName" />
+                <input type="text" name="middlename" placeholder="Middle Name" class="full" value="@Account.Profile.Profile.MiddleName" />
                 <select name="sex" class="full" required>
                     <option value="">-- Select Sex --</option>
                     <option value="1">Male</option>
@@ -67,19 +69,19 @@
 
                 <p class="sub-title">Address</p>
 
-                <input type="text" name="house" placeholder="House Number" class="full" required value="@Account.Profile.Profile.HouseNo"/>
-                <input type="text" name="street" placeholder="Street" class="full" required value="@Account.Profile.Profile.Street"/>
-                <input type="text" name="city" placeholder="City" class="full" required value="@Account.Profile.Profile.City"/>
-                <input type="text" name="province" placeholder="Province" class="full" required value="@Account.Profile.Profile.Province"/>
+                <input type="text" name="house" placeholder="House Number" class="full" required value="@Account.Profile.Profile.HouseNo" />
+                <input type="text" name="street" placeholder="Street" class="full" required value="@Account.Profile.Profile.Street" />
+                <input type="text" name="city" placeholder="City" class="full" required value="@Account.Profile.Profile.City" />
+                <input type="text" name="province" placeholder="Province" class="full" required value="@Account.Profile.Profile.Province" />
             </div>
             <div class="cluster">
 
-                <input type="text" name="contact-number" placeholder="Contact Number" class="full" required value="@Account.Profile.Profile.Contact"/>
+                <input type="text" name="contact-number" placeholder="Contact Number" class="full" required value="@Account.Profile.Profile.Contact" />
 
                 <p class="sub-title">In case of emergency</p>
-                <input type="text" name="contact-person" placeholder="Contact Person" class="full" required value="@Account.Profile.Profile.ContactPerson"/>
-                <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" required value="@Account.Profile.Profile.CPersonNo"/>
-                <input type="text" name="relationship" placeholder="Relationship" class="full" required value="@Account.Profile.Profile.CPersonRel"/>
+                <input type="text" name="contact-person" placeholder="Contact Person" class="full" required value="@Account.Profile.Profile.ContactPerson" />
+                <input type="text" name="contact-number-emergency" placeholder="Contact Number" class="full" required value="@Account.Profile.Profile.CPersonNo" />
+                <input type="text" name="relationship" placeholder="Relationship" class="full" required value="@Account.Profile.Profile.CPersonRel" />
             </div>
         </div>
         <hr />
@@ -89,19 +91,19 @@
                 <img src="@Url.Content("~/Content/assets/icons/add.svg")" />
                 Add History
             </button>
-            <br/>
-            @if (Account.Profile.Profile.EmploymentHistories.Count > 0)
+            <br />
+            @if (Account.Profile.Profile.EmploymentHistories != null && Account.Profile.Profile.EmploymentHistories.Count > 0)
             {
                 foreach (EmploymentHistory emp in Account.Profile.Profile.EmploymentHistories)
                 {
                     <text>
                         <div class='two-column-content' data-container='employee-history'>
                             <div class='cluster'>
-                                <input type='text' name='company' placeholder='Company' class='full' value="@emp.CompanyName"/>
-                                <input type='text' name='address' placeholder='Address' class='full' value="@emp.Address"/>
-                                <input type='text' name='position' placeholder='Position' class='full' value="@emp.Position"/>
-                                <input type='text' name='cperson' placeholder='Contact Person' class='full' value="@emp.ContactName"/>
-                                <input type='phone' name='number' placeholder='Contact Number' class='full' value="@emp.ContactNo"/>
+                                <input type='text' name='company' placeholder='Company' class='full' value="@emp.CompanyName" />
+                                <input type='text' name='address' placeholder='Address' class='full' value="@emp.Address" />
+                                <input type='text' name='position' placeholder='Position' class='full' value="@emp.Position" />
+                                <input type='text' name='cperson' placeholder='Contact Person' class='full' value="@emp.ContactName" />
+                                <input type='phone' name='number' placeholder='Contact Number' class='full' value="@emp.ContactNo" />
                                 <textarea placeholder="Reason for leaving" name="leave" class="full">@emp.LeavingReason</textarea>
                             </div>
                             <div class='cluster date'>
@@ -117,8 +119,8 @@
         <div class="two-column-content">
             <div class="cluster">
                 <p class="sub-title">Elementary</p>
-                <input type="text" name="elementary-name" placeholder="School Name" class="full" value="@Account.Profile.Profile.Education.Elementary.Name"//>
-                <input type="text" name="elementary-address" placeholder="Address" class="full" value="@Account.Profile.Profile.Education.Elementary.Address"//>
+                <input type="text" name="elementary-name" placeholder="School Name" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.Elementary.Name : "")"//>
+                <input type="text" name="elementary-address" placeholder="Address" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.Elementary.Address : "")"//>
                 <div class="date">
                     <select id="year" name="elementary-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
@@ -131,8 +133,8 @@
                 </div>
 
                 <p class="sub-title">High School</p>
-                <input type="text" name="hs-name" placeholder="School Name" class="full" value="@Account.Profile.Profile.Education.HighSchool.Name"/>
-                <input type="text" name="hs-address" placeholder="Address" class="full" value="@Account.Profile.Profile.Education.HighSchool.Address"//>
+                <input type="text" name="hs-name" placeholder="School Name" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.HighSchool.Name : "")" />
+                <input type="text" name="hs-address" placeholder="Address" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.HighSchool.Address : "")"//>
                 <div class="date">
                     <select id="year" name="hs-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
@@ -146,8 +148,8 @@
             </div>
             <div class="cluster">
                 <p class="sub-title">College</p>
-                <input type="text" name="college-name" placeholder="School Name" class="full" value="@Account.Profile.Profile.Education.College.Name"//>
-                <input type="text" name="college-address" placeholder="Address" class="full" value="@Account.Profile.Profile.Education.College.Address"//>
+                <input type="text" name="college-name" placeholder="School Name" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.College.Name : "")"//>
+                <input type="text" name="college-address" placeholder="Address" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.College.Address : "")"//>
                 <div class="date">
                     <select id="year" name="college-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
@@ -160,8 +162,8 @@
                 </div>
 
                 <p class="sub-title">Post Graduate</p>
-                <input type="text" name="post-name" placeholder="School Name" class="full" value="@Account.Profile.Profile.Education.PostGraduate.Name"/>
-                <input type="text" name="post-address" placeholder="Address" class="full" value="@Account.Profile.Profile.Education.PostGraduate.Name"/>
+                <input type="text" name="post-name" placeholder="School Name" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.PostGraduate.Name : "")" />
+                <input type="text" name="post-address" placeholder="Address" class="full" value="@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.PostGraduate.Name : "")" />
                 <div class="date">
                     <select id="year" name="post-start-year" class="full">
                         <option value="-1">-- Start Year --</option>
@@ -179,23 +181,23 @@
     </form>
     <script>
         $(document).ready(() => {
-            $("select[name=post-start-year]").val(@Account.Profile.Profile.Education.PostGraduate.Start);
-            $("select[name=post-end-year]").val(@Account.Profile.Profile.Education.PostGraduate.End);
+            $("select[name=post-start-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.PostGraduate.Start : ""));
+            $("select[name=post-end-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.PostGraduate.End : ""));
 
-            $("select[name=college-start-year]").val(@Account.Profile.Profile.Education.College.Start);
-            $("select[name=college-end-year]").val(@Account.Profile.Profile.Education.College.End);
+            $("select[name=college-start-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.College.Start : ""));
+            $("select[name=college-end-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.College.End : ""));
 
-            $("select[name=hs-start-year]").val(@Account.Profile.Profile.Education.HighSchool.Start);
-            $("select[name=hs-end-year]").val(@Account.Profile.Profile.Education.HighSchool.End);
-        
-            $("select[name=elementary-start-year]").val(@Account.Profile.Profile.Education.Elementary.Start);
-            $("select[name=elementary-end-year]").val(@Account.Profile.Profile.Education.Elementary.End);
-            
+            $("select[name=hs-start-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.HighSchool.Start : ""));
+            $("select[name=hs-end-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.HighSchool.End : ""));
+
+            $("select[name=elementary-start-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.Elementary.Start : ""));
+            $("select[name=elementary-end-year]").val(@(Account.Profile.Profile.Education != null ? @Account.Profile.Profile.Education.Elementary.End : ""));
+
             $("select[name=birth-year]").val(@Account.Profile.Profile.BirthDate.Year);
             $("select[name=birth-day]").val(@Account.Profile.Profile.BirthDate.Day);
             $("select[name=birth-month]").val(@Account.Profile.Profile.BirthDate.Month);
 
-            
+
             $("select[name=sex]").val(@Account.Profile.Profile.Sex);
             $("select[name=civil-status]").val(@Account.Profile.Profile.CivilStatus);
         })

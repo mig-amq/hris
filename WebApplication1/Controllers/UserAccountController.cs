@@ -13,6 +13,7 @@ namespace WebApplication1.Controllers
 
     using WebApplication1.Models;
     using WebApplication1.Models.Supers;
+    using System.Data;
 
     public class UserAccountController : GlobalController
     {
@@ -33,6 +34,16 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public ActionResult ViewEdits()
+        {
+            if (!this.IsLoggedIn())
+                return this.RedirectToAction("Index", "Home");
+
+            if (this.GetAccount().Type == AccountType.Applicant || ((Employee) this.GetAccount().Profile).Department.Type != DepartmentType.HumanResources)
+                return this.RedirectToAction("Index", "Home");
+
+            return View();
+        }
         // POST: UserAccount
         [HttpPost]
         public ContentResult LogIn(FormCollection form)
@@ -539,6 +550,82 @@ namespace WebApplication1.Controllers
             {
                 json["error"] = true;
                 json["message"] = "You are not authorized to continue";
+            }
+
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpGet]
+        public ContentResult ProfileRequests()
+        {
+            JObject json = new JObject();
+            DBHandler db = new DBHandler();
+            List<ProfileRequest> pr = new List<ProfileRequest>();
+
+            using (DataTable dt = db.Execute<DataTable>(CRUD.READ, "SELECT * FROM ProfileRequest"))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    try
+                    {
+                        pr.Add(new ProfileRequest(Int32.Parse(row["ProfileRequestID"].ToString()), byPrimary: true));
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            }
+
+            json["content"] = JArray.FromObject(pr);
+            return Content(json.ToString(), "application/json");
+        }
+
+        [HttpPost]
+        public ContentResult UpdateProfile(FormCollection form)
+        {
+            JObject json = new JObject();
+            json["error"] = false;
+            json["message"] = "";
+
+            if (this.IsLoggedIn())
+            {
+                if (this.GetAccount().Type != AccountType.Applicant
+                    && ((Employee)this.GetAccount().Profile).Department.Type == DepartmentType.HumanResources)
+                {
+                    if (form.GetValue("id") != null)
+                    {
+                        try
+                        {
+                            ProfileRequest pr = new ProfileRequest(Int32.Parse(form.GetValue("id").AttemptedValue), true);
+
+                            int temp = pr.NewProfile.ProfileID;
+                            pr.NewProfile.ProfileID = pr.CurrentProfile.ProfileID;
+                            pr.NewProfile.Update(false);
+
+                            pr.NewProfile.ProfileID = temp;
+                            pr.Delete();
+                            json["message"] = "Successfuly approved profile request...";
+                        }
+                        catch (Exception e)
+                        {
+                            json["error"] = true;
+                            json["message"] = e.Message;
+                        }
+                    } else
+                    {
+                        json["error"] = true;
+                        json["message"] = "Form is incomplete";
+                    }
+                } else
+                {
+                    json["error"] = true;
+                    json["message"] = "You are not authorized to continue";
+                }
+            }
+            else
+            {
+                json["error"] = true;
+                json["message"] = "You must be logged in to continue";
             }
 
             return Content(json.ToString(), "application/json");
