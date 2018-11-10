@@ -9,6 +9,10 @@ function clearModalForm() {
     }
 }
 
+$(document).on("submit", "form", () => {
+    $("#alert").removeAttr("class");
+})
+
 $(document).on('click', '.modal-trigger', () => {
     $("#modal").show();
 })
