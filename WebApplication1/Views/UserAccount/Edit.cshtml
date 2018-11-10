@@ -198,8 +198,8 @@
             $("select[name=birth-month]").val(@Account.Profile.Profile.BirthDate.Month);
 
 
-            $("select[name=sex]").val(@Account.Profile.Profile.Sex);
-            $("select[name=civil-status]").val(@Account.Profile.Profile.CivilStatus);
+            $("select[name=sex]").val(@((int)Account.Profile.Profile.Sex));
+            $("select[name=civil-status]").val(@((int)Account.Profile.Profile.CivilStatus));
         })
     </script>
     <script>

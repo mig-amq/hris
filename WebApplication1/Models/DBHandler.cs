@@ -100,6 +100,7 @@ namespace WebApplication1.Models
             }
             catch (Exception e)
             {
+                Console.WriteLine(sql);
                 Console.WriteLine(e.Message);
                 throw e;
             }

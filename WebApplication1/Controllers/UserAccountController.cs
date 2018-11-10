@@ -214,6 +214,7 @@ namespace WebApplication1.Controllers
                     Account ac = new Account();
                     ac.Profile = new Applicant();
 
+                    bool hasProfilePic = false;
                     if (!ac.FindByUsername(form.GetValue("username").AttemptedValue).Exists)
                     {
 
@@ -242,6 +243,8 @@ namespace WebApplication1.Controllers
                                 var path = Path.Combine(HttpContext.Server.MapPath("~/Content/img/uploads"), filename);
                                 file.SaveAs(path);
                                 ac.Image = Path.Combine("~/Content/img/uploads", filename);
+
+                                hasProfilePic = true;
                             }
                             else
                             {
@@ -250,10 +253,14 @@ namespace WebApplication1.Controllers
                                     ac.Username + "-" + filename);
                                 file.SaveAs(path);
 
-                                support.Add(path);
+                                support.Add(Path.Combine("~/Content/support/uploads", ac.Username + "-" + filename));
                             }
                         }
 
+                        if (!hasProfilePic)
+                        {
+                            ac.Image = Path.Combine("~/Content/img/uploads", "default.png");
+                        }
                         ((Applicant)ac.Profile).SupportingFiles = support.ToArray();
 
                         if (Request.Files.Count <= 0)
@@ -603,6 +610,7 @@ namespace WebApplication1.Controllers
                             pr.NewProfile.Update(false);
 
                             pr.NewProfile.ProfileID = temp;
+                            pr.NewProfile.Delete();
                             pr.Delete();
                             json["message"] = "Successfuly approved profile request...";
                         }

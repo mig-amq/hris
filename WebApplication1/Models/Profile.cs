@@ -160,7 +160,7 @@ namespace WebApplication1.Models
             if (recursive)
                 if (this.Education != null) this.Education.Update(recursive);
 
-            string set = "UPDATE Profile SET FirstName = @FirstName, MiddleName = @MiddleName, "
+            string set = "UPDATE Profile SET Education = @Education, FirstName = @FirstName, MiddleName = @MiddleName, "
                          + "LastName = @LastName, HouseNo = @HouseNo, Street = @Street, "
                          + "City = @City, Province = @Province, Sex = @Sex, CivilStatus = @CivilStatus, "
                          + "BirthDate = @BirthDate, Contact = @Contact, ContactPerson = @ContactPerson, "
@@ -185,6 +185,14 @@ namespace WebApplication1.Models
             param.Add("@CPersonNo", this.CPersonNo);
             param.Add("@CPersonRel", this.CPersonRel);
 
+            if (this.Education != null)
+            {
+                param.Add("@Education", this.Education.EducationID);
+            }
+            else
+            {
+                param.Add("@Education", DBNull.Value);
+            }
             this.DBHandler.Execute<Int32>(CRUD.UPDATE, set, param);
             return this;
         }

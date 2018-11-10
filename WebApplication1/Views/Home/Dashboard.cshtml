@@ -160,11 +160,15 @@
                 <li>Supporting Files</li>
                 <ul>
                     @{
-                        for (var i = 1; i < ((Applicant)Account.Profile).SupportingFiles.Length; i++)
+                        for (var i = 0; i < ((Applicant)Account.Profile).SupportingFiles.Length; i++)
                         {
                             <li>
                                 <a href="@(((Applicant)Account.Profile).SupportingFiles[i].Substring(1))">
-                                    @(((Applicant)Account.Profile).SupportingFiles[i]);
+                                    @if ((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") != -1)
+                                    {
+                                        
+                                        @(((Applicant)Account.Profile).SupportingFiles[i].Substring((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") + 1));
+                                    }
                                 </a>
                             </li>
                         }
