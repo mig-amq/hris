@@ -160,17 +160,20 @@
                 <li>Supporting Files</li>
                 <ul>
                     @{
-                        for (var i = 0; i < ((Applicant)Account.Profile).SupportingFiles.Length; i++)
+                        if (((Applicant)Account.Profile).SupportingFiles.Length > 0 && !String.IsNullOrEmpty(((Applicant)Account.Profile).SupportingFiles[0]))
                         {
-                            <li>
-                                <a href="@(((Applicant)Account.Profile).SupportingFiles[i].Substring(1))">
-                                    @if ((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") != -1)
-                                    {
+                            for (var i = 0; i < ((Applicant)Account.Profile).SupportingFiles.Length; i++)
+                            {
+                                <li>
+                                    <a href="@(((Applicant)Account.Profile).SupportingFiles[i].Substring(1))">
+                                        @if ((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") != -1)
+                                        {
                                         
-                                        @(((Applicant)Account.Profile).SupportingFiles[i].Substring((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") + 1));
-                                    }
-                                </a>
-                            </li>
+                                            @(((Applicant)Account.Profile).SupportingFiles[i].Substring((((Applicant)Account.Profile).SupportingFiles[i]).LastIndexOf("\\") + 1));
+                                        }
+                                    </a>
+                                </li>
+                            }
                         }
                     }
                     

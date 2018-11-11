@@ -609,9 +609,15 @@ namespace WebApplication1.Controllers
                             pr.NewProfile.ProfileID = pr.CurrentProfile.ProfileID;
                             pr.NewProfile.Update(false);
 
+
+                            Account ac = this.GetAccount();
+                            ac.Profile.Profile = pr.NewProfile;
+                            Session["user"] = ac;
+
                             pr.NewProfile.ProfileID = temp;
                             pr.NewProfile.Delete();
                             pr.Delete();
+
                             json["message"] = "Successfuly approved profile request...";
                         }
                         catch (Exception e)
