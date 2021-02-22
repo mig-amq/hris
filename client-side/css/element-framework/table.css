@@ -18,7 +18,7 @@ table th{
 }
 
 table td{
-	font-size: 0.78em;
+	font-size: 0.85em;
 	padding: 0.5em 1.5em;
 	text-align: left;
 }
@@ -43,4 +43,8 @@ table thead{
 
 table tr:nth-child(odd){
 	background-color: #f4f4f4;
+}
+
+table select{
+	border-color: transparent;
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Calfurn - Add Employee</title>
+		<title>Calfurn - Job Application</title>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700" />
 		<link rel="stylesheet" type="text/css" href="css/element-framework/theme.css" />
 		<link rel="stylesheet" type="text/css" href="css/element-framework/button.css" />
@@ -29,7 +29,7 @@
 					<h6 class="cluster-label">Recruitment</h6>
 					<ul>
 						<a href="job-posting.html"><li>Job Posting</li></a>
-						<a href="job-application.html"><li>Job Application</li></a>
+						<a href="job-application.html"><li class="active">Job Application</li></a>
 						<a href="application-status.html"><li>Application Status</li></a>
 					</ul>
 				</div>
@@ -37,7 +37,7 @@
 				<div class="cluster">
 					<h6 class="cluster-label">Employment</h6>
 					<ul>
-						<a href="add-employee.html"><li class="active">Add Employee</li></a>
+						<a href="add-employee.html"><li>Add Employee</li></a>
 						<a href="employee-list.html"><li>Employee List</li></a>
 					</ul>
 				</div>
@@ -81,52 +81,12 @@
 				</div>
 			</ul>
 		</nav>
-		<header>
-			<div id="account-wrapper">
-				<div id="profile-picture"></div>
-				<div>
-					<span id="profile-name">John Baptist De La Salle</span>
-					<span id="profile-email">john.delasalle@gmail.com</span>
-				</div>
-				<img src="assets/icons/arrow-down-2.svg" id="profile-dropdown" />
-			</div>
-			<div id="account-dropdown">
-				<ul>
-					<a href="#"><li>Logout</li></a>
-				</ul>
-			</div>
-		</header>
 		<section>
 			<div id="section-heading">
-				<h1 id="section-title">Add Employee</h1>
+				<h1 id="section-title">Job Application</h1>
 			</div>
 			<br/>
 			<form>
-				<div class="two-column-content">
-					<div class="cluster">
-						<p class="sub-title">Department</p>
-						<input type="text" name="employee-code" placeholder="Employee Code" class="full" />
-						<input type="text" name="employee-department" placeholder="Department" class="full" />
-						<input type="text" name="employee-position" placeholder="Position" class="full" />
-						<textarea placeholder="Description" name="description" class="full"></textarea>
-					</div>
-					<div class="cluster">
-						<p class="sub-title">Date of Hire</p>
-						<select id="month" name="month" class="full">
-							<option value="-1">-- Select month --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="day" name="day" class="full">
-							<option value="-1">-- Select day --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="year" name="year" class="full">
-							<option value="-1">-- Select year --</option>
-							<!-- JS generated -->
-						</select>
-					</div>
-				</div>
-				<hr/>
 				<p class="sub-title">Employee History</p>
 				<div class="two-column-content">
 					<div class="cluster">
@@ -151,51 +111,6 @@
 					</div>
 				</div>
 				<hr/>
-				<p class="sub-title">Personal Details</p>
-				<div class="two-column-content">
-					<div class="cluster">
-						<input type="text" name="firstname" placeholder="First Name" class="full" />
-						<input type="text" name="lastname" placeholder="Last Name" class="full" />
-						<input type="text" name="middlename" placeholder="Middle Name" class="full" />
-						<select name="sex" class="full">
-							<option value="-1">-- Select Sex --</option>
-							<option value="0">Male</option>
-							<option value="1">Female</option>
-						</select>
-						<select name="civil-status" class="full">
-							<option value="-1">-- Select Civil Status --</option>
-							<option value="0">Single</option>
-							<option value="1">Married</option>
-							<option value="2">Widowed</option>
-							<option value="3">Widower</option>
-						</select>
-						<p class="sub-title">Birthdate</p>
-						<select id="month" name="birth-month" class="full">
-							<option value="-1">-- Select month --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="day" name="birth-day" class="full">
-							<option value="-1">-- Select day --</option>
-							<!-- JS generated -->
-						</select>
-						<select id="year" name="birth-year" class="full">
-							<option value="-1">-- Select year --</option>
-							<!-- JS generated -->
-						</select>
-					</div>
-					<div class="cluster">
-						<input type="text" name="contact-number" placeholder="Contact Number" class="full" />
-						<input type="email" name="email" placeholder="Email Address" class="full" />
-						<input type="text" name="username" placeholder="Username" class="full" />
-						<input type="password" name="password" placeholder="Password" class="full" />
-
-						<p class="sub-title">In case of emergency</p>
-						<input type="text" name="contact-person" placeholder="Contact Person" class="full" />
-						<input type="text" name="contact-number" placeholder="Contact Number" class="full" />
-						<input type="text" name="relationship" placeholder="Relationship" class="full" />
-					</div>
-				</div>
-				<hr/>
 				<div class="two-column-content">
 					<div class="cluster">
 						<p class="sub-title">Elementary</p>
@@ -211,7 +126,7 @@
 								<!-- JS generated -->
 							</select>
 						</div>
-
+						<br/>
 						<p class="sub-title">High School</p>
 						<input type="text" name="hs-name" placeholder="School Name" class="full" />
 						<input type="text" name="hs-address" placeholder="Address" class="full" />
@@ -242,7 +157,7 @@
 						</div>
 					</div>
 				</div>
-				<button type="submit" class="full">Add New Employee</button>
+				<button type="submit" class="full">Submit</button>
 			</form>
 		</section>
 	</body>
